@@ -1,0 +1,38 @@
+<!-- home.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Coffee Brew Helper</title>
+    <!-- Add any CSS links, meta tags, or other head elements here -->
+</head>
+<body>
+    <h1>Coffee Brew Helper</h1>
+    
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Step</th>
+                <th>Change in Water</th>
+                <th>Total Water</th>
+                <th>Change in Time</th>
+                <th>Total Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for step in steps %}
+            <tr>
+                <td>{{ step.step_id }}</td>
+                <td>{{ step.change_in_water }}</td>
+                <td>{{ step.total_water }}</td>
+                <td>{{ step.change_in_time }}</td>
+                <td>{{ step.total_time }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Add any JavaScript scripts or other body elements here -->
+</body>
+</html>
