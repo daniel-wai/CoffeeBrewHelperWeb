@@ -16,6 +16,9 @@
 <body>
     <h1>Coffee Brew Helper</h1>
     
+    <!-- Input element to display elapsed time -->
+    <input type="text" id="elapsed-time" readonly value="0">
+
     <table border="1" id="brewing-steps">
         <thead>
             <tr>
@@ -24,6 +27,7 @@
                 <th>Total Water</th>
                 <th>Change in Time</th>
                 <th>Total Time</th>
+                <th>Executed Time</th>
             </tr>
         </thead>
         <tbody>
@@ -34,6 +38,7 @@
                 <td>{{ step.total_water }}</td>
                 <td>{{ step.change_in_time }}</td>
                 <td>{{ step.total_time }}</td>
+                <td id="executed-time-{{ step.step_id }}"></td>
             </tr>
             {% endfor %}
         </tbody>
@@ -43,6 +48,7 @@
     <button onclick="startTimer()">Start</button>
     <button onclick="stopTimer()">Stop</button>
     <button onclick="resetTimer()">Reset</button>
+    <button onclick="onNextClicked()">Next</button>
 
     <!-- Add any JavaScript scripts or other body elements here -->
     <script>
@@ -50,6 +56,7 @@
         const rows = document.querySelectorAll('#brewing-steps tbody tr');
         
         let stepIndex = 0;
+        let executedStepIndex = 0;
         let elapsedTime = 0;
         let timer;
 
@@ -63,6 +70,12 @@
         function highlightStep() {
             removeHighlightStep();
             rows[stepIndex].classList.add('highlighted-step'); // Highlight the current step
+        }
+
+        // Function to update elapsed time in the input element
+        function updateElapsedTime() {
+            const elapsedTimeInput = document.getElementById('elapsed-time');
+            elapsedTimeInput.value = elapsedTime; // Update input value with elapsed time
         }
 
         // Function to start the timer and highlight steps based on total_time
@@ -79,6 +92,7 @@
                         highlightStep();
                     }
                     elapsedTime += 1; // Increment elapsed time (assuming 1 second intervals)
+                    updateElapsedTime(); // Update elapsed time in the input element
                 }
             }, 1000); // Timer interval: 1 second (adjust as needed)
         }
@@ -91,8 +105,27 @@
         function resetTimer() {
             clearInterval(timer);
             stepIndex = 0;
+            executedStepIndex = 0;
             elapsedTime = 0;
             removeHighlightStep();
+            updateElapsedTime(); // Update elapsed time in the input element
+
+            // Clear the executed-time column
+            const timeTakenCells = document.querySelectorAll('[id^="executed-time-"]');
+            timeTakenCells.forEach(cell => {
+                cell.textContent = ''; // Clear the content of executed-time cells
+            });
+        }
+
+        // Function to record time taken and update step
+        function onNextClicked() {
+            // Record current time for the current step
+            const currentStepId = executedStepIndex + 1; // Assuming stepIndex starts from 0
+            const timeTakenCell = document.getElementById(`executed-time-${currentStepId}`);
+            timeTakenCell.textContent = elapsedTime;
+
+            // Update step for the user
+            executedStepIndex++; // Increment step index for the user
         }
     </script>
 </body>
