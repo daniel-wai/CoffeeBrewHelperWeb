@@ -24,9 +24,9 @@
             <tr>
                 <th>Step</th>
                 <th>Change in Water</th>
-                <th>Total Water</th>
+                <th>Target Water</th>
                 <th>Change in Time</th>
-                <th>Total Time</th>
+                <th>Target Time</th>
                 <th>Executed Time</th>
             </tr>
         </thead>
@@ -35,9 +35,9 @@
             <tr>
                 <td>{{ step.step_id }}</td>
                 <td>{{ step.change_in_water }}</td>
-                <td>{{ step.total_water }}</td>
+                <td>{{ step.target_total_water }}</td>
                 <td>{{ step.change_in_time }}</td>
-                <td>{{ step.total_time }}</td>
+                <td>{{ step.target_total_time }}</td>
                 <td id="executed-time-{{ step.step_id }}"></td>
             </tr>
             {% endfor %}
@@ -78,7 +78,7 @@
             elapsedTimeInput.value = elapsedTime; // Update input value with elapsed time
         }
 
-        // Function to start the timer and highlight steps based on total_time
+        // Function to start the timer and highlight steps based on target_total_time
         function startTimer() {
             highlightStep();
             timer = setInterval(() => {
