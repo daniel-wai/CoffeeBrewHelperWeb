@@ -6,11 +6,17 @@
     <meta charset="UTF-8">
     <title>Coffee Brew Helper</title>
     <!-- Add any CSS links, meta tags, or other head elements here -->
+    <style>
+        .highlighted-step {
+            /* Add your CSS styling for highlighting here */
+            background-color: yellow; /* Example: Highlight the step with a yellow background */
+        }
+    </style>
 </head>
 <body>
     <h1>Coffee Brew Helper</h1>
     
-    <table border="1">
+    <table border="1" id="brewing-steps">
         <thead>
             <tr>
                 <th>Step</th>
@@ -33,6 +39,61 @@
         </tbody>
     </table>
 
+    <!-- Buttons for controlling the timer -->
+    <button onclick="startTimer()">Start</button>
+    <button onclick="stopTimer()">Stop</button>
+    <button onclick="resetTimer()">Reset</button>
+
     <!-- Add any JavaScript scripts or other body elements here -->
+    <script>
+        // Get all rows of the table
+        const rows = document.querySelectorAll('#brewing-steps tbody tr');
+        
+        let stepIndex = 0;
+        let elapsedTime = 0;
+        let timer;
+
+        // Function to remove higlight from all steps
+        function removeHighlightStep(){
+            rows.forEach(row => {
+                row.classList.remove('highlighted-step'); // Remove highlight from all rows
+            });
+        }
+        // Function to highlight the current step
+        function highlightStep() {
+            removeHighlightStep();
+            rows[stepIndex].classList.add('highlighted-step'); // Highlight the current step
+        }
+
+        // Function to start the timer and highlight steps based on total_time
+        function startTimer() {
+            highlightStep();
+            timer = setInterval(() => {
+                // Highlight the current step
+                if (stepIndex >= rows.length) {
+                    clearInterval(timer); // Stop the timer when all steps are completed
+                } else {
+                    const currentStepTotalTime = parseInt(rows[stepIndex].querySelector('td:nth-child(5)').textContent);
+                    if (elapsedTime >= currentStepTotalTime) {
+                        stepIndex++;
+                        highlightStep();
+                    }
+                    elapsedTime += 1; // Increment elapsed time (assuming 1 second intervals)
+                }
+            }, 1000); // Timer interval: 1 second (adjust as needed)
+        }
+        // Function to stop the timer
+        function stopTimer() {
+            clearInterval(timer);
+        }
+
+        // Function to reset the timer and step index
+        function resetTimer() {
+            clearInterval(timer);
+            stepIndex = 0;
+            elapsedTime = 0;
+            removeHighlightStep();
+        }
+    </script>
 </body>
 </html>
