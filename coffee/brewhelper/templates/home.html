@@ -45,8 +45,7 @@
     </table>
 
     <!-- Buttons for controlling the timer -->
-    <button onclick="startTimer()">Start</button>
-    <button onclick="stopTimer()">Stop</button>
+    <button id="startPauseButton" onclick="toggleTimer()">Start</button>
     <button onclick="resetTimer()">Reset</button>
     <button onclick="onNextClicked()">Next</button>
 
@@ -59,6 +58,8 @@
         let executedStepIndex = 0;
         let elapsedTime = 0;
         let timer;
+
+        let isTimerRunning = false;
 
         // Function to remove higlight from all steps
         function removeHighlightStep(){
@@ -76,6 +77,20 @@
         function updateElapsedTime() {
             const elapsedTimeInput = document.getElementById('elapsed-time');
             elapsedTimeInput.value = elapsedTime; // Update input value with elapsed time
+        }
+        
+        function toggleTimer() {
+            const startPauseButton = document.getElementById('startPauseButton');
+
+            if (!isTimerRunning) {
+                startTimer();
+                startPauseButton.textContent = 'Pause'; // Change button text to 'Pause'
+            } else {
+                pauseTimer();
+                startPauseButton.textContent = 'Start'; // Change button text to 'Start'
+            }
+
+            isTimerRunning = !isTimerRunning; // Toggle timer status
         }
 
         // Function to start the timer and highlight steps based on target_total_time
@@ -97,7 +112,7 @@
             }, 1000); // Timer interval: 1 second (adjust as needed)
         }
         // Function to stop the timer
-        function stopTimer() {
+        function pauseTimer() {
             clearInterval(timer);
         }
 
