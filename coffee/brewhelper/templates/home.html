@@ -38,49 +38,60 @@
 </head>
 <body>
     <h1>Coffee Brew Helper</h1>
-    <div class="general-info">
-        <!-- Element to display recipe header info -->
-        <label id = "recipe-name-label" for="recipe-name">
-            <span>Name: </span>
-            <input type ="text" id="recipe-name" readonly value="{{ recipe.name }}">
-        </label>
-        <label id = "recipe-description-label" for="recipe-description">
-            <span>Description: </span>
-            <input type ="text" id="recipe-description" readonly value="{{ recipe.description }}">
-        </label>
-        <!-- Element to display elapsed time -->
-        <label id = "elapsed-time-label" for="elapsed-time">
-            <span>Elapsed Time: </span>
-            <input type="text" id="elapsed-time" readonly value="0">
-        </label>
-    </div>
-
-    <table border="1" id="brewing-steps">
-        <thead>
-            <tr>
-                <th>Step</th>
-                <th>Description</th>
-                <th>Change in Water</th>
-                <th>Target Water</th>
-                <th>Change in Time</th>
-                <th>Target Time</th>
-                <th>Executed Time</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for step in steps %}
-            <tr>
-                <td>{{ step.step_id }}</td>
-                <td>{{ step.description }}</td>
-                <td>{{ step.change_in_water }}</td>
-                <td>{{ step.target_total_water }}</td>
-                <td>{{ step.change_in_time }}</td>
-                <td>{{ step.target_total_time }}</td>
-                <td id="executed-time-{{ step.step_id }}"></td>
-            </tr>
+    <form action="{% url 'home' %}" method="GET">
+        <label for="recipe-dropdown">Select Recipe:</label>
+        <select id="recipe-dropdown" name="selected_recipe_id">
+            <option value="">Select a Recipe</option>
+            {% for recipe in recipes %}
+                <option value="{{ recipe.id }}" {% if recipe.id == selected_recipe.id %}selected{% endif %}>
+                    {{ recipe.name }}
+                </option>
             {% endfor %}
-        </tbody>
-    </table>
+        </select>
+        <input type="submit" value="Select">
+    </form>
+        
+    {% if selected_recipe %}
+        <div class="general-info">
+            <!-- Element to display recipe header info -->
+            <label id = "recipe-description-label" for="recipe-description">
+                <span>Description: </span>
+                <input type ="text" id="recipe-description" readonly value="{{ selected_recipe.description }}">
+            </label>
+            <!-- Element to display elapsed time -->
+            <label id = "elapsed-time-label" for="elapsed-time">
+                <span>Elapsed Time: </span>
+                <input type="text" id="elapsed-time" readonly value="0">
+            </label>
+        </div>
+        
+        <table border="1" id="brewing-steps">
+            <thead>
+                <tr>
+                    <th>Step</th>
+                    <th>Description</th>
+                    <th>Change in Water</th>
+                    <th>Target Water</th>
+                    <th>Change in Time</th>
+                    <th>Target Time</th>
+                    <th>Executed Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for step in steps %}
+                <tr>
+                    <td>{{ step.step_id }}</td>
+                    <td>{{ step.description }}</td>
+                    <td>{{ step.change_in_water }}</td>
+                    <td>{{ step.target_total_water }}</td>
+                    <td>{{ step.change_in_time }}</td>
+                    <td>{{ step.target_total_time }}</td>
+                    <td id="executed-time-{{ step.step_id }}"></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
 
     <!-- Buttons for controlling the timer -->
     <button id="startPauseButton" onclick="toggleTimer()">Start</button>
