@@ -1,7 +1,7 @@
 from django.db import models
 
 # Create your models here.
-class brewstep(models.Model):
+class BrewStep(models.Model):
     step_id = models.PositiveIntegerField()
     description = models.CharField(max_length=200, default='')
     change_in_water = models.IntegerField()

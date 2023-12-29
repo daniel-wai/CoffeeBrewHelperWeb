@@ -1,9 +1,9 @@
 from django.shortcuts import render, HttpResponse
-from .models import brewstep
+from .models import BrewStep
 # Create your views here.
 
 def home(request):
-    steps = brewstep.objects.all()
+    steps = BrewStep.objects.all()
 
     target_total_water = 0
     target_total_time = 0
