@@ -30,6 +30,9 @@
         #recipe-description {
             width: 80%; 
         }
+        #recipe-coffee-grind-size{
+            width: 80%; 
+        }
         #elapsed-time-label {
             display: flex;
             align-items: center;
@@ -58,8 +61,32 @@
                 <span>Description: </span>
                 <input type ="text" id="recipe-description" readonly value="{{ selected_recipe.description }}">
             </label>
+            <label id = "recipe-coffee-weight-label" for="recipe-coffee-weight">
+                <span>Total coffee: </span>
+                <input type ="text" id="recipe-coffee-weight" readonly value="{{ selected_recipe.coffee_weight}}">
+            </label>
+            <label id = "recipe-target-total-water-label" for="recipe-target-total-water">
+                <span>Total water: </span>
+                <input type ="text" id="recipe-target-total-water" readonly value="{{ selected_recipe.target_total_water }}">
+            </label>
+            <label id = "recipe-brew-ratio-label" for="recipe-brew-ratio">
+                <span>Brew ratio: </span>
+                <input type ="text" id="recipe-brew-ratio" readonly value="{{ selected_recipe.brew_ratio }}">
+            </label>
+            <label id = "recipe-coffee-grind-size-label" for="recipe-coffee-grind-size">
+                <span>Grind size: </span>
+                <input type ="text" id="recipe-coffee-grind-size" readonly value="{{ selected_recipe.coffee_grind_size }}">
+            </label>
+            <label id = "recipe-temperature-label" for="recipe-temperature">
+                <span>Temperature: </span>
+                <input type ="text" id="recipe-temperature" readonly value="{{ selected_recipe.temperature }}">
+            </label>
+            <label id = "recipe-target-total-time-label" for="recipe-target-total-time">
+                <span>Total time: </span>
+                <input type ="text" id="recipe-target-total-time" readonly value="{{ selected_recipe.target_total_time }}">
+            </label>
             <!-- Element to display elapsed time -->
-            <label id = "elapsed-time-label" for="elapsed-time">
+            <label id = "elapsed-time-label" for="elapsed-time" style="margin-top: 10px">
                 <span>Elapsed Time: </span>
                 <input type="text" id="elapsed-time" readonly value="0">
             </label>
@@ -118,8 +145,8 @@
         }
         // Function to highlight the current step
         function highlightStep() {
-            removeHighlightStep();
             if (stepIndex < rows.length){
+                removeHighlightStep();
                 rows[stepIndex].classList.add('highlighted-step'); // Highlight the current step
             }
         }

@@ -17,9 +17,12 @@ class BrewStep(models.Model):
 
 class Recipe(models.Model):
     recipe_id = models.PositiveIntegerField()
-    name = models.CharField(max_length=100)
-    description = models.TextField()
-
+    name = models.CharField(max_length=100, default='')
+    description = models.TextField(default='')
+    temperature = models.PositiveIntegerField(default=95)
+    coffee_weight = models.PositiveIntegerField(default=0)
+    coffee_grind_size = models.TextField(default='')
+    
     def __str__(self):
         return self.name
     

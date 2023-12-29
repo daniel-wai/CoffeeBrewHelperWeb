@@ -25,6 +25,11 @@ def home(request):
                 target_total_time += step.change_in_time
                 step.target_total_time = target_total_time
                 step.target_total_water = target_total_water
+            
+            selected_recipe.target_total_time = target_total_time
+            selected_recipe.target_total_water = target_total_water
+            # Calculate brew ration assuming that water density is 1 g/mL
+            selected_recipe.brew_ratio = "{:.1f}".format(selected_recipe.target_total_water/selected_recipe.coffee_weight) 
                 
         except:
             pass #do not render any recipe info if selected_recipe = None
