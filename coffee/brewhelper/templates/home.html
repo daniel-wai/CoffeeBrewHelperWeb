@@ -11,40 +11,114 @@
             /* Add your CSS styling for highlighting here */
             background-color: yellow; /* Example: Highlight the step with a yellow background */
         }
+        /* General information styling */
+        .general-info {
+            display: flex;
+            flex-direction: column;
+        }
+        .general-info input[type="text"] {
+            background: none;
+            border: none;
+            outline: none;
+            /* Additional styling if needed */
+        }
+        .general-info label{
+            font-weight: bold;
+        }
+        
+        /* Specific element styling*/
+        #recipe-description {
+            width: 80%; 
+        }
+        #recipe-coffee-grind-size{
+            width: 80%; 
+        }
+        #elapsed-time-label {
+            display: flex;
+            align-items: center;
+        }
     </style>
 </head>
 <body>
     <h1>Coffee Brew Helper</h1>
-    
-    <!-- Input element to display elapsed time -->
-    <input type="text" id="elapsed-time" readonly value="0">
-
-    <table border="1" id="brewing-steps">
-        <thead>
-            <tr>
-                <th>Step</th>
-                <th>Description</th>
-                <th>Change in Water</th>
-                <th>Target Water</th>
-                <th>Change in Time</th>
-                <th>Target Time</th>
-                <th>Executed Time</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for step in steps %}
-            <tr>
-                <td>{{ step.step_id }}</td>
-                <td>{{ step.description }}</td>
-                <td>{{ step.change_in_water }}</td>
-                <td>{{ step.target_total_water }}</td>
-                <td>{{ step.change_in_time }}</td>
-                <td>{{ step.target_total_time }}</td>
-                <td id="executed-time-{{ step.step_id }}"></td>
-            </tr>
+    <form action="{% url 'home' %}" method="GET">
+        <label for="recipe-dropdown">Select Recipe:</label>
+        <select id="recipe-dropdown" name="selected_recipe_id">
+            <option value="">Select a Recipe</option>
+            {% for recipe in recipes %}
+                <option value="{{ recipe.id }}" {% if recipe.id == selected_recipe.id %}selected{% endif %}>
+                    {{ recipe.name }}
+                </option>
             {% endfor %}
-        </tbody>
-    </table>
+        </select>
+        <input type="submit" value="Select">
+    </form>
+        
+    {% if selected_recipe %}
+        <div class="general-info">
+            <!-- Element to display recipe header info -->
+            <label id = "recipe-description-label" for="recipe-description">
+                <span>Description: </span>
+                <input type ="text" id="recipe-description" readonly value="{{ selected_recipe.description }}">
+            </label>
+            <label id = "recipe-coffee-weight-label" for="recipe-coffee-weight">
+                <span>Total coffee: </span>
+                <input type ="text" id="recipe-coffee-weight" readonly value="{{ selected_recipe.coffee_weight}}">
+            </label>
+            <label id = "recipe-target-total-water-label" for="recipe-target-total-water">
+                <span>Total water: </span>
+                <input type ="text" id="recipe-target-total-water" readonly value="{{ selected_recipe.target_total_water }}">
+            </label>
+            <label id = "recipe-brew-ratio-label" for="recipe-brew-ratio">
+                <span>Brew ratio: </span>
+                <input type ="text" id="recipe-brew-ratio" readonly value="{{ selected_recipe.brew_ratio }}">
+            </label>
+            <label id = "recipe-coffee-grind-size-label" for="recipe-coffee-grind-size">
+                <span>Grind size: </span>
+                <input type ="text" id="recipe-coffee-grind-size" readonly value="{{ selected_recipe.coffee_grind_size }}">
+            </label>
+            <label id = "recipe-temperature-label" for="recipe-temperature">
+                <span>Temperature: </span>
+                <input type ="text" id="recipe-temperature" readonly value="{{ selected_recipe.temperature }}">
+            </label>
+            <label id = "recipe-target-total-time-label" for="recipe-target-total-time">
+                <span>Total time: </span>
+                <input type ="text" id="recipe-target-total-time" readonly value="{{ selected_recipe.target_total_time }}">
+            </label>
+            <!-- Element to display elapsed time -->
+            <label id = "elapsed-time-label" for="elapsed-time" style="margin-top: 10px">
+                <span>Elapsed Time: </span>
+                <input type="text" id="elapsed-time" readonly value="0">
+            </label>
+        </div>
+        
+        <table border="1" id="brewing-steps">
+            <thead>
+                <tr>
+                    <th>Step</th>
+                    <th>Description</th>
+                    <th>Change in Water</th>
+                    <th>Target Water</th>
+                    <th>Change in Time</th>
+                    <th>Target Time</th>
+                    <th>Executed Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for step in steps %}
+                <tr>
+                    <td>{{ step.order_id }}</td>
+                    <td>{{ step.description }}</td>
+                    <td>{{ step.change_in_water }}</td>
+                    <td>{{ step.target_total_water }}</td>
+                    <td>{{ step.change_in_time }}</td>
+                    <td id="target-total-time-{{ step.target_total_time }}">{{ step.target_total_time }}</td>
+                    <td id="executed-time-{{ step.order_id }}"></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
 
     <!-- Buttons for controlling the timer -->
     <button id="startPauseButton" onclick="toggleTimer()">Start</button>
@@ -71,8 +145,10 @@
         }
         // Function to highlight the current step
         function highlightStep() {
-            removeHighlightStep();
-            rows[stepIndex].classList.add('highlighted-step'); // Highlight the current step
+            if (stepIndex < rows.length){
+                removeHighlightStep();
+                rows[stepIndex].classList.add('highlighted-step'); // Highlight the current step
+            }
         }
 
         // Function to update elapsed time in the input element
@@ -101,16 +177,16 @@
             timer = setInterval(() => {
                 // Highlight the current step
                 if (stepIndex >= rows.length) {
-                    clearInterval(timer); // Stop the timer when all steps are completed
+                    // Don't stop timer as it will disrupt the executed completed time
                 } else {
-                    const currentStepTotalTime = parseInt(rows[stepIndex].querySelector('td:nth-child(5)').textContent);
+                    const currentStepTotalTime = parseInt(rows[stepIndex].querySelector('[id^="target-total-time-"]').textContent);
                     if (elapsedTime >= currentStepTotalTime) {
                         stepIndex++;
                         highlightStep();
                     }
-                    elapsedTime += 1; // Increment elapsed time (assuming 1 second intervals)
-                    updateElapsedTime(); // Update elapsed time in the input element
                 }
+                elapsedTime += 1; // Increment elapsed time (assuming 1 second intervals)
+                updateElapsedTime(); // Update elapsed time in the input element
             }, 1000); // Timer interval: 1 second (adjust as needed)
         }
         // Function to stop the timer
@@ -120,7 +196,13 @@
 
         // Function to reset the timer and step index
         function resetTimer() {
-            clearInterval(timer);
+            // Stop the timer
+            clearInterval(timer); 
+            const startPauseButton = document.getElementById('startPauseButton');
+            startPauseButton.textContent = 'Start'; // Change button text to 'Start'
+            isTimerRunning = false;
+        
+            // Reset test parameters
             stepIndex = 0;
             executedStepIndex = 0;
             elapsedTime = 0;
