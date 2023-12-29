@@ -3,6 +3,6 @@ from .models import brewstep
 from adminsortable2.admin import SortableAdminMixin
 
 class BrewStepAdmin(SortableAdminMixin, admin.ModelAdmin):
-    list_display = ('step_id','__str__', 'change_in_water', 'change_in_time')
+    list_display = ('step_id','__str__','description', 'change_in_water', 'change_in_time')
 
 admin.site.register(brewstep, BrewStepAdmin)

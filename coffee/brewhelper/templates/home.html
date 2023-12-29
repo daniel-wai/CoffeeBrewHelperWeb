@@ -23,6 +23,7 @@
         <thead>
             <tr>
                 <th>Step</th>
+                <th>Description</th>
                 <th>Change in Water</th>
                 <th>Target Water</th>
                 <th>Change in Time</th>
@@ -34,6 +35,7 @@
             {% for step in steps %}
             <tr>
                 <td>{{ step.step_id }}</td>
+                <td>{{ step.description }}</td>
                 <td>{{ step.change_in_water }}</td>
                 <td>{{ step.target_total_water }}</td>
                 <td>{{ step.change_in_time }}</td>
