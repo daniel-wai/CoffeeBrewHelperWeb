@@ -14,14 +14,18 @@ def home(request):
             selected_recipe = Recipe.objects.get(id=selected_recipe_id)
             # Get associated steps
             steps = selected_recipe.steps.all().order_by('step_id')
+            order_id = 1
             target_total_water = 0
             target_total_time = 0
 
             for step in steps:
+                step.order_id = order_id
+                order_id += 1
                 target_total_water += step.change_in_water
                 target_total_time += step.change_in_time
                 step.target_total_time = target_total_time
                 step.target_total_water = target_total_water
+                
         except:
             pass #do not render any recipe info if selected_recipe = None
 

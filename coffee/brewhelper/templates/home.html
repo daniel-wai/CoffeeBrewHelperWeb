@@ -80,13 +80,13 @@
             <tbody>
                 {% for step in steps %}
                 <tr>
-                    <td>{{ step.step_id }}</td>
+                    <td>{{ step.order_id }}</td>
                     <td>{{ step.description }}</td>
                     <td>{{ step.change_in_water }}</td>
                     <td>{{ step.target_total_water }}</td>
                     <td>{{ step.change_in_time }}</td>
-                    <td>{{ step.target_total_time }}</td>
-                    <td id="executed-time-{{ step.step_id }}"></td>
+                    <td id="target-total-time-{{ step.target_total_time }}">{{ step.target_total_time }}</td>
+                    <td id="executed-time-{{ step.order_id }}"></td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -119,7 +119,9 @@
         // Function to highlight the current step
         function highlightStep() {
             removeHighlightStep();
-            rows[stepIndex].classList.add('highlighted-step'); // Highlight the current step
+            if (stepIndex < rows.length){
+                rows[stepIndex].classList.add('highlighted-step'); // Highlight the current step
+            }
         }
 
         // Function to update elapsed time in the input element
@@ -148,16 +150,16 @@
             timer = setInterval(() => {
                 // Highlight the current step
                 if (stepIndex >= rows.length) {
-                    clearInterval(timer); // Stop the timer when all steps are completed
+                    // Don't stop timer as it will disrupt the executed completed time
                 } else {
-                    const currentStepTotalTime = parseInt(rows[stepIndex].querySelector('td:nth-child(5)').textContent);
+                    const currentStepTotalTime = parseInt(rows[stepIndex].querySelector('[id^="target-total-time-"]').textContent);
                     if (elapsedTime >= currentStepTotalTime) {
                         stepIndex++;
                         highlightStep();
                     }
-                    elapsedTime += 1; // Increment elapsed time (assuming 1 second intervals)
-                    updateElapsedTime(); // Update elapsed time in the input element
                 }
+                elapsedTime += 1; // Increment elapsed time (assuming 1 second intervals)
+                updateElapsedTime(); // Update elapsed time in the input element
             }, 1000); // Timer interval: 1 second (adjust as needed)
         }
         // Function to stop the timer
@@ -167,7 +169,13 @@
 
         // Function to reset the timer and step index
         function resetTimer() {
-            clearInterval(timer);
+            // Stop the timer
+            clearInterval(timer); 
+            const startPauseButton = document.getElementById('startPauseButton');
+            startPauseButton.textContent = 'Start'; // Change button text to 'Start'
+            isTimerRunning = false;
+        
+            // Reset test parameters
             stepIndex = 0;
             executedStepIndex = 0;
             elapsedTime = 0;
