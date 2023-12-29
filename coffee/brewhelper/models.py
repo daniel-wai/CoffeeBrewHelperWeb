@@ -7,7 +7,7 @@ class BrewStep(models.Model):
     change_in_water = models.IntegerField()
     change_in_time = models.IntegerField()
 
-    recipe = models.ForeignKey('Recipe', on_delete=models.CASCADE, related_name='steps', null=True)  # ForeignKey to Recipe
+    recipeID = models.ForeignKey('Recipe', on_delete=models.CASCADE, related_name='steps', null=True)  # ForeignKey to Recipe
 
     def __str__(self):
         return f'Step {self.step_id}'
