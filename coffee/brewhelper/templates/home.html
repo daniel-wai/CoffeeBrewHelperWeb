@@ -11,13 +11,49 @@
             /* Add your CSS styling for highlighting here */
             background-color: yellow; /* Example: Highlight the step with a yellow background */
         }
+        /* General information styling */
+        .general-info {
+            display: flex;
+            flex-direction: column;
+        }
+        .general-info input[type="text"] {
+            background: none;
+            border: none;
+            outline: none;
+            /* Additional styling if needed */
+        }
+        .general-info label{
+            font-weight: bold;
+        }
+        
+        /* Specific element styling*/
+        #recipe-description {
+            width: 80%; 
+        }
+        #elapsed-time-label {
+            display: flex;
+            align-items: center;
+        }
     </style>
 </head>
 <body>
     <h1>Coffee Brew Helper</h1>
-    
-    <!-- Input element to display elapsed time -->
-    <input type="text" id="elapsed-time" readonly value="0">
+    <div class="general-info">
+        <!-- Element to display recipe header info -->
+        <label id = "recipe-name-label" for="recipe-name">
+            <span>Name: </span>
+            <input type ="text" id="recipe-name" readonly value="{{ recipe.name }}">
+        </label>
+        <label id = "recipe-description-label" for="recipe-description">
+            <span>Description: </span>
+            <input type ="text" id="recipe-description" readonly value="{{ recipe.description }}">
+        </label>
+        <!-- Element to display elapsed time -->
+        <label id = "elapsed-time-label" for="elapsed-time">
+            <span>Elapsed Time: </span>
+            <input type="text" id="elapsed-time" readonly value="0">
+        </label>
+    </div>
 
     <table border="1" id="brewing-steps">
         <thead>

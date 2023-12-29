@@ -7,8 +7,21 @@ class BrewStep(models.Model):
     change_in_water = models.IntegerField()
     change_in_time = models.IntegerField()
 
+    recipe = models.ForeignKey('Recipe', on_delete=models.CASCADE, related_name='steps', null=True)  # ForeignKey to Recipe
+
     def __str__(self):
         return f'Step {self.step_id}'
 
     class Meta:
         ordering = ['step_id']  # Choose a field for default ordering
+
+class Recipe(models.Model):
+    recipe_id = models.PositiveIntegerField()
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        ordering = ['recipe_id']  # Choose a field for default ordering
