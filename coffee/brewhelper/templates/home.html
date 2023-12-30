@@ -42,15 +42,20 @@
 <body>
     <h1>Coffee Brew Helper</h1>
     <form action="{% url 'home' %}" method="GET">
+        <label for="method-dropdown">Select Method:</label>
+        <select id="method-dropdown" name="selected_method_id" onchange="populateRecipes()">
+            <option value="">Select a Method</option>
+            {% for method in methods %}
+                <option value="{{ method.id }}">{{ method.name }}</option>
+            {% endfor %}
+        </select>
+
         <label for="recipe-dropdown">Select Recipe:</label>
         <select id="recipe-dropdown" name="selected_recipe_id">
             <option value="">Select a Recipe</option>
-            {% for recipe in recipes %}
-                <option value="{{ recipe.id }}" {% if recipe.id == selected_recipe.id %}selected{% endif %}>
-                    {{ recipe.name }}
-                </option>
-            {% endfor %}
+            <!-- Recipes will be populated dynamically using JavaScript -->
         </select>
+
         <input type="submit" value="Select">
     </form>
         
@@ -127,6 +132,68 @@
 
     <!-- Add any JavaScript scripts or other body elements here -->
     <script>
+        // Selecting the recipe //////////////////////////////////////////////
+        // Function to populate recipe dropdown base on method
+        async function populateRecipes() {
+            return new Promise((resolve, reject) => {
+                const methodDropdown = document.getElementById('method-dropdown');
+                const selectedMethodId = methodDropdown.value;
+                const recipeDropdown = document.getElementById('recipe-dropdown');
+
+                // Clear previous options in the recipe dropdown
+                recipeDropdown.innerHTML = '<option value="">Select a Recipe</option>';
+
+                if (selectedMethodId !== '') {
+                    // AJAX call to fetch recipes associated with the selected method
+                    fetch(`/get-recipes?method_id=${selectedMethodId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            data.forEach(recipe => {
+                                const option = document.createElement('option');
+                                option.value = recipe.id;
+                                option.textContent = recipe.name;
+                                recipeDropdown.appendChild(option);
+                            });
+                            resolve(); // Resolve the Promise once fetching and populating is done
+                        })
+                        .catch(error => {
+                            console.error('Error fetching recipes:', error);
+                            reject(error); // Reject the Promise in case of an error
+                        });
+                } else {
+                    resolve(); // Resolve immediately if no method is selected
+                }
+            });
+        }
+
+        // After Select is hit or the page is refreshed, retain selected method and recipe
+        document.addEventListener('DOMContentLoaded', () => {
+            const methodDropdown = document.getElementById('method-dropdown');
+            const recipeDropdown = document.getElementById('recipe-dropdown');
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const selectedMethodId = urlParams.get('selected_method_id');
+            const selectedRecipeId = urlParams.get('selected_recipe_id');
+
+            if (selectedMethodId) {
+                methodDropdown.value = selectedMethodId;
+                // Populate recipes based on the selected method and set the currently selected recipe
+                populateRecipes()
+                    .then(() => {
+                        if (selectedRecipeId) {
+                            recipeDropdown.value = selectedRecipeId;
+                        }
+                    })
+                    .catch(error => {
+                        // Handle any errors that occurred during populateRecipes
+                        console.error('Error in populateRecipes:', error);
+                    });
+            }
+
+            
+        });
+
+        ////////////////////////////////////////////////////////////////////////
         // Get all rows of the table
         const rows = document.querySelectorAll('#brewing-steps tbody tr');
         
