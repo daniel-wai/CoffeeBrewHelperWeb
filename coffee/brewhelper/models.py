@@ -28,3 +28,7 @@ class Recipe(models.Model):
     
     class Meta:
         ordering = ['recipe_id']  # Choose a field for default ordering
+
+class BrewMethod(models.Model):
+    name = models.CharField(max_length=100)
+    recipes = models.ManyToManyField(Recipe, related_name='methods')
