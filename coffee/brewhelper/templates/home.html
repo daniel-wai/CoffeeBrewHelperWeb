@@ -93,7 +93,7 @@
             <!-- Element to display elapsed time -->
             <label id = "elapsed-time-label" for="elapsed-time" style="margin-top: 10px">
                 <span>Elapsed Time: </span>
-                <input type="text" id="elapsed-time" readonly value="0">
+                <input type="text" id="elapsed-time" readonly value="00:00">
             </label>
         </div>
         
@@ -116,7 +116,7 @@
                     <td>{{ step.description }}</td>
                     <td>{{ step.change_in_water }}</td>
                     <td>{{ step.target_total_water }}</td>
-                    <td>{{ step.change_in_time }}</td>
+                    <td id="change-in-time-{{ step.change_in_time }}">{{ step.change_in_time }}</td>
                     <td id="target-total-time-{{ step.target_total_time }}">{{ step.target_total_time }}</td>
                     <td id="executed-time-{{ step.order_id }}"></td>
                 </tr>
@@ -132,6 +132,21 @@
 
     <!-- Add any JavaScript scripts or other body elements here -->
     <script>
+        // General helpers ///////////////////////////////////////////////////
+        function getTimeStringFromSeconds(seconds) {
+            const minutes = Math.floor(seconds / 60); // Get minutes
+            const remainingSeconds = seconds % 60; // Get remaining seconds
+
+            const formattedMinutes = String(minutes).padStart(2, '0'); // Ensure 2-digit minutes
+            const formattedSeconds = String(remainingSeconds).padStart(2, '0'); // Ensure 2-digit seconds
+
+            return `${formattedMinutes}:${formattedSeconds}`; // Format as "mm:ss"
+        }
+        function getSecondsFromTimeString(timeString) {
+            const [minutes, seconds] = timeString.split(':').map(Number);
+            return minutes * 60 + seconds;
+        }
+
         // Selecting the recipe //////////////////////////////////////////////
         // Function to populate recipe dropdown base on method
         async function populateRecipes() {
@@ -194,6 +209,10 @@
         });
 
         ////////////////////////////////////////////////////////////////////////
+        // Update time data in header info
+        const recipeTargetTotalTime = document.getElementById('recipe-target-total-time');
+        recipeTargetTotalTime.value = getTimeStringFromSeconds(recipeTargetTotalTime.value);
+
         // Get all rows of the table
         const rows = document.querySelectorAll('#brewing-steps tbody tr');
         
@@ -203,6 +222,18 @@
         let timer;
 
         let isTimerRunning = false;
+
+        // Update the Time cells in the table        
+        function updateTimeCells(timeCells){
+            timeCells.forEach(cell => {
+            const timeInSeconds = parseInt(cell.textContent);
+            cell.textContent = getTimeStringFromSeconds(timeInSeconds);
+            });
+        }
+        const totalTargetTimeCells = document.querySelectorAll('[id^="target-total-time-"]');
+        const changeInTimeCells = document.querySelectorAll('[id^="change-in-time-"]');
+        updateTimeCells(totalTargetTimeCells)
+        updateTimeCells(changeInTimeCells)
 
         // Function to remove higlight from all steps
         function removeHighlightStep(){
@@ -221,7 +252,8 @@
         // Function to update elapsed time in the input element
         function updateElapsedTime() {
             const elapsedTimeInput = document.getElementById('elapsed-time');
-            elapsedTimeInput.value = elapsedTime; // Update input value with elapsed time
+            const formattedTime = getTimeStringFromSeconds(elapsedTime); // Convert elapsed time to "mm:ss"
+            elapsedTimeInput.value = formattedTime; // Update input value with formatted time
         }
         
         function toggleTimer() {
@@ -246,7 +278,7 @@
                 if (stepIndex >= rows.length) {
                     // Don't stop timer as it will disrupt the executed completed time
                 } else {
-                    const currentStepTotalTime = parseInt(rows[stepIndex].querySelector('[id^="target-total-time-"]').textContent);
+                    const currentStepTotalTime = getSecondsFromTimeString(rows[stepIndex].querySelector('[id^="target-total-time-"]').textContent);
                     if (elapsedTime >= currentStepTotalTime) {
                         stepIndex++;
                         highlightStep();
@@ -288,7 +320,7 @@
             // Record current time for the current step
             const currentStepId = executedStepIndex + 1; // Assuming stepIndex starts from 0
             const timeTakenCell = document.getElementById(`executed-time-${currentStepId}`);
-            timeTakenCell.textContent = elapsedTime;
+            timeTakenCell.textContent = getTimeStringFromSeconds(elapsedTime);
 
             // Update step for the user
             executedStepIndex++; // Increment step index for the user
