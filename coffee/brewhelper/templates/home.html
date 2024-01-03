@@ -131,7 +131,11 @@
     <button id="startPauseButton" onclick="toggleTimer()">Start</button>
     <button onclick="resetTimer()">Reset</button>
     <button onclick="onNextClicked()">Next</button>
-
+    <!-- Checkbox for toggling speech recognition feature -->
+    <label for="toggleSpeechRecognition">
+        <span>Enable Speech Recognition</span>
+        <input type ="checkbox" id="toggleSpeechRecognition" onchange="toggleSpeechRecognition()">
+    </label>
     <!-- Keyboard shortcuts note -->
     <div class="notes">
         <p><strong>Note:</strong> Keyboard shortcuts available:</p>
@@ -192,16 +196,16 @@
                 }
             });
         }
-
-        // After Select is hit or the page is refreshed, retain selected method and recipe
+       
         document.addEventListener('DOMContentLoaded', () => {
+            // After Select is hit or the page is refreshed, retain selected method and recipe
             const methodDropdown = document.getElementById('method-dropdown');
             const recipeDropdown = document.getElementById('recipe-dropdown');
 
             const urlParams = new URLSearchParams(window.location.search);
             const selectedMethodId = urlParams.get('selected_method_id');
             const selectedRecipeId = urlParams.get('selected_recipe_id');
-
+            
             if (selectedMethodId) {
                 methodDropdown.value = selectedMethodId;
                 // Populate recipes based on the selected method and set the currently selected recipe
@@ -236,8 +240,84 @@
                         break;
                 }
             });
+            
+            // Initialize speech recognition
+            initSpeechRecognition();
         });
+        // Speech Recognition ///////////////////////////////////////////////////////////
+        let speechRecognition;
+        // Function to initialize speech recognition
+        function initSpeechRecognition() {
+            // Check browser support for SpeechRecognition
+            if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+                speechRecognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
 
+                // Configure speech recognition
+                speechRecognition.continuous = false; // Enable continuous recognition
+                speechRecognition.lang = 'en-US'; // Set the language
+                speechRecognition.interimResults = false; // Set to true for interim results
+                
+                // Define commands and associate with functions                
+                isAutoRestart = true;
+                
+                speechRecognition.onresult = event => {
+                    const lastResultIndex = event.results.length - 1;
+                    const speechResult = event.results[lastResultIndex][0].transcript.toLowerCase();
+
+                    switch (speechResult) {
+                        case 'start':
+                        case 'pause':
+                            toggleTimer(); // Start/Pause operation
+                            break;
+                        case 'reset':
+                            resetTimer(); // Reset operation
+                            break;
+                        case 'next':
+                            onNextClicked(); // Next operation
+                            break;
+                        default:
+                            break;
+                    }
+                };
+
+                // Handle errors and other events
+                speechRecognition.onerror = event => {
+                    switch(event.error){
+                        case 'not-allowed':
+                        case 'service-not-allowed':
+                            // if permission to use the mic is denied, turn off auto-restart
+                            isAutoRestart = false;
+                            break;
+                    }
+                    console.error('Speech recognition error:', event.error);
+                };
+
+                // Start/stop speech recognition based on checkbox state
+                toggleSpeechRecognition();
+
+                // Restart recognition after it ends to enable continuous listening
+                speechRecognition.onend = () => {
+                    if (isAutoRestart){
+                        speechRecognition.start(); // Restart recognition after it ends
+                    }
+                };
+            } else {
+                console.log('Speech recognition not supported.');
+            }
+        }
+        // Function to toggle speech recognition based on checkbox state
+        function toggleSpeechRecognition() {
+            if (speechRecognition) {
+                const checkbox = document.getElementById('toggleSpeechRecognition');
+                if (checkbox.checked) {
+                    isAutoRestart = true;
+                    speechRecognition.start(); // Start speech recognition
+                } else {
+                    isAutoRestart = false;
+                    speechRecognition.stop(); // Stop speech recognition
+                }
+            }
+        }
         ////////////////////////////////////////////////////////////////////////
         // Update time data in header info
         const recipeTargetTotalTime = document.getElementById('recipe-target-total-time');
