@@ -131,14 +131,25 @@
     <button id="startPauseButton" onclick="toggleTimer()">Start</button>
     <button onclick="resetTimer()">Reset</button>
     <button onclick="onNextClicked()">Next</button>
-    <!-- Checkbox for toggling speech recognition feature -->
-    <label for="toggleSpeechRecognition">
-        <span>Enable Speech Recognition</span>
-        <input type ="checkbox" id="toggleSpeechRecognition" onchange="toggleSpeechRecognition()">
-    </label>
+    
+    <!-- Voice commands -->
+    <div class="notes">
+        <p><!-- Checkbox for toggling voice commands feature -->
+            <label for="toggleVoiceCommands">
+                <span><strong>Enable Voice Commnads</strong></span>
+                <input type ="checkbox" id="toggleVoiceCommands" onchange="toggleVoiceCommands()">
+            </label>
+        </p>
+        <ul>
+            <li>Start</li>
+            <li>Pause</li>
+            <li>Reset</li>
+            <li>Next</li>
+        </ul>
+    </div>
     <!-- Keyboard shortcuts note -->
     <div class="notes">
-        <p><strong>Note:</strong> Keyboard shortcuts available:</p>
+        <p><strong>Keyboard Shortcuts:</strong></p>
         <ul>
             <li><strong>z:</strong> Start/Pause</li>
             <li><strong>x:</strong> Reset</li>
@@ -293,7 +304,7 @@
                 };
 
                 // Start/stop speech recognition based on checkbox state
-                toggleSpeechRecognition();
+                toggleVoiceCommands();
 
                 // Restart recognition after it ends to enable continuous listening
                 speechRecognition.onend = () => {
@@ -306,9 +317,9 @@
             }
         }
         // Function to toggle speech recognition based on checkbox state
-        function toggleSpeechRecognition() {
+        function toggleVoiceCommands() {
             if (speechRecognition) {
-                const checkbox = document.getElementById('toggleSpeechRecognition');
+                const checkbox = document.getElementById('toggleVoiceCommands');
                 if (checkbox.checked) {
                     isAutoRestart = true;
                     speechRecognition.start(); // Start speech recognition
