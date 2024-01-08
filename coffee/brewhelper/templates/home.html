@@ -7,38 +7,54 @@
     <title>Coffee Brew Helper</title>
     <!-- Add any CSS links, meta tags, or other head elements here -->
     <style>
+        /* Key Test Output*/
         .highlighted-step {
             /* Add your CSS styling for highlighting here */
             background-color: yellow; /* Example: Highlight the step with a yellow background */
         }
-        /* General information styling */
-        .general-info {
+        .elapsed-time {
+            margin-top: 10px;
+        }
+
+        /* Header styling */
+        h2 {
+            margin-top: 10px;
+            margin-bottom: 10px; /* Reduce space below section headers */
+        }
+
+        /* Section Styling */
+        .section {
             display: flex;
             flex-direction: column;
         }
-        .general-info input[type="text"] {
+        
+        /* List Styling */
+        ul {
+            margin-top: 0px;
+            line-height: 1.5; /* Adjust line spacing within sections */
+        }
+
+        /* Paragraph styling */
+        p {
+            margin-top: 0px;
+        }
+
+        /* Input Styling */
+        input[type="text"] {
             background: none;
             border: none;
             outline: none;
-            /* Additional styling if needed */
+            width: 80%;
         }
-        .general-info label{
+
+        /* Label Styling */
+        label {
             font-weight: bold;
+            margin: 0;
+            padding: 0;
         }
-        .notes {
-            margin-top: 20px
-        }
-        /* Specific element styling*/
-        #recipe-description {
-            width: 80%; 
-        }
-        #recipe-coffee-grind-size{
-            width: 80%; 
-        }
-        #elapsed-time-label {
-            display: flex;
-            align-items: center;
-        }
+
+
     </style>
 </head>
 <body>
@@ -62,7 +78,8 @@
     </form>
         
     {% if selected_recipe %}
-        <div class="general-info">
+        <div class="section">
+            <h2>{{selected_recipe.name}}</h2>
             <!-- Element to display recipe header info -->
             <label id = "recipe-description-label" for="recipe-description">
                 <span>Description: </span>
@@ -93,10 +110,12 @@
                 <input type ="text" id="recipe-target-total-time" readonly value="{{ selected_recipe.target_total_time }}">
             </label>
             <!-- Element to display elapsed time -->
-            <label id = "elapsed-time-label" for="elapsed-time" style="margin-top: 10px">
-                <span>Elapsed Time: </span>
-                <input type="text" id="elapsed-time" readonly value="00:00">
-            </label>
+            <div class="elapsed-time">
+                <label id = "elapsed-time-label" for="elapsed-time">
+                    <span>Elapsed Time: </span>
+                    <input type="text" id="elapsed-time" readonly value="00:00">
+                </label>
+            </div>
         </div>
         
         <table border="1" id="brewing-steps">
@@ -125,23 +144,52 @@
                 {% endfor %}
             </tbody>
         </table>
-    {% endif %}
 
     <!-- Buttons for controlling the timer -->
     <button id="startPauseButton" onclick="toggleTimer()">Start</button>
     <button onclick="resetTimer()">Reset</button>
     <button onclick="onNextClicked()">Next</button>
-
-    <!-- Keyboard shortcuts note -->
-    <div class="notes">
-        <p><strong>Note:</strong> Keyboard shortcuts available:</p>
-        <ul>
-            <li><strong>z:</strong> Start/Pause</li>
-            <li><strong>x:</strong> Reset</li>
-            <li><strong>c:</strong> Next</li>
+    
+    <!-- Voice commands -->
+    <div class="section">
+        <h2>Voice Commands</h2>
+        <p><!-- Checkbox for toggling voice commands feature -->
+            <label for="toggleVoiceCommands">
+                <input type ="checkbox" id="toggleVoiceCommands" onchange="toggleVoiceCommands()">
+                <span><strong>Enable Voice Commands</strong></span>
+            </label>
+        </p>
+        <p class="detected-voice-command-label">
+            <label for="detected-voice-command"><span>Last Detected Word: </span></label>
+            <input type="text" id="detected-voice-command" readonly value="">
+        </p>
+        <p class="voice-command-list-title-label"><label>Accepted Commands:</label></p>
+        <ul class="voice-command-list">
+            <li>Start</li>
+            <li>Pause</li>
+            <li>Reset</li>
+            <li>Next</li>
         </ul>
     </div>
 
+    <!-- Keyboard shortcuts note -->
+    <div class="section">
+        <h2>Keyboard Shortcuts:</h2>
+        <div class="keyboard-shortcut-info">
+            <ul class="keyboard-shortcut-list">
+                <li><strong>z:</strong> Start/Pause</li>
+                <li><strong>x:</strong> Reset</li>
+                <li><strong>c:</strong> Next</li>
+            </ul>
+        </div>
+    </div>
+
+    {% else %}
+    <div class="section">
+        <h2>[No Recipe Selected]</h2>
+    </div>
+    {% endif %}
+    
     <!-- Add any JavaScript scripts or other body elements here -->
     <script>
         // General helpers ///////////////////////////////////////////////////
@@ -192,16 +240,16 @@
                 }
             });
         }
-
-        // After Select is hit or the page is refreshed, retain selected method and recipe
+       
         document.addEventListener('DOMContentLoaded', () => {
+            // After Select is hit or the page is refreshed, retain selected method and recipe
             const methodDropdown = document.getElementById('method-dropdown');
             const recipeDropdown = document.getElementById('recipe-dropdown');
 
             const urlParams = new URLSearchParams(window.location.search);
             const selectedMethodId = urlParams.get('selected_method_id');
             const selectedRecipeId = urlParams.get('selected_recipe_id');
-
+            
             if (selectedMethodId) {
                 methodDropdown.value = selectedMethodId;
                 // Populate recipes based on the selected method and set the currently selected recipe
@@ -236,7 +284,98 @@
                         break;
                 }
             });
+            
+            // Initialize voice commands
+            initVoiceCommands();
         });
+        // voice commands for Voice Commands ///////////////////////////////////////////////////////////
+        let voiceCommands;
+        // Function to initialize voice commands
+        function initVoiceCommands() {
+            // Check browser support for SpeechRecognition
+            if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+                voiceCommands = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+
+                // Configure voice commands
+                voiceCommands.continuous = false; // Enable continuous recognition
+                voiceCommands.lang = 'en-US'; // Set the language
+                voiceCommands.interimResults = false; // Set to true for interim results
+                
+                // Define commands and associate with functions                
+                isAutoRestart = true;
+                
+                voiceCommands.onresult = event => {
+                    const lastResultIndex = event.results.length - 1;
+                    const speechResult = event.results[lastResultIndex][0].transcript.toLowerCase();
+                    
+                    // Split the speechResult into words and extract the last word spoken
+                    const words = speechResult.split(' ');
+                    const lastWord = words[words.length - 1];
+                    
+                    // Compare last word to accepted list of commands
+                    switch (lastWord) {
+                        case 'start':
+                        case 'pause':
+                            toggleTimer(); // Start/Pause operation
+                            break;
+                        case 'reset':
+                            resetTimer(); // Reset operation
+                            break;
+                        case 'next':
+                            onNextClicked(); // Next operation
+                            break;
+                        default:
+                            break;
+                    }
+                    // Update user with last word detected
+                    updateDetectedVoiceCommand(lastWord)
+                };
+
+                // Handle errors and other events
+                voiceCommands.onerror = event => {
+                    switch(event.error){
+                        case 'not-allowed':
+                        case 'service-not-allowed':
+                            // if permission to use the mic is denied, turn off auto-restart
+                            isAutoRestart = false;
+                            break;
+                    }
+                    console.error('voice commands error:', event.error);
+                };
+
+                // Start/stop voice commands based on checkbox state
+                toggleVoiceCommands();
+
+                // Restart recognition after it ends to enable continuous listening
+                voiceCommands.onend = () => {
+                    //updateDetectedVoiceCommand(); //clear shown detected command
+                    if (isAutoRestart){
+                        voiceCommands.start(); // Restart recognition after it ends
+                    }
+                };
+            } else {
+                console.log('voice commands not supported.');
+            }
+        }
+        // Function to toggle voice commands based on checkbox state
+        function toggleVoiceCommands() {
+            if (voiceCommands) {
+                const checkbox = document.getElementById('toggleVoiceCommands');
+                if (checkbox.checked) {
+                    isAutoRestart = true;
+                    voiceCommands.start(); // Start voice commands
+                } else {
+                    updateDetectedVoiceCommand(); //clear shown detected command
+                    isAutoRestart = false;
+                    voiceCommands.stop(); // Stop voice commands
+                }
+            }
+        }
+        // Function to update detected voice command in the input element, defaults to empty string (clear)
+        function updateDetectedVoiceCommand(detecedVoiceCommandResult = "[No Word Detected]") {
+            const detecedVoiceCommandInput = document.getElementById('detected-voice-command');
+            detecedVoiceCommandInput.value = detecedVoiceCommandResult ; // Update input value with speech recognition result
+        }
 
         ////////////////////////////////////////////////////////////////////////
         // Update time data in header info
