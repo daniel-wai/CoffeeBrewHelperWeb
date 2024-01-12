@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <title>Coffee Brew Helper</title>
     <!-- Add any CSS links, meta tags, or other head elements here -->
+    {% load static %}
     <style>
         /* Key Test Output*/
         .highlighted-step {
@@ -146,6 +147,8 @@
         </table>
 
     <!-- Buttons for controlling the timer -->
+    <audio id="shortBeepSound" src="{% static 'brewhelper/audio/shortBeep128.mp3' %}" type="audio/mpeg"></audio>
+    <audio id="longBeepSound" src="{% static 'brewhelper/audio/longBeep128.mp3' %}" type="audio/mpeg"></audio>
     <button id="startPauseButton" onclick="toggleTimer()">Start</button>
     <button onclick="resetTimer()">Reset</button>
     <button onclick="onNextClicked()">Next</button>
@@ -441,31 +444,48 @@
 
         // Function to start the timer and highlight steps based on target_total_time
         function startTimer() {
+            if (elapsedTime === 0){
+                const stepStartAudio = document.getElementById('shortBeepSound');
+                stepStartAudio.play();
+            }
             highlightStep();
             timer = setInterval(() => {
+                elapsedTime += 1; // Increment elapsed time (assuming 1 second intervals)
+                updateElapsedTime(); // Update elapsed time in the input element
                 // Highlight the current step
                 if (stepIndex >= rows.length) {
                     // Don't stop timer as it will disrupt the executed completed time
                 } else {
                     const currentStepTotalTime = getSecondsFromTimeString(rows[stepIndex].querySelector('[id^="target-total-time-"]').textContent);
+                    
+                    // Play warning beep 3 seconds before step change
+                    if (elapsedTime >= currentStepTotalTime - 3) {
+                        const warningAndStepStartAudio = document.getElementById('longBeepSound');
+                        if (warningAndStepStartAudio.paused){
+                            warningAndStepStartAudio.play();
+                        }
+                    }
+                    
                     if (elapsedTime >= currentStepTotalTime) {
                         stepIndex++;
                         highlightStep();
                     }
                 }
-                elapsedTime += 1; // Increment elapsed time (assuming 1 second intervals)
-                updateElapsedTime(); // Update elapsed time in the input element
             }, 1000); // Timer interval: 1 second (adjust as needed)
         }
         // Function to stop the timer
         function pauseTimer() {
             clearInterval(timer);
+            const stepStartAudio = document.getElementById('shortBeepSound');
+            stepStartAudio.pause();
+            const warningAndStepStartAudio = document.getElementById('longBeepSound');
+            warningAndStepStartAudio.pause();
         }
 
         // Function to reset the timer and step index
         function resetTimer() {
             // Stop the timer
-            clearInterval(timer); 
+            pauseTimer(timer);
             const startPauseButton = document.getElementById('startPauseButton');
             startPauseButton.textContent = 'Start'; // Change button text to 'Start'
             isTimerRunning = false;
@@ -474,6 +494,10 @@
             stepIndex = 0;
             executedStepIndex = 0;
             elapsedTime = 0;
+            const stepStartAudio = document.getElementById('shortBeepSound');
+            stepStartAudio.currentTime = 0;
+            const warningAndStepStartAudio = document.getElementById('longBeepSound');
+            warningAndStepStartAudio.currentTime = 0;
             removeHighlightStep();
             updateElapsedTime(); // Update elapsed time in the input element
 
