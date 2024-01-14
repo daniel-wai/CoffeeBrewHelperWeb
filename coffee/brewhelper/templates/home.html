@@ -147,8 +147,8 @@
         </table>
 
     <!-- Buttons for controlling the timer -->
-    <audio id="shortBeepSound" src="{% static 'brewhelper/audio/shortBeep128.mp3' %}" type="audio/mpeg"></audio>
-    <audio id="longBeepSound" src="{% static 'brewhelper/audio/longBeep128.mp3' %}" type="audio/mpeg"></audio>
+    <audio id="startStepBeepSound" src="{% static 'brewhelper/audio/startStepBeep128.mp3' %}" type="audio/mpeg"></audio>
+    <audio id="warningStepEndBeepsSound" src="{% static 'brewhelper/audio/warningStepEndBeeps128.mp3' %}" type="audio/mpeg"></audio>
     <button id="startPauseButton" onclick="toggleTimer()">Start</button>
     <button onclick="resetTimer()">Reset</button>
     <button onclick="onNextClicked()">Next</button>
@@ -498,8 +498,8 @@
         // Function to start the timer and highlight steps based on target_total_time
         function startTimer() {
             if (elapsedTime === 0){
-                const stepStartAudio = document.getElementById('shortBeepSound');
-                stepStartAudio.play();
+                const startStepAudio = document.getElementById('startStepBeepSound');
+                startStepAudio.play();
             }
             highlightStep();
             readStepDescription();
@@ -514,14 +514,18 @@
                     
                     // Play warning beep 3 seconds before step change
                     if (elapsedTime >= currentStepTotalTime - 3) {
-                        const warningAndStepStartAudio = document.getElementById('longBeepSound');
-                        if (warningAndStepStartAudio.paused){
-                            warningAndStepStartAudio.play();
+                        const warningStepEndAudio = document.getElementById('warningStepEndBeepsSound');
+                        if (warningStepEndAudio.paused){
+                            warningStepEndAudio.play();
                         }
                     }
                     
                     if (elapsedTime >= currentStepTotalTime) {
                         stepIndex++;
+                        const startStepAudio = document.getElementById('startStepBeepSound');
+                        if (startStepAudio.paused){
+                            startStepAudio.play();
+                        }
                         highlightStep();
                         readStepDescription();
                     }
@@ -531,10 +535,10 @@
         // Function to stop the timer
         function pauseTimer() {
             clearInterval(timer);
-            const stepStartAudio = document.getElementById('shortBeepSound');
-            stepStartAudio.pause();
-            const warningAndStepStartAudio = document.getElementById('longBeepSound');
-            warningAndStepStartAudio.pause();
+            const startStepAudio = document.getElementById('startStepBeepSound');
+            startStepAudio.pause();
+            const warningStepEndAudio = document.getElementById('warningStepEndBeepsSound');
+            warningStepEndAudio.pause();
             cancelReadStepDescription(); //better to cancel and restart reading
         }
 
@@ -550,10 +554,10 @@
             stepIndex = 0;
             executedStepIndex = 0;
             elapsedTime = 0;
-            const stepStartAudio = document.getElementById('shortBeepSound');
-            stepStartAudio.currentTime = 0;
-            const warningAndStepStartAudio = document.getElementById('longBeepSound');
-            warningAndStepStartAudio.currentTime = 0;
+            const startStepAudio = document.getElementById('startStepBeepSound');
+            startStepAudio.currentTime = 0;
+            const warningStepEndAudio = document.getElementById('warningStepEndBeepsSound');
+            warningStepEndAudio.currentTime = 0;
             cancelReadStepDescription();
             removeHighlightStep();
             updateElapsedTime(); // Update elapsed time in the input element
