@@ -124,9 +124,9 @@
                 <tr>
                     <th>Step</th>
                     <th>Description</th>
-                    <th>Change in Water</th>
+                    <!-- <th>Change in Water</th> -->
                     <th>Target Water</th>
-                    <th>Change in Time</th>
+                    <!-- <th>Change in Time</th> -->
                     <th>Target Time</th>
                     <th>Executed Time</th>
                 </tr>
@@ -136,9 +136,9 @@
                 <tr>
                     <td>{{ step.order_id }}</td>
                     <td id="description-{{ step.order_id }}">{{ step.description }}</td>
-                    <td>{{ step.change_in_water }}</td>
+                    <!-- <td>{{ step.change_in_water }}</td> -->
                     <td>{{ step.target_total_water }}</td>
-                    <td id="change-in-time-{{ step.order_id }}">{{ step.change_in_time }}</td>
+                    <!-- <td id="change-in-time-{{ step.order_id }}">{{ step.change_in_time }}</td> -->
                     <td id="target-total-time-{{ step.order_id }}">{{ step.target_total_time }}</td>
                     <td id="executed-time-{{ step.order_id }}"></td>
                 </tr>
@@ -151,7 +151,7 @@
     <audio id="warningStepEndBeepsSound" src="{% static 'brewhelper/audio/warningStepEndBeeps128.mp3' %}" type="audio/mpeg"></audio>
     <button id="startPauseButton" onclick="toggleTimer()">Start</button>
     <button onclick="resetTimer()">Reset</button>
-    <button onclick="onNextClicked()">Next</button>
+    <button onclick="onDoneClicked()">Done</button>
     
     <!-- Speech Settings -->
     <div class="section">
@@ -177,7 +177,7 @@
             <li>Start</li>
             <li>Pause</li>
             <li>Reset</li>
-            <li>Next</li>
+            <li>Done</li>
         </ul>
     </div>
 
@@ -188,7 +188,7 @@
             <ul class="keyboard-shortcut-list">
                 <li><strong>z:</strong> Start/Pause</li>
                 <li><strong>x:</strong> Reset</li>
-                <li><strong>c:</strong> Next</li>
+                <li><strong>c:</strong> Done</li>
             </ul>
         </div>
     </div>
@@ -287,7 +287,7 @@
                         break;
                     case 'c':
                     case 'C':
-                        onNextClicked(); // Next operation when C key is pressed
+                        onDoneClicked(); // Done operation when C key is pressed
                         break;
                     default:
                         break;
@@ -377,8 +377,8 @@
                         case 'reset':
                             resetTimer(); // Reset operation
                             break;
-                        case 'next':
-                            onNextClicked(); // Next operation
+                        case 'done':
+                            onDoneClicked(); // Done operation
                             break;
                         default:
                             break;
@@ -570,7 +570,7 @@
         }
 
         // Function to record time taken and update step
-        function onNextClicked() {
+        function onDoneClicked() {
             // Record current time for the current step
             const currentStepId = executedStepIndex + 1; // Assuming stepIndex starts from 0
             const timeTakenCell = document.getElementById(`executed-time-${currentStepId}`);
