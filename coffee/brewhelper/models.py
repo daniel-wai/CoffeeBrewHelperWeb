@@ -3,7 +3,7 @@ from django.db import models
 # Create your models here.
 class BrewStep(models.Model):
     step_id = models.PositiveIntegerField()
-    description = models.CharField(max_length=200, default='')
+    description = models.TextField(default='')
     change_in_water = models.IntegerField()
     change_in_time = models.IntegerField()
 
@@ -19,6 +19,7 @@ class Recipe(models.Model):
     recipe_id = models.PositiveIntegerField()
     name = models.CharField(max_length=100, default='')
     description = models.TextField(default='')
+    reference = models.TextField(default='')
     temperature = models.PositiveIntegerField(default=95)
     coffee_weight = models.PositiveIntegerField(default=0)
     coffee_grind_size = models.TextField(default='')
