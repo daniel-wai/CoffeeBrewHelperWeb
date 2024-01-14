@@ -135,11 +135,11 @@
                 {% for step in steps %}
                 <tr>
                     <td>{{ step.order_id }}</td>
-                    <td>{{ step.description }}</td>
+                    <td id="description-{{ step.order_id }}">{{ step.description }}</td>
                     <td>{{ step.change_in_water }}</td>
                     <td>{{ step.target_total_water }}</td>
-                    <td id="change-in-time-{{ step.change_in_time }}">{{ step.change_in_time }}</td>
-                    <td id="target-total-time-{{ step.target_total_time }}">{{ step.target_total_time }}</td>
+                    <td id="change-in-time-{{ step.order_id }}">{{ step.change_in_time }}</td>
+                    <td id="target-total-time-{{ step.order_id }}">{{ step.target_total_time }}</td>
                     <td id="executed-time-{{ step.order_id }}"></td>
                 </tr>
                 {% endfor %}
@@ -153,9 +153,15 @@
     <button onclick="resetTimer()">Reset</button>
     <button onclick="onNextClicked()">Next</button>
     
-    <!-- Voice commands -->
+    <!-- Speech Settings -->
     <div class="section">
-        <h2>Voice Commands</h2>
+        <h2>Speech Settings</h2>
+        <p><!-- Checkbox for toggling read steps outloud feature -->
+            <label for="toggleReadStepsOutloud">
+                <input type ="checkbox" id="toggleReadStepsOutloud" onchange="toggleReadStepsOutloud()">
+                <span><strong>Enable Read Steps Outloud</strong></span>
+            </label>
+        </p>
         <p><!-- Checkbox for toggling voice commands feature -->
             <label for="toggleVoiceCommands">
                 <input type ="checkbox" id="toggleVoiceCommands" onchange="toggleVoiceCommands()">
@@ -163,7 +169,7 @@
             </label>
         </p>
         <p class="detected-voice-command-label">
-            <label for="detected-voice-command"><span>Last Detected Word: </span></label>
+            <label for="detected-voice-command"><span>Last Detected Command: </span></label>
             <input type="text" id="detected-voice-command" readonly value="">
         </p>
         <p class="voice-command-list-title-label"><label>Accepted Commands:</label></p>
@@ -288,10 +294,57 @@
                 }
             });
             
+            // Initialize read outloud
+            // Wait for voice list to load (aync to the page) before using them in speech functions
+            window.speechSynthesis.getVoices();
+            window.speechSynthesis.onvoiceschanged = function(){
+                voices = window.speechSynthesis.getVoices();
+            }
             // Initialize voice commands
             initVoiceCommands();
         });
-        // voice commands for Voice Commands ///////////////////////////////////////////////////////////
+        
+        // Speech Features ///////////////////////////////////////////////////////
+        // read steps outloud ////
+        let isReadStepsOutloud = false;
+        let voices;
+        // Function to set read steps outloud flag based on checkbox state
+        function toggleReadStepsOutloud() {
+            const checkbox = document.getElementById('toggleReadStepsOutloud');
+            isReadStepsOutloud = checkbox.checked;
+            if (!isReadStepsOutloud) {
+                cancelReadStepDescription();
+            }
+        }
+        // Function to read the description aloud
+        function readStepDescription() {
+            if (!isReadStepsOutloud){
+                return;
+            }
+            // Clear old utterances
+            cancelReadStepDescription();
+            // Create utterance from latest step description
+            const description = rows[stepIndex].querySelector('[id^="description-"]').textContent
+            const utterance = new SpeechSynthesisUtterance(description);
+            // set voice
+            utterance.voice = voices[4]; //for now we hardcode one
+            // Read description
+            window.speechSynthesis.speak(utterance);
+        }
+        // Function to pause reading description
+        function pauseReadStepDescription(){
+            if (window.speechSynthesis.speaking){
+                window.speechSynthesis.pause();
+            }
+        }
+        // Function to cancel reading all descriptions
+        function cancelReadStepDescription(){
+            if (window.speechSynthesis.speaking){
+                window.speechSynthesis.cancel();
+            }
+        }
+
+        // voice commands for Voice Commands ////
         let voiceCommands;
         // Function to initialize voice commands
         function initVoiceCommands() {
@@ -449,6 +502,7 @@
                 stepStartAudio.play();
             }
             highlightStep();
+            readStepDescription();
             timer = setInterval(() => {
                 elapsedTime += 1; // Increment elapsed time (assuming 1 second intervals)
                 updateElapsedTime(); // Update elapsed time in the input element
@@ -469,6 +523,7 @@
                     if (elapsedTime >= currentStepTotalTime) {
                         stepIndex++;
                         highlightStep();
+                        readStepDescription();
                     }
                 }
             }, 1000); // Timer interval: 1 second (adjust as needed)
@@ -480,6 +535,7 @@
             stepStartAudio.pause();
             const warningAndStepStartAudio = document.getElementById('longBeepSound');
             warningAndStepStartAudio.pause();
+            cancelReadStepDescription(); //better to cancel and restart reading
         }
 
         // Function to reset the timer and step index
@@ -498,6 +554,7 @@
             stepStartAudio.currentTime = 0;
             const warningAndStepStartAudio = document.getElementById('longBeepSound');
             warningAndStepStartAudio.currentTime = 0;
+            cancelReadStepDescription();
             removeHighlightStep();
             updateElapsedTime(); // Update elapsed time in the input element
 
