@@ -86,13 +86,17 @@
                 <span>Description: </span>
                 <input type ="text" id="recipe-description" readonly value="{{ selected_recipe.description }}">
             </label>
+            <label id = "recipe-reference-label" for="recipe-reference">
+                <span>Reference: </span>
+                <input type ="text" id="recipe-reference" readonly value="{{ selected_recipe.reference }}">
+            </label>
             <label id = "recipe-coffee-weight-label" for="recipe-coffee-weight">
                 <span>Total coffee: </span>
-                <input type ="text" id="recipe-coffee-weight" readonly value="{{ selected_recipe.coffee_weight}}">
+                <input type ="text" id="recipe-coffee-weight" readonly value="{{ selected_recipe.coffee_weight}}g">
             </label>
             <label id = "recipe-target-total-water-label" for="recipe-target-total-water">
                 <span>Total water: </span>
-                <input type ="text" id="recipe-target-total-water" readonly value="{{ selected_recipe.target_total_water }}">
+                <input type ="text" id="recipe-target-total-water" readonly value="{{ selected_recipe.target_total_water }}g">
             </label>
             <label id = "recipe-brew-ratio-label" for="recipe-brew-ratio">
                 <span>Brew ratio: </span>
@@ -104,7 +108,7 @@
             </label>
             <label id = "recipe-temperature-label" for="recipe-temperature">
                 <span>Temperature: </span>
-                <input type ="text" id="recipe-temperature" readonly value="{{ selected_recipe.temperature }}">
+                <input type ="text" id="recipe-temperature" readonly value="{{ selected_recipe.temperature }}&deg;C">
             </label>
             <label id = "recipe-target-total-time-label" for="recipe-target-total-time">
                 <span>Total time: </span>
@@ -124,9 +128,9 @@
                 <tr>
                     <th>Step</th>
                     <th>Description</th>
-                    <th>Change in Water</th>
+                    <!-- <th>Change in Water</th> -->
                     <th>Target Water</th>
-                    <th>Change in Time</th>
+                    <!-- <th>Change in Time</th> -->
                     <th>Target Time</th>
                     <th>Executed Time</th>
                 </tr>
@@ -134,13 +138,13 @@
             <tbody>
                 {% for step in steps %}
                 <tr>
-                    <td>{{ step.order_id }}</td>
-                    <td id="description-{{ step.order_id }}">{{ step.description }}</td>
-                    <td>{{ step.change_in_water }}</td>
-                    <td>{{ step.target_total_water }}</td>
-                    <td id="change-in-time-{{ step.order_id }}">{{ step.change_in_time }}</td>
-                    <td id="target-total-time-{{ step.order_id }}">{{ step.target_total_time }}</td>
-                    <td id="executed-time-{{ step.order_id }}"></td>
+                    <td id="step-order-id-{{ step.order_id }}" style="text-align: center;">{{ step.order_id }}</td>
+                    <td id="step-description-{{ step.order_id }}">{{ step.description }}</td>
+                    <!-- <td>{{ step.change_in_water }}</td> -->
+                    <td id="step-target-total-water-{{ step.order_id }}" style="text-align: center;">{{ step.target_total_water }}g</td>
+                    <!-- <td id="change-in-time-{{ step.order_id }}">{{ step.change_in_time }}</td> -->
+                    <td id="step-target-total-time-{{ step.order_id }}"  style="text-align: center;">{{ step.target_total_time }}</td>
+                    <td id="step-executed-time-{{ step.order_id }}"  style="text-align: center;"></td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -151,7 +155,7 @@
     <audio id="warningStepEndBeepsSound" src="{% static 'brewhelper/audio/warningStepEndBeeps128.mp3' %}" type="audio/mpeg"></audio>
     <button id="startPauseButton" onclick="toggleTimer()">Start</button>
     <button onclick="resetTimer()">Reset</button>
-    <button onclick="onNextClicked()">Next</button>
+    <button onclick="onDoneClicked()">Done</button>
     
     <!-- Speech Settings -->
     <div class="section">
@@ -177,7 +181,7 @@
             <li>Start</li>
             <li>Pause</li>
             <li>Reset</li>
-            <li>Next</li>
+            <li>Done</li>
         </ul>
     </div>
 
@@ -188,7 +192,7 @@
             <ul class="keyboard-shortcut-list">
                 <li><strong>z:</strong> Start/Pause</li>
                 <li><strong>x:</strong> Reset</li>
-                <li><strong>c:</strong> Next</li>
+                <li><strong>c:</strong> Done</li>
             </ul>
         </div>
     </div>
@@ -287,7 +291,7 @@
                         break;
                     case 'c':
                     case 'C':
-                        onNextClicked(); // Next operation when C key is pressed
+                        onDoneClicked(); // Done operation when C key is pressed
                         break;
                     default:
                         break;
@@ -324,7 +328,7 @@
             // Clear old utterances
             cancelReadStepDescription();
             // Create utterance from latest step description
-            const description = rows[stepIndex].querySelector('[id^="description-"]').textContent
+            const description = rows[stepIndex].querySelector('[id^="step-description-"]').textContent
             const utterance = new SpeechSynthesisUtterance(description);
             // set voice
             utterance.voice = voices[4]; //for now we hardcode one
@@ -377,8 +381,8 @@
                         case 'reset':
                             resetTimer(); // Reset operation
                             break;
-                        case 'next':
-                            onNextClicked(); // Next operation
+                        case 'done':
+                            onDoneClicked(); // Done operation
                             break;
                         default:
                             break;
@@ -455,10 +459,10 @@
             cell.textContent = getTimeStringFromSeconds(timeInSeconds);
             });
         }
-        const totalTargetTimeCells = document.querySelectorAll('[id^="target-total-time-"]');
-        const changeInTimeCells = document.querySelectorAll('[id^="change-in-time-"]');
+        const totalTargetTimeCells = document.querySelectorAll('[id^="step-target-total-time-"]');
+        //const changeInTimeCells = document.querySelectorAll('[id^="step-change-in-time-"]');
         updateTimeCells(totalTargetTimeCells)
-        updateTimeCells(changeInTimeCells)
+        //updateTimeCells(changeInTimeCells)
 
         // Function to remove higlight from all steps
         function removeHighlightStep(){
@@ -510,7 +514,7 @@
                 if (stepIndex >= rows.length) {
                     // Don't stop timer as it will disrupt the executed completed time
                 } else {
-                    const currentStepTotalTime = getSecondsFromTimeString(rows[stepIndex].querySelector('[id^="target-total-time-"]').textContent);
+                    const currentStepTotalTime = getSecondsFromTimeString(rows[stepIndex].querySelector('[id^="step-target-total-time-"]').textContent);
                     
                     // Play warning beep 3 seconds before step change
                     if (elapsedTime >= currentStepTotalTime - 3) {
@@ -563,17 +567,17 @@
             updateElapsedTime(); // Update elapsed time in the input element
 
             // Clear the executed-time column
-            const timeTakenCells = document.querySelectorAll('[id^="executed-time-"]');
+            const timeTakenCells = document.querySelectorAll('[id^="step-executed-time-"]');
             timeTakenCells.forEach(cell => {
                 cell.textContent = ''; // Clear the content of executed-time cells
             });
         }
 
         // Function to record time taken and update step
-        function onNextClicked() {
+        function onDoneClicked() {
             // Record current time for the current step
             const currentStepId = executedStepIndex + 1; // Assuming stepIndex starts from 0
-            const timeTakenCell = document.getElementById(`executed-time-${currentStepId}`);
+            const timeTakenCell = document.getElementById(`step-executed-time-${currentStepId}`);
             timeTakenCell.textContent = getTimeStringFromSeconds(elapsedTime);
 
             // Update step for the user
