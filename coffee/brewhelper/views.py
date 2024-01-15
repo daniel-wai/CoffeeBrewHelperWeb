@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponse
-from .models import BrewStep, Recipe, BrewMethod
+from .models import Step, BrewStep, Recipe, BrewMethod
 from django.http import JsonResponse
 # Create your views here.
 
@@ -7,7 +7,8 @@ def home(request):
     methods = BrewMethod.objects.all()
     recipes = Recipe.objects.all()
     selected_recipe = None
-    steps = []
+    preparation_steps = []
+    brew_steps = []
 
     if 'selected_recipe_id' in request.GET:
         # Get recipe
@@ -21,13 +22,17 @@ def home(request):
             target_total_time = 0
 
             for step in steps:
-                step.order_id = order_id
-                order_id += 1
-                target_total_water += step.change_in_water
-                target_total_time += step.change_in_time
-                step.target_total_time = target_total_time
-                step.target_total_water = target_total_water
-            
+                if hasattr(step, 'brewstep'):
+                    brew_steps.append(step)
+                    step.order_id = order_id
+                    order_id += 1
+                    target_total_water += step.brewstep.change_in_water
+                    target_total_time += step.brewstep.change_in_time
+                    step.target_total_time = target_total_time
+                    step.target_total_water = target_total_water
+                else:
+                    preparation_steps.append(step)
+
             selected_recipe.target_total_time = target_total_time
             selected_recipe.target_total_water = target_total_water
             # Calculate brew ration assuming that water density is 1 g/mL
@@ -36,7 +41,7 @@ def home(request):
         except:
             pass #do not render any recipe info if selected_recipe = None
 
-    return render(request, 'home.html', {'methods': methods, 'recipes': recipes, 'selected_recipe': selected_recipe, 'steps': steps})
+    return render(request, 'home.html', {'methods': methods, 'recipes': recipes, 'selected_recipe': selected_recipe, 'preparation_steps': preparation_steps, 'brew_steps': brew_steps})
 
 def get_recipes(request):
     method_id = request.GET.get('method_id')

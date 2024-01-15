@@ -1,9 +1,14 @@
 from django.contrib import admin
-from .models import BrewStep, Recipe, BrewMethod
+from .models import Step, BrewStep, Recipe, BrewMethod
 from adminsortable2.admin import SortableAdminMixin
 
+class StepAdmin(SortableAdminMixin, admin.ModelAdmin):
+    list_display = ('step_id','__str__','recipe','description')
+
+admin.site.register(Step, StepAdmin)
+
 class BrewStepAdmin(SortableAdminMixin, admin.ModelAdmin):
-    list_display = ('step_id','__str__','recipeID','description', 'change_in_water', 'change_in_time')
+    list_display = ('__str__','change_in_water', 'change_in_time')
 
 admin.site.register(BrewStep, BrewStepAdmin)
 
