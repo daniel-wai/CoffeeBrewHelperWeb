@@ -22,10 +22,10 @@ def home(request):
             target_total_time = 0
 
             for step in steps:
+                step.order_id = order_id
+                order_id += 1
                 if hasattr(step, 'brewstep'):
                     brew_steps.append(step)
-                    step.order_id = order_id
-                    order_id += 1
                     target_total_water += step.brewstep.change_in_water
                     target_total_time += step.brewstep.change_in_time
                     step.target_total_time = target_total_time

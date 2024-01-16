@@ -13,13 +13,14 @@
             /* Add your CSS styling for highlighting here */
             background-color: yellow; /* Example: Highlight the step with a yellow background */
         }
-        .elapsed-time {
-            margin-top: 10px;
-        }
 
         /* Header styling */
         h2 {
-            margin-top: 10px;
+            margin-top: 20px;
+            margin-bottom: 10px; /* Reduce space below section headers */
+        }
+        h3 {
+            margin-top: 20px;
             margin-bottom: 10px; /* Reduce space below section headers */
         }
 
@@ -114,93 +115,120 @@
                 <span>Total time: </span>
                 <input type ="text" id="recipe-target-total-time" readonly value="{{ selected_recipe.target_total_time }}">
             </label>
-            <!-- Element to display elapsed time -->
-            <div class="elapsed-time">
-                <label id = "elapsed-time-label" for="elapsed-time">
-                    <span>Elapsed Time: </span>
-                    <input type="text" id="elapsed-time" readonly value="00:00">
-                </label>
-            </div>
         </div>
         
-        <table border="1" id="brewing-steps">
-            <thead>
-                <tr>
-                    <th>Step</th>
-                    <th>Description</th>
-                    <!-- <th>Change in Water</th> -->
-                    <th>Target Water</th>
-                    <!-- <th>Change in Time</th> -->
-                    <th>Target Time</th>
-                    <th>Executed Time</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for step in brew_steps %}
-                <tr>
-                    <td id="brew-step-order-id-{{ step.order_id }}" style="text-align: center;">{{ step.order_id }}</td>
-                    <td id="brew-step-description-{{ step.order_id }}">{{ step.description }}</td>
-                    <!-- <td>{{ step.change_in_water }}</td> -->
-                    <td id="brew-step-target-total-water-{{ step.order_id }}" style="text-align: center;">{{ step.target_total_water }}g</td>
-                    <!-- <td id="change-in-time-{{ step.order_id }}">{{ step.change_in_time }}</td> -->
-                    <td id="brew-step-target-total-time-{{ step.order_id }}"  style="text-align: center;">{{ step.target_total_time }}</td>
-                    <td id="brew-step-executed-time-{{ step.order_id }}"  style="text-align: center;"></td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+         <!-- Preparation steps-->
+        <div class="section">
+            <h3>Preparation</h3>
+            {% if preparation_steps %}
+                <table border="1" id="preparation-steps">
+                    <thead>
+                        <tr>
+                            <th style="width: 5%;">Step</th>
+                            <th style="width: 95%;">Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for step in preparation_steps %}
+                        <tr>
+                            <td id="preparation-step-order-id-{{ step.order_id }}" style="text-align: center;">{{ step.order_id }}</td>
+                            <td id="preparation-step-description-{{ step.order_id }}">{{ step.description }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <label>No prepration steps</label>
+            {% endif %}
+        </div>
 
-    <!-- Buttons for controlling the timer -->
-    <audio id="startStepBeepSound" src="{% static 'brewhelper/audio/startStepBeep128.mp3' %}" type="audio/mpeg"></audio>
-    <audio id="warningStepEndBeepsSound" src="{% static 'brewhelper/audio/warningStepEndBeeps128.mp3' %}" type="audio/mpeg"></audio>
-    <button id="startPauseButton" onclick="toggleTimer()">Start</button>
-    <button onclick="resetTimer()">Reset</button>
-    <button onclick="onDoneClicked()">Done</button>
-    
-    <!-- Speech Settings -->
-    <div class="section">
-        <h2>Speech Settings</h2>
-        <p><!-- Checkbox for toggling read steps outloud feature -->
-            <label for="toggleReadBrewStepsOutloud">
-                <input type ="checkbox" id="toggleReadBrewStepsOutloud" onchange="toggleReadBrewStepsOutloud()">
-                <span><strong>Enable Read Brew Steps Outloud</strong></span>
+        <!-- Brew steps-->
+        <div class="section">
+            <h3>Brew</h3>
+            <!-- Element to display elapsed time -->
+            <label id = "elapsed-time-label" for="elapsed-time">
+                <span>Elapsed Time: </span>
+                <input type="text" id="elapsed-time" readonly value="00:00">
             </label>
-        </p>
-        <p><!-- Checkbox for toggling voice commands feature -->
-            <label for="toggleVoiceCommands">
-                <input type ="checkbox" id="toggleVoiceCommands" onchange="toggleVoiceCommands()">
-                <span><strong>Enable Voice Commands</strong></span>
-            </label>
-        </p>
-        <p class="detected-voice-command-label">
-            <label for="detected-voice-command"><span>Last Detected Command: </span></label>
-            <input type="text" id="detected-voice-command" readonly value="">
-        </p>
-        <p class="voice-command-list-title-label"><label>Accepted Commands:</label></p>
-        <ul class="voice-command-list">
-            <li>Start</li>
-            <li>Pause</li>
-            <li>Reset</li>
-            <li>Done</li>
-        </ul>
-    </div>
+            <table border="1" id="brewing-steps">
+                <thead>
+                    <tr>
+                        <th style="width: 5%;">Step</th>
+                        <th style="width: 70%;">Description</th>
+                        <!-- <th>Change in Water</th> -->
+                        <th>Target Water</th>
+                        <!-- <th>Change in Time</th> -->
+                        <th>Target Time</th>
+                        <th>Executed Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for step in brew_steps %}
+                    <tr>
+                        <td id="brew-step-order-id-{{ step.order_id }}" style="text-align: center;">{{ step.order_id }}</td>
+                        <td id="brew-step-description-{{ step.order_id }}">{{ step.description }}</td>
+                        <!-- <td>{{ step.change_in_water }}</td> -->
+                        <td id="brew-step-target-total-water-{{ step.order_id }}" style="text-align: center;">{{ step.target_total_water }}g</td>
+                        <!-- <td id="change-in-time-{{ step.order_id }}">{{ step.change_in_time }}</td> -->
+                        <td id="brew-step-target-total-time-{{ step.order_id }}"  style="text-align: center;">{{ step.target_total_time }}</td>
+                        <td id="brew-step-executed-time-{{ step.order_id }}"  style="text-align: center;"></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
-    <!-- Keyboard shortcuts note -->
-    <div class="section">
-        <h2>Keyboard Shortcuts:</h2>
-        <div class="keyboard-shortcut-info">
-            <ul class="keyboard-shortcut-list">
-                <li><strong>z:</strong> Start/Pause</li>
-                <li><strong>x:</strong> Reset</li>
-                <li><strong>c:</strong> Done</li>
+        <!-- Buttons for controlling the timer -->
+        <audio id="startStepBeepSound" src="{% static 'brewhelper/audio/startStepBeep128.mp3' %}" type="audio/mpeg"></audio>
+        <audio id="warningStepEndBeepsSound" src="{% static 'brewhelper/audio/warningStepEndBeeps128.mp3' %}" type="audio/mpeg"></audio>
+        <button id="startPauseButton" onclick="toggleTimer()">Start</button>
+        <button onclick="resetTimer()">Reset</button>
+        <button onclick="onDoneClicked()">Done</button>
+        
+        <!-- Speech Settings -->
+        <div class="section">
+            <h2>Speech Settings</h2>
+            <p><!-- Checkbox for toggling read steps outloud feature -->
+                <label for="toggleReadBrewStepsOutloud">
+                    <input type ="checkbox" id="toggleReadBrewStepsOutloud" onchange="toggleReadBrewStepsOutloud()">
+                    <span><strong>Enable Read Brew Steps Outloud</strong></span>
+                </label>
+            </p>
+            <p><!-- Checkbox for toggling voice commands feature -->
+                <label for="toggleVoiceCommands">
+                    <input type ="checkbox" id="toggleVoiceCommands" onchange="toggleVoiceCommands()">
+                    <span><strong>Enable Voice Commands</strong></span>
+                </label>
+            </p>
+            <p class="detected-voice-command-label">
+                <label for="detected-voice-command"><span>Last Detected Command: </span></label>
+                <input type="text" id="detected-voice-command" readonly value="">
+            </p>
+            <p class="voice-command-list-title-label"><label>Accepted Commands:</label></p>
+            <ul class="voice-command-list">
+                <li>Start</li>
+                <li>Pause</li>
+                <li>Reset</li>
+                <li>Done</li>
             </ul>
         </div>
-    </div>
+
+        <!-- Keyboard shortcuts note -->
+        <div class="section">
+            <h2>Keyboard Shortcuts:</h2>
+            <div class="keyboard-shortcut-info">
+                <ul class="keyboard-shortcut-list">
+                    <li><strong>z:</strong> Start/Pause</li>
+                    <li><strong>x:</strong> Reset</li>
+                    <li><strong>c:</strong> Done</li>
+                </ul>
+            </div>
+        </div>
 
     {% else %}
-    <div class="section">
-        <h2>[No Recipe Selected]</h2>
-    </div>
+        <div class="section">
+            <h2>[No Recipe Selected]</h2>
+        </div>
     {% endif %}
     
     <!-- Add any JavaScript scripts or other body elements here -->
