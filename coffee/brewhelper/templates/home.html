@@ -9,9 +9,11 @@
     {% load static %}
     <style>
         /* Key Test Output*/
-        .highlighted-step {
-            /* Add your CSS styling for highlighting here */
-            background-color: yellow; /* Example: Highlight the step with a yellow background */
+        .highlighted-current-step { /*completed step*/ 
+            background-color: yellow; 
+        }
+        .highlighted-target-step {
+            outline: 2px solid black;
         }
 
         /* Header styling */
@@ -131,8 +133,8 @@
                     <tbody>
                         {% for step in preparation_steps %}
                         <tr>
-                            <td id="preparation-step-order-id-{{ step.order_id }}" style="text-align: center;">{{ step.order_id }}</td>
-                            <td id="preparation-step-description-{{ step.order_id }}">{{ step.description }}</td>
+                            <td class="step-order-id" style="text-align: center;">{{ step.order_id }}</td>
+                            <td class="step-description">{{ step.description }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -165,13 +167,11 @@
                 <tbody>
                     {% for step in brew_steps %}
                     <tr>
-                        <td id="brew-step-order-id-{{ step.order_id }}" style="text-align: center;">{{ step.order_id }}</td>
-                        <td id="brew-step-description-{{ step.order_id }}">{{ step.description }}</td>
-                        <!-- <td>{{ step.change_in_water }}</td> -->
-                        <td id="brew-step-target-total-water-{{ step.order_id }}" style="text-align: center;">{{ step.target_total_water }}g</td>
-                        <!-- <td id="change-in-time-{{ step.order_id }}">{{ step.change_in_time }}</td> -->
-                        <td id="brew-step-target-total-time-{{ step.order_id }}"  style="text-align: center;">{{ step.target_total_time }}</td>
-                        <td id="brew-step-executed-time-{{ step.order_id }}"  style="text-align: center;"></td>
+                        <td class="step-order-id" style="text-align: center;">{{ step.order_id }}</td>
+                        <td class="step-description">{{ step.description }}</td>
+                        <td class="step-target-total-water" style="text-align: center;">{{ step.target_total_water }}g</td>
+                        <td class="step-target-total-time"  style="text-align: center;">{{ step.target_total_time }}</td>
+                        <td class="step-executed-time"  style="text-align: center;"></td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -181,17 +181,17 @@
         <!-- Buttons for controlling the timer -->
         <audio id="startStepBeepSound" src="{% static 'brewhelper/audio/startStepBeep128.mp3' %}" type="audio/mpeg"></audio>
         <audio id="warningStepEndBeepsSound" src="{% static 'brewhelper/audio/warningStepEndBeeps128.mp3' %}" type="audio/mpeg"></audio>
-        <button id="startPauseButton" onclick="toggleTimer()">Start</button>
-        <button onclick="resetTimer()">Reset</button>
-        <button onclick="onDoneClicked()">Done</button>
+        <button id="startPauseButton" onclick="onStartClicked()">Start</button>
+        <button onclick="onResetClicked()">Reset</button>
+        <button onclick="onNextStepClicked()">Next</button>
         
         <!-- Speech Settings -->
         <div class="section">
             <h2>Speech Settings</h2>
             <p><!-- Checkbox for toggling read steps outloud feature -->
-                <label for="toggleReadBrewStepsOutloud">
-                    <input type ="checkbox" id="toggleReadBrewStepsOutloud" onchange="toggleReadBrewStepsOutloud()">
-                    <span><strong>Enable Read Brew Steps Outloud</strong></span>
+                <label for="toggleReadStepsOutloud">
+                    <input type ="checkbox" id="toggleReadStepsOutloud" onchange="toggleReadStepsOutloud()">
+                    <span><strong>Enable Read Steps Outloud</strong></span>
                 </label>
             </p>
             <p><!-- Checkbox for toggling voice commands feature -->
@@ -319,7 +319,7 @@
                         break;
                     case 'c':
                     case 'C':
-                        onDoneClicked(); // Done operation when C key is pressed
+                        nextBrewStep(); // Done operation when C key is pressed
                         break;
                     default:
                         break;
@@ -341,36 +341,35 @@
         let isReadStepsOutloud = false;
         let voices;
         // Function to set read steps outloud flag based on checkbox state
-        function toggleReadBrewStepsOutloud() {
-            const checkbox = document.getElementById('toggleReadBrewStepsOutloud');
+        function toggleReadStepsOutloud() {
+            const checkbox = document.getElementById('toggleReadStepsOutloud');
             isReadStepsOutloud = checkbox.checked;
             if (!isReadStepsOutloud) {
-                cancelReadStepDescription();
+                cancelReadText();
             }
         }
         // Function to read the description aloud
-        function readStepDescription() {
+        function readText(text) {
             if (!isReadStepsOutloud){
                 return;
             }
             // Clear old utterances
-            cancelReadStepDescription();
-            // Create utterance from latest step description
-            const description = brewSteps[brewStepIndex].querySelector('[id^="brew-step-description-"]').textContent
-            const utterance = new SpeechSynthesisUtterance(description);
+            cancelReadText();
+            // Create utterance from description
+            const utterance = new SpeechSynthesisUtterance(text);
             // set voice
             utterance.voice = voices[4]; //for now we hardcode one
             // Read description
             window.speechSynthesis.speak(utterance);
         }
         // Function to pause reading description
-        function pauseReadStepDescription(){
+        function pauseReadText(){
             if (window.speechSynthesis.speaking){
                 window.speechSynthesis.pause();
             }
         }
         // Function to cancel reading all descriptions
-        function cancelReadStepDescription(){
+        function cancelReadText(){
             if (window.speechSynthesis.speaking){
                 window.speechSynthesis.cancel();
             }
@@ -410,7 +409,7 @@
                             resetTimer(); // Reset operation
                             break;
                         case 'done':
-                            onDoneClicked(); // Done operation
+                            nextBrewStep(); // Done operation
                             break;
                         default:
                             break;
@@ -464,21 +463,186 @@
             const detecedVoiceCommandInput = document.getElementById('detected-voice-command');
             detecedVoiceCommandInput.value = detecedVoiceCommandResult ; // Update input value with speech recognition result
         }
-
-        ////////////////////////////////////////////////////////////////////////
-        // Update time data in header info
+        ///////////////////////////////////////////////////////////////////////
+        // Navigate through different processes
+        // Process status that assumes you can't have multiple processes going at the same time
+        const Process = {
+            NONE: Symbol('no process ready'),
+            PREPARATION: Symbol('preparation process'),
+            BREW: Symbol('brew process')
+        };
+        let currentProcess = Process.NONE;
+        // Update brew time data in header info
         const recipeTargetTotalTime = document.getElementById('recipe-target-total-time');
         recipeTargetTotalTime.value = getTimeStringFromSeconds(recipeTargetTotalTime.value);
 
         // Get all rows of the table
+        const preparationSteps = document.querySelectorAll('#preparation-steps tbody tr');
         const brewSteps = document.querySelectorAll('#brewing-steps tbody tr');
         
-        let brewStepIndex = 0;
-        let executedBrewStepIndex = 0;
+        let preparationStepIndex = -1;
+        let brewStepIndex = -1;
+        let executedBrewStepIndex = -1;
         let elapsedTime = 0;
         let timer;
 
         let isTimerRunning = false;
+
+        updateProcessStatus();
+
+        // Function to remove format from all steps
+        function removeEmphasizeSteps(steps, formatName){
+            steps.forEach(row => {
+                row.classList.remove(formatName); // Remove highlight from all rows
+            });
+        }
+        // Function to add format to step
+        function emphasizeCurrentStep(stepIndex, steps, formatName) {
+            removeEmphasizeSteps(steps, formatName);
+            if (stepIndex < steps.length){
+                steps[stepIndex].classList.add(formatName); //Add format to step
+            }
+        }
+
+        // Function to remove higlight from all steps
+        function removeHighlightCurrentStep(steps){
+            removeEmphasizeSteps(steps, 'highlighted-current-step');
+        }
+        // Function to highlight the current step
+        function highlightCurrentStep(stepIndex, steps) {
+            emphasizeCurrentStep(stepIndex, steps, 'highlighted-current-step');
+        }
+        
+        // Function to remove bold from all steps
+        function removeHighlightTargetStep(steps){
+            removeEmphasizeSteps(steps, 'highlighted-target-step'); // Remove bold from all rows
+        } 
+        // Function to bold the step description
+        function highlightTargetStep(stepIndex, steps){
+            emphasizeCurrentStep(stepIndex, steps, 'highlighted-target-step');
+        }
+
+        // Function to update the status of buttons according to the step
+        function updateProcessStatus(){
+            const startPauseButton = document.getElementById('startPauseButton');
+            if (preparationStepIndex < 0 && brewStepIndex < 0){ 
+                if (preparationSteps.length > 0){
+                    // preparation ready to start
+                    currentProcess = Process.PREPARATION;
+                } else if (brewSteps.length > 0){
+                    // brew ready to start
+                    currentProcess = Process.BREW;
+                } else {
+                    // no process can be started
+                    currentProcess = Process.NONE;
+                }
+                startPauseButton.textContent = 'Start';
+            } else if (currentProcess === Process.PREPARATION) {
+                if (preparationStepIndex >= 0 && preparationStepIndex < preparationSteps.length) {
+                    // preperation under way
+                    startPauseButton.textContent = 'Skip';
+                } else {
+                    // end preparation, ready for brew
+                    startPauseButton.textContent = 'Brew';
+                    currentProcess = Process.BREW;
+                }
+            } else if (currentProcess === Process.BREW) {
+                if (brewStepIndex < 0){
+                    if (preparationStepIndex >= 0 && preparationStepIndex < preparationSteps.length) {
+                        // preperation under way
+                        startPauseButton.textContent = 'Skip';
+                    } else {
+                        // end preparation, ready for brew
+                        startPauseButton.textContent = 'Brew';
+                        currentProcess = Process.BREW;
+                    }
+                } else if (brewStepIndex >= 0 && brewStepIndex <= brewSteps.length){ 
+                    // brew under way
+                    if (!isTimerRunning){
+                        startPauseButton.textContent = 'Brew'
+                    } else {
+                        startPauseButton.textContent = 'Pause'
+                    }
+                }
+            } else {
+                // unhandled case
+            }
+        }
+
+        // Function to run through the current process steps
+        function onStartClicked(){
+            if (currentProcess === Process.PREPARATION){
+                if (preparationStepIndex < 0){ 
+                    startPreparationSteps();
+                } else {
+                    stopPreparationSteps();
+                }
+            } else if (currentProcess === Process.BREW) { 
+                startBrewSteps();
+            } else {
+                //unhandled case
+                print(currentProcess);
+            }
+            updateProcessStatus();
+        }
+        // Function to reset all processes 
+        function onResetClicked(){
+            resetPreparationSteps();
+            resetTimer();
+            updateProcessStatus();
+        }
+        // Function to move to the next step of the current process
+        function onNextStepClicked(){
+            if (currentProcess === Process.PREPARATION){
+                nextPreparationStep();
+            } else if (currentProcess === Process.BREW){
+                nextBrewStep();
+            } else {
+                //unhandled case
+            }
+            updateProcessStatus();
+        }
+        
+        // Function to get step description
+        function getStepDescription(stepIndex, steps){
+            return steps[stepIndex].querySelector('.step-description').textContent;
+        }
+        ////////////////////////////////////////////////////////////////////////
+        // Preparation process       
+        
+        // Function to start preparation
+        function startPreparationSteps() {
+            preparationStepIndex = 0;
+            highlightTargetStep(preparationStepIndex,preparationSteps);
+            highlightCurrentStep(preparationStepIndex, preparationSteps);
+            readText(getStepDescription(preparationStepIndex, preparationSteps));
+        }
+        // Function to stop preparation
+        function stopPreparationSteps(){
+            preparationStepIndex = preparationSteps.length;
+            removeHighlightTargetStep(preparationSteps);
+            removeHighlightCurrentStep(preparationSteps);
+        }
+        // Function to move to the next preparation step
+        function nextPreparationStep() {
+            if (preparationStepIndex < preparationSteps.length - 1){
+                preparationStepIndex++;
+                highlightTargetStep(preparationStepIndex,preparationSteps);
+                highlightCurrentStep(preparationStepIndex, preparationSteps);
+                readText(getStepDescription(preparationStepIndex, preparationSteps));
+            } else {
+                stopPreparationSteps();
+            }
+        }
+
+        // Function to reset preparation steps
+        function resetPreparationSteps(){
+            preparationStepIndex = -1;
+            removeHighlightTargetStep(preparationSteps);
+            removeHighlightCurrentStep(preparationSteps);
+        }
+        ////////////////////////////////////////////////////////////////////////
+        // Brew process
 
         // Update the Time cells in the table        
         function updateTimeCells(timeCells){
@@ -487,24 +651,8 @@
             cell.textContent = getTimeStringFromSeconds(timeInSeconds);
             });
         }
-        const totalTargetTimeCells = document.querySelectorAll('[id^="brew-step-target-total-time-"]');
-        //const changeInTimeCells = document.querySelectorAll('[id^="brew-step-change-in-time-"]');
+        const totalTargetTimeCells = document.querySelectorAll('.step-target-total-time');
         updateTimeCells(totalTargetTimeCells)
-        //updateTimeCells(changeInTimeCells)
-
-        // Function to remove higlight from all steps
-        function removeHighlighBrewStep(){
-            brewSteps.forEach(row => {
-                row.classList.remove('highlighted-step'); // Remove highlight from all rows
-            });
-        }
-        // Function to highlight the current step
-        function highlightBrewStep() {
-            if (brewStepIndex < brewSteps.length){
-                removeHighlighBrewStep();
-                brewSteps[brewStepIndex].classList.add('highlighted-step'); // Highlight the current step
-            }
-        }
 
         // Function to update elapsed time in the input element
         function updateElapsedTime() {
@@ -513,17 +661,13 @@
             elapsedTimeInput.value = formattedTime; // Update input value with formatted time
         }
         
+        // Function to enable/disable timer
         function toggleTimer() {
-            const startPauseButton = document.getElementById('startPauseButton');
-
             if (!isTimerRunning) { 
                 startTimer();
-                startPauseButton.textContent = 'Pause'; // Change button text to 'Pause'
             } else {
                 pauseTimer();
-                startPauseButton.textContent = 'Start'; // Change button text to 'Start'
             }
-
             isTimerRunning = !isTimerRunning; // Toggle timer status
         }
 
@@ -533,8 +677,9 @@
                 const startStepAudio = document.getElementById('startStepBeepSound');
                 startStepAudio.play();
             }
-            highlightBrewStep();
-            readStepDescription();
+            highlightTargetStep(brewStepIndex, brewSteps);
+            highlightCurrentStep(brewStepIndex, brewSteps);
+            readText(getStepDescription(brewStepIndex, brewSteps));
             timer = setInterval(() => {
                 elapsedTime += 1; // Increment elapsed time (assuming 1 second intervals)
                 updateElapsedTime(); // Update elapsed time in the input element
@@ -542,7 +687,7 @@
                 if (brewStepIndex >= brewSteps.length) {
                     // Don't stop timer as it will disrupt the executed completed time
                 } else {
-                    const currentStepTotalTime = getSecondsFromTimeString(brewSteps[brewStepIndex].querySelector('[id^="brew-step-target-total-time-"]').textContent);
+                    const currentStepTotalTime = getSecondsFromTimeString(brewSteps[brewStepIndex].querySelector('.step-target-total-time').textContent);
                     
                     // Play warning beep 3 seconds before step change
                     if (elapsedTime >= currentStepTotalTime - 3) {
@@ -558,8 +703,8 @@
                         if (startStepAudio.paused){
                             startStepAudio.play();
                         }
-                        highlightBrewStep();
-                        readStepDescription();
+                        highlightTargetStep(brewStepIndex, brewSteps);
+                        readText(getStepDescription(brewStepIndex, brewSteps));
                     }
                 }
             }, 1000); // Timer interval: 1 second (adjust as needed)
@@ -571,7 +716,16 @@
             startStepAudio.pause();
             const warningStepEndAudio = document.getElementById('warningStepEndBeepsSound');
             warningStepEndAudio.pause();
-            cancelReadStepDescription(); //better to cancel and restart reading
+            cancelReadText(); //better to cancel and restart reading
+        }
+
+        // Function to start brew 
+        function startBrewSteps(){
+            if (brewStepIndex === -1){
+                brewStepIndex = 0; 
+                isTimerRunning = false;
+            }
+            toggleTimer();
         }
 
         // Function to reset the timer and step index
@@ -583,33 +737,45 @@
             isTimerRunning = false;
         
             // Reset test parameters
-            brewStepIndex = 0;
-            executedBrewStepIndex = 0;
+            brewStepIndex = -1;
+            executedBrewStepIndex = -1;
             elapsedTime = 0;
             const startStepAudio = document.getElementById('startStepBeepSound');
             startStepAudio.currentTime = 0;
             const warningStepEndAudio = document.getElementById('warningStepEndBeepsSound');
             warningStepEndAudio.currentTime = 0;
-            cancelReadStepDescription();
-            removeHighlighBrewStep();
+            cancelReadText();
+            removeHighlightTargetStep(brewSteps);
+            removeHighlightCurrentStep(brewSteps);
             updateElapsedTime(); // Update elapsed time in the input element
 
             // Clear the executed-time column
-            const timeTakenCells = document.querySelectorAll('[id^="brew-step-executed-time-"]');
+            const timeTakenCells = document.querySelectorAll('.step-executed-time');
             timeTakenCells.forEach(cell => {
                 cell.textContent = ''; // Clear the content of executed-time cells
             });
         }
 
         // Function to record time taken and update step
-        function onDoneClicked() {
-            // Record current time for the current step
-            const currentStepId = executedBrewStepIndex + 1; // Assuming stepIndex starts from 0
-            const timeTakenCell = document.getElementById(`brew-step-executed-time-${currentStepId}`);
-            timeTakenCell.textContent = getTimeStringFromSeconds(elapsedTime);
+        function nextBrewStep() {
+            if (brewStepIndex < 0){
+                return; //brew hasn't started
+            }
 
-            // Update step for the user
-            executedBrewStepIndex++; // Increment step index for the user
+            if (executedBrewStepIndex >= -1 && executedBrewStepIndex < brewSteps.length - 1){
+                // Increment to current step to be executed
+                executedBrewStepIndex++; 
+                // Record current time for the current step executed
+                const currentStepId = executedBrewStepIndex + 1; // Assuming stepIndex starts from 0
+                const timeTakenCell = brewSteps[executedBrewStepIndex].querySelector(`.step-executed-time`);
+                timeTakenCell.textContent = getTimeStringFromSeconds(elapsedTime);
+
+                // Highlight next step to execute
+                highlightCurrentStep(executedBrewStepIndex + 1, brewSteps);
+            } else {
+                // past steps
+                removeHighlightCurrentStep(brewSteps);
+            }
         }
     </script>
 </body>
