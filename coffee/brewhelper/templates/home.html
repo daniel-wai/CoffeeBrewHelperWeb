@@ -402,14 +402,26 @@
                     // Compare last word to accepted list of commands
                     switch (lastWord) {
                         case 'start':
+                        case 'skip':
+                            onStartClicked(); //start operation
+                            break;
+                        case 'skip':
+                            if (currentProcess === Process.PREPARATION){
+                                stopPreparationSteps();
+                            }
+                            break;
+                        case 'brew':
+                            stopPreparationSteps();
+                            currentProcess = Proces.BREW;
+                            onStartClicked();
                         case 'pause':
                             toggleTimer(); // Start/Pause operation
                             break;
                         case 'reset':
-                            resetTimer(); // Reset operation
+                            onResetClicked(); // Reset operation
                             break;
-                        case 'done':
-                            nextBrewStep(); // Done operation
+                        case 'next':
+                            onNextStepClicked(); // Next operation
                             break;
                         default:
                             break;
@@ -488,7 +500,7 @@
 
         let isTimerRunning = false;
 
-        updateProcessStatus();
+        updateStartButtonStatus();
 
         // Function to remove format from all steps
         function removeEmphasizeSteps(steps, formatName){
@@ -522,47 +534,18 @@
             emphasizeCurrentStep(stepIndex, steps, 'highlighted-target-step');
         }
 
-        // Function to update the status of buttons according to the step
-        function updateProcessStatus(){
+        // Function to update the status of the start button according to the step
+        function updateStartButtonStatus(){
             const startPauseButton = document.getElementById('startPauseButton');
-            if (preparationStepIndex < 0 && brewStepIndex < 0){ 
-                if (preparationSteps.length > 0){
-                    // preparation ready to start
-                    currentProcess = Process.PREPARATION;
-                } else if (brewSteps.length > 0){
-                    // brew ready to start
-                    currentProcess = Process.BREW;
-                } else {
-                    // no process can be started
-                    currentProcess = Process.NONE;
-                }
+            if (currentProcess === Process.NONE){ 
                 startPauseButton.textContent = 'Start';
             } else if (currentProcess === Process.PREPARATION) {
-                if (preparationStepIndex >= 0 && preparationStepIndex < preparationSteps.length) {
-                    // preperation under way
-                    startPauseButton.textContent = 'Skip';
-                } else {
-                    // end preparation, ready for brew
-                    startPauseButton.textContent = 'Brew';
-                    currentProcess = Process.BREW;
-                }
+                startPauseButton.textContent = 'Brew';
             } else if (currentProcess === Process.BREW) {
-                if (brewStepIndex < 0){
-                    if (preparationStepIndex >= 0 && preparationStepIndex < preparationSteps.length) {
-                        // preperation under way
-                        startPauseButton.textContent = 'Skip';
-                    } else {
-                        // end preparation, ready for brew
-                        startPauseButton.textContent = 'Brew';
-                        currentProcess = Process.BREW;
-                    }
-                } else if (brewStepIndex >= 0 && brewStepIndex <= brewSteps.length){ 
-                    // brew under way
-                    if (!isTimerRunning){
-                        startPauseButton.textContent = 'Brew'
-                    } else {
-                        startPauseButton.textContent = 'Pause'
-                    }
+                if (!isTimerRunning){
+                    startPauseButton.textContent = 'Brew'
+                } else {
+                    startPauseButton.textContent = 'Pause'
                 }
             } else {
                 // unhandled case
@@ -571,25 +554,27 @@
 
         // Function to run through the current process steps
         function onStartClicked(){
-            if (currentProcess === Process.PREPARATION){
-                if (preparationStepIndex < 0){ 
-                    startPreparationSteps();
-                } else {
-                    stopPreparationSteps();
-                }
-            } else if (currentProcess === Process.BREW) { 
+            if (preparationStepIndex < 0 && preparationSteps.length > 0){ 
+                // preparation ready to start
+                currentProcess = Process.PREPARATION;
+                startPreparationSteps();
+            } else if (brewSteps.length > 0){
+                // brew ready to start
+                currentProcess = Process.BREW;
+                stopPreparationSteps();
                 startBrewSteps();
             } else {
-                //unhandled case
-                print(currentProcess);
+                // no process can be started
+                currentProcess = Process.NONE;
             }
-            updateProcessStatus();
+            updateStartButtonStatus();
         }
         // Function to reset all processes 
         function onResetClicked(){
             resetPreparationSteps();
             resetTimer();
-            updateProcessStatus();
+            currentProcess = Process.NONE;
+            updateStartButtonStatus();
         }
         // Function to move to the next step of the current process
         function onNextStepClicked(){
@@ -600,7 +585,7 @@
             } else {
                 //unhandled case
             }
-            updateProcessStatus();
+            updateStartButtonStatus();
         }
         
         // Function to get step description
@@ -622,7 +607,6 @@
             preparationStepIndex = preparationSteps.length;
             removeHighlightTargetStep(preparationSteps);
             removeHighlightCurrentStep(preparationSteps);
-            readText('Preparation steps complete. Time to brew.');
         }
         // Function to move to the next preparation step
         function nextPreparationStep() {
@@ -633,6 +617,7 @@
                 readText(getStepDescription(preparationStepIndex, preparationSteps));
             } else {
                 stopPreparationSteps();
+                readText('Preparation steps complete. Time to brew.');
             }
         }
 
@@ -733,8 +718,6 @@
         function resetTimer() {
             // Stop the timer
             pauseTimer(timer);
-            const startPauseButton = document.getElementById('startPauseButton');
-            startPauseButton.textContent = 'Start'; // Change button text to 'Start'
             isTimerRunning = false;
         
             // Reset test parameters
