@@ -402,20 +402,20 @@
                     // Compare last word to accepted list of commands
                     switch (lastWord) {
                         case 'start':
-                        case 'skip':
-                            onStartClicked(); //start operation
-                            break;
-                        case 'skip':
-                            if (currentProcess === Process.PREPARATION){
-                                stopPreparationSteps();
+                            if (currentProcess === Process.NONE){
+                                onStartClicked(); //start operation
                             }
                             break;
                         case 'brew':
-                            stopPreparationSteps();
-                            currentProcess = Proces.BREW;
+                            if (currentProcess === Process.NONE || currentProcess === Process.PREPARATION){
+                                stopPreparationSteps();
+                            }
                             onStartClicked();
+                            break;
                         case 'pause':
-                            toggleTimer(); // Start/Pause operation
+                            if (currentProcess === Process.BREW && isTimerRunning){
+                                onStartClicked();
+                            }
                             break;
                         case 'reset':
                             onResetClicked(); // Reset operation
@@ -659,7 +659,7 @@
 
         // Function to start the timer and highlight brew steps based on target_total_time
         function startTimer() {
-            if (elapsedTime === 0){
+            if (elapsedTime < 1){
                 const startStepAudio = document.getElementById('startStepBeepSound');
                 startStepAudio.play();
             }
@@ -707,7 +707,7 @@
 
         // Function to start brew 
         function startBrewSteps(){
-            if (brewStepIndex === -1){
+            if (brewStepIndex < 0){
                 brewStepIndex = 0; 
                 isTimerRunning = false;
             }
