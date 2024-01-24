@@ -290,17 +290,16 @@
             // Shortcut keys
             document.addEventListener('keydown', event => {
                 switch (event.key) {
-                    case 'z':
-                    case 'Z':
-                        toggleTimer(); // Start/Pause when Z key is pressed
+                    case 'Shift':
+                        onStartClicked();
                         break;
-                    case 'x':
-                    case 'X':
-                        resetTimer(); // Reset when X key is pressed
+                    case 'Control':
+                        onResetClicked();
                         break;
-                    case 'c':
-                    case 'C':
-                        nextBrewStep(); // Done operation when C key is pressed
+                    case ' ':
+                    case 'Spacebar':
+                        event.preventDefault();
+                        onNextStepClicked();
                         break;
                     default:
                         break;
