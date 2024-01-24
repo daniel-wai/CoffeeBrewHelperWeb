@@ -187,7 +187,7 @@
         
         <!-- Speech Settings -->
         <div class="section">
-            <h2>Speech Settings</h2>
+            <h2>Settings</h2>
             <p><!-- Checkbox for toggling read steps outloud feature -->
                 <label for="toggleReadStepsOutloud">
                     <input type ="checkbox" id="toggleReadStepsOutloud" onchange="toggleReadStepsOutloud()">
@@ -204,25 +204,6 @@
                 <label for="detected-voice-command"><span>Last Detected Command: </span></label>
                 <input type="text" id="detected-voice-command" readonly value="">
             </p>
-            <p class="voice-command-list-title-label"><label>Accepted Commands:</label></p>
-            <ul class="voice-command-list">
-                <li>Start</li>
-                <li>Pause</li>
-                <li>Reset</li>
-                <li>Done</li>
-            </ul>
-        </div>
-
-        <!-- Keyboard shortcuts note -->
-        <div class="section">
-            <h2>Keyboard Shortcuts:</h2>
-            <div class="keyboard-shortcut-info">
-                <ul class="keyboard-shortcut-list">
-                    <li><strong>z:</strong> Start/Pause</li>
-                    <li><strong>x:</strong> Reset</li>
-                    <li><strong>c:</strong> Done</li>
-                </ul>
-            </div>
         </div>
 
     {% else %}
