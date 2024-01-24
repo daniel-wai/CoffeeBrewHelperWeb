@@ -665,14 +665,16 @@
                 const startStepAudio = document.getElementById('startStepBeepSound');
                 startStepAudio.play();
             }
-            highlightTargetStep(brewStepIndex, brewSteps);
-            highlightCurrentStep(brewStepIndex, brewSteps);
-            readText(getStepDescription(brewSteps[brewStepIndex])+ " " + getBrewStepTargetSpeechText(brewSteps[brewStepIndex]));
+            if (brewStepIndex >= 0 && brewStepIndex < brewSteps.length){
+                highlightTargetStep(brewStepIndex, brewSteps);
+                highlightCurrentStep(brewStepIndex, brewSteps);
+                readText(getStepDescription(brewSteps[brewStepIndex])+ " " + getBrewStepTargetSpeechText(brewSteps[brewStepIndex]));
+            }
             timer = setInterval(() => {
                 elapsedTime += 1; // Increment elapsed time (assuming 1 second intervals)
                 updateElapsedTime(); // Update elapsed time in the input element
                 // Highlight the current step
-                if (brewStepIndex >= brewSteps.length) {
+                if (brewStepIndex < 0 || brewStepIndex >= brewSteps.length) {
                     // Don't stop timer as it will disrupt the executed completed time
                 } else {
                     const currentStepTotalTime = getSecondsFromTimeString(brewSteps[brewStepIndex].querySelector('.step-target-total-time').textContent);
@@ -686,13 +688,18 @@
                     }
                     
                     if (elapsedTime >= currentStepTotalTime) {
-                        brewStepIndex++;
                         const startStepAudio = document.getElementById('startStepBeepSound');
                         if (startStepAudio.paused){
                             startStepAudio.play();
                         }
-                        highlightTargetStep(brewStepIndex, brewSteps);
-                        readText(getStepDescription(brewSteps[brewStepIndex])+ " " + getBrewStepTargetSpeechText(brewSteps[brewStepIndex]));
+                        brewStepIndex++;
+                        if (brewStepIndex >= 0 && brewStepIndex < brewSteps.length){
+                            highlightTargetStep(brewStepIndex, brewSteps);
+                            readText(getStepDescription(brewSteps[brewStepIndex])+ " " + getBrewStepTargetSpeechText(brewSteps[brewStepIndex]));
+                        }
+                        else{
+                            removeHighlightTargetStep(brewSteps);
+                        }
                     }
                 }
             }, 1000); // Timer interval: 1 second (adjust as needed)
