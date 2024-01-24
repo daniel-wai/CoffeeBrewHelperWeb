@@ -215,15 +215,35 @@
     <!-- Add any JavaScript scripts or other body elements here -->
     <script>
         // General helpers ///////////////////////////////////////////////////
+        
+        // Function the returns object with minutes and seconds converted from input total seconds
+        function getMinutesAndSeconds(totalSeconds) {
+            if (isNaN(totalSeconds) || totalSeconds < 0) {
+                return { minutes: 0, seconds: 0 };
+            }
+
+            var minutes = Math.floor(totalSeconds / 60);
+            var remainingSeconds = totalSeconds % 60;
+
+            return { minutes: minutes, seconds: remainingSeconds };
+        }
+
+        // Function to convert seconds to display string mm:ss
         function getTimeStringFromSeconds(seconds) {
-            const minutes = Math.floor(seconds / 60); // Get minutes
-            const remainingSeconds = seconds % 60; // Get remaining seconds
+            if (isNaN(seconds) || seconds < 0) {
+                return "";
+            }
+            timeObject = getMinutesAndSeconds(seconds);
+            const minutes = timeObject.minutes; // Get minutes
+            const remainingSeconds = timeObject.seconds; // Get remaining seconds
 
             const formattedMinutes = String(minutes).padStart(2, '0'); // Ensure 2-digit minutes
             const formattedSeconds = String(remainingSeconds).padStart(2, '0'); // Ensure 2-digit seconds
 
             return `${formattedMinutes}:${formattedSeconds}`; // Format as "mm:ss"
         }
+
+        // Function to convert display string mm:ss to seconds
         function getSecondsFromTimeString(timeString) {
             const [minutes, seconds] = timeString.split(':').map(Number);
             return minutes * 60 + seconds;
@@ -569,8 +589,8 @@
         }
         
         // Function to get step description
-        function getStepDescription(stepIndex, steps){
-            return steps[stepIndex].querySelector('.step-description').textContent;
+        function getStepDescription(step){
+            return step.querySelector('.step-description').textContent;
         }
         ////////////////////////////////////////////////////////////////////////
         // Preparation process       
@@ -578,9 +598,10 @@
         // Function to start preparation
         function startPreparationSteps() {
             preparationStepIndex = 0;
+            preparationStep = preparationSteps[preparationStepIndex];
             highlightTargetStep(preparationStepIndex,preparationSteps);
             highlightCurrentStep(preparationStepIndex, preparationSteps);
-            readText(getStepDescription(preparationStepIndex, preparationSteps));
+            readText(getStepDescription(preparationStep));
         }
         // Function to stop preparation
         function stopPreparationSteps(){
@@ -592,9 +613,10 @@
         function nextPreparationStep() {
             if (preparationStepIndex < preparationSteps.length - 1){
                 preparationStepIndex++;
+                preparationStep = preparationSteps[preparationStepIndex];
                 highlightTargetStep(preparationStepIndex,preparationSteps);
                 highlightCurrentStep(preparationStepIndex, preparationSteps);
-                readText(getStepDescription(preparationStepIndex, preparationSteps));
+                readText(getStepDescription(preparationStep));
             } else {
                 stopPreparationSteps();
                 readText('Preparation steps complete. Time to brew.');
@@ -645,7 +667,7 @@
             }
             highlightTargetStep(brewStepIndex, brewSteps);
             highlightCurrentStep(brewStepIndex, brewSteps);
-            readText(getStepDescription(brewStepIndex, brewSteps));
+            readText(getStepDescription(brewSteps[brewStepIndex])+ " " + getBrewStepTargetSpeechText(brewSteps[brewStepIndex]));
             timer = setInterval(() => {
                 elapsedTime += 1; // Increment elapsed time (assuming 1 second intervals)
                 updateElapsedTime(); // Update elapsed time in the input element
@@ -670,7 +692,7 @@
                             startStepAudio.play();
                         }
                         highlightTargetStep(brewStepIndex, brewSteps);
-                        readText(getStepDescription(brewStepIndex, brewSteps));
+                        readText(getStepDescription(brewSteps[brewStepIndex])+ " " + getBrewStepTargetSpeechText(brewSteps[brewStepIndex]));
                     }
                 }
             }, 1000); // Timer interval: 1 second (adjust as needed)
@@ -741,6 +763,29 @@
                 removeHighlightCurrentStep(brewSteps);
             }
         }
+
+        // Function to get step target description
+        function getBrewStepTargetSpeechText(step){
+            targetTotalWater = parseFloat(step.querySelector('.step-target-total-water').textContent);
+            targetTotalTime = step.querySelector('.step-target-total-time').textContent;
+    
+            timeObject = getMinutesAndSeconds(getSecondsFromTimeString(targetTotalTime));
+            const minutes = timeObject.minutes; // Get minutes
+            const remainingSeconds = timeObject.seconds; // Get remaining seconds
+
+            var minutesText = minutes > 0 ? minutes + " minute" + (minutes > 1 ? "s" : "") : "";
+            var secondsText = remainingSeconds > 0 ? remainingSeconds + " second" + (remainingSeconds > 1 ? "s" : "") : "";
+
+            targetTotalTimeMinsAndSecs = '';
+            if (minutesText && secondsText) {
+                targetTotalTimeMinsAndSecs = minutesText + " and " + secondsText;
+            } else {
+                targetTotalTimeMinsAndSecs = minutesText + secondsText;
+            }
+
+            return "Target " + targetTotalWater + " grams of water at " + targetTotalTimeMinsAndSecs + ".";
+        }
+
     </script>
 </body>
 </html>
