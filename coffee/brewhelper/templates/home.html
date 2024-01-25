@@ -401,12 +401,12 @@
                     
                     // Compare last word to accepted list of commands
                     switch (lastWord) {
-                        case 'start':
+                        case 'prepare':
                             if (currentProcess === Process.NONE){
                                 onStartClicked(); //start operation
                             }
                             break;
-                        case 'brew':
+                        case 'start':
                             if (currentProcess === Process.NONE || currentProcess === Process.PREPARATION){
                                 stopPreparationSteps();
                             }
@@ -538,12 +538,12 @@
         function updateStartButtonStatus(){
             const startPauseButton = document.getElementById('startPauseButton');
             if (currentProcess === Process.NONE){ 
-                startPauseButton.textContent = 'Start';
+                startPauseButton.textContent = 'Prepare';
             } else if (currentProcess === Process.PREPARATION) {
-                startPauseButton.textContent = 'Brew';
+                startPauseButton.textContent = 'Start';
             } else if (currentProcess === Process.BREW) {
                 if (!isTimerRunning){
-                    startPauseButton.textContent = 'Brew'
+                    startPauseButton.textContent = 'Start'
                 } else {
                     startPauseButton.textContent = 'Pause'
                 }
