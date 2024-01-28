@@ -14,7 +14,7 @@ class Recipe(models.Model):
     name = models.CharField(max_length=100, default='')
     description = models.TextField(default='')
     reference = models.TextField(default='')
-    temperature = models.PositiveIntegerField(default=95)
+    temperature = models.TextField(default='')
     coffee_weight = models.PositiveIntegerField(default=0)
     coffee_grind_size = models.TextField(default='')   
     
