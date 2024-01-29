@@ -6,9 +6,18 @@ from django.http import JsonResponse
 def home(request):
     methods = BrewMethod.objects.all()
     recipes = Recipe.objects.all()
+    selected_method = None
     selected_recipe = None
     preparation_steps = []
     brew_steps = []
+
+    if 'selected_method_id' in request.GET:
+        # Get method
+        selected_method_id = request.GET['selected_method_id']
+        try:
+            selected_method = BrewMethod.objects.get(id=selected_method_id)
+        except:
+            pass #do not render any method info if selected_method = None
 
     if 'selected_recipe_id' in request.GET:
         # Get recipe
@@ -41,7 +50,7 @@ def home(request):
         except:
             pass #do not render any recipe info if selected_recipe = None
 
-    return render(request, 'home.html', {'methods': methods, 'recipes': recipes, 'selected_recipe': selected_recipe, 'preparation_steps': preparation_steps, 'brew_steps': brew_steps})
+    return render(request, 'home.html', {'methods': methods, 'recipes': recipes,'selected_method': selected_method, 'selected_recipe': selected_recipe, 'preparation_steps': preparation_steps, 'brew_steps': brew_steps})
 
 def get_recipes(request):
     method_id = request.GET.get('method_id')

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Step, BrewStep, Recipe, BrewMethod
+from .models import Step, BrewStep, Recipe, BrewMethod, Equipment
 from adminsortable2.admin import SortableAdminMixin
 
 class StepAdmin(SortableAdminMixin, admin.ModelAdmin):
@@ -18,5 +18,7 @@ class RecipeAdmin(SortableAdminMixin, admin.ModelAdmin):
 admin.site.register(Recipe, RecipeAdmin)
 
 admin.site.register(BrewMethod)
+
+admin.site.register(Equipment)
 
 
