@@ -347,7 +347,7 @@
         
         // Speech Features ///////////////////////////////////////////////////////
         // read steps outloud ////
-        let isReadStepsOutloud = false;
+        let isReadStepsOutloud = true;
         let voices;
         // Function to set read steps outloud flag based on checkbox state
         function toggleReadStepsOutloud() {
@@ -360,8 +360,10 @@
         // Function to read the description aloud
         function readText(text) {
             if (!isReadStepsOutloud){
+                console.log('why')
                 return;
             }
+            console.log('here')
             // Clear old utterances
             cancelReadText();
             // Create utterance from description
