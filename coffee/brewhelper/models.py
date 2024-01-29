@@ -2,9 +2,21 @@ from django.db import models
 
 # Create your models here.
 
+# Equipment used for carry out a method
+class Equipment(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField(default='')
+
+    def __str__(self):
+        return self.name
+
 # Method of making coffee
 class BrewMethod(models.Model):
     name = models.CharField(max_length=100)
+    equipment = models.ManyToManyField(Equipment, related_name='brewmethods')
+
+    def __str__(self):
+        return self.name
 
 # Collection of steps to make coffee which may be considered one or more method types
 class Recipe(models.Model):
