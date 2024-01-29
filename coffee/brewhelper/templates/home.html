@@ -97,7 +97,7 @@
             <!-- Element to display method header info -->
             <h3>Equipment:</h3>
             <ul>
-                {% for equipment in selected_method.equipment.all %}
+                {% for equipment in selected_method.equipment.all|dictsort:"name" %}
                     <li>{{ equipment.name }}</li>
                 {% endfor %}
             </ul>
