@@ -23,7 +23,7 @@ class Recipe(models.Model):
     methods = models.ManyToManyField(BrewMethod, related_name='recipes')
 
     recipe_id = models.PositiveIntegerField()
-    name = models.CharField(max_length=100, default='')
+    name = models.CharField(max_length=150, default='')
     description = models.TextField(default='')
     reference = models.TextField(default='')
     temperature = models.TextField(default='')
