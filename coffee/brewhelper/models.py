@@ -27,7 +27,7 @@ class Recipe(models.Model):
     description = models.TextField(default='')
     reference = models.TextField(default='')
     temperature = models.TextField(default='')
-    coffee_weight = models.PositiveIntegerField(default=0)
+    coffee_weight = models.DecimalField(max_digits=6, decimal_places=1, default=0)
     coffee_grind_size = models.TextField(default='')   
     
     def __str__(self):
