@@ -18,7 +18,6 @@ This application focuses on guiding the brew process and providing feedback on t
 
 ### Library of Methods and Associated Recipes
 
-https://www.subtext.coffee/pages/brew-guides
 Brew methods and their associated recipes are uploaded manually to the database. The long-term goal is to allow user input to add or improve recipes based on their testing. Here is a list of supported methods and recipes:
 - V60: Hario V60 pourover
    - James Hoffmann V60 1 cup
