@@ -1,4 +1,5 @@
 # Coffee Brew Helper Application
+[Click here to try the application!](https://danielwai.pythonanywhere.com)
 
 ## Introduction
 
@@ -55,8 +56,6 @@ The target step to complete is read outloud. For brew steps, the target total wa
 When enabled, the user can use the appplication by saying commands rather than pressing buttons or using the keyboard. See Usage section for more details on supported commands.
 
 ## Usage
-Try the live [Coffee Brew Helper application](https://danielwai.pythonanywhere.com)!
-
 The typical workflow is as follows:
 1. Select a **Brew Method** from the dropdown menu on the top left. The **Recipe** dropdown menu will populate with all recipes which use this brew method.
 1. Select a recipe from the **Recipe** dropdown menu. Press Select. Recipe information will be loaded onto the page.
