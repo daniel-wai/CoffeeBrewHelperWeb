@@ -1,6 +1,9 @@
 # Coffee Brew Helper Application
 [Click here to try the application!](https://danielwai.pythonanywhere.com)
 
+![TempThumbnailMod](https://github.com/daniel-wai/CoffeeBrewHelperWeb/assets/83196054/6d163a52-a380-4e06-b965-c4177b21eb80)
+
+
 ## Introduction
 
 We often think of brewing coffee as using an automatic drip machine where the process is hands-off for the most part. However, coffee ethusiasts have been exploring other brewing methods, such as pourover, french press and aeropress, to achieve the best cup possible. This application aims to help new coffee ethusiasts experiment with their coffee brewing technique.
