@@ -1,0 +1,836 @@
+<!-- home.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Coffee Brew Helper</title>
+    <!-- Add any CSS links, meta tags, or other head elements here -->
+    {% load static %}
+
+    <!-- Custom fonts for this template-->
+    <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
+
+    <!-- Custom styles for this page -->
+    <link href="{% static 'vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+    
+ 
+    <style>
+        /* Key Test Output*/
+        .highlighted-current-step { /*completed step*/ 
+            background-color: var(--primary); 
+            color: var(--white);
+        }
+        .highlighted-target-step {
+            outline: 2px solid var(--dark);
+        }
+
+        /* Title styling */
+        .title-text{
+            font-weight: bold;
+        }
+    </style>
+
+</head>
+<body>
+    <!-- Begin Page Content -->
+    <div class="container-fluid">
+        <h1 class="py-3 title-text">Coffee Brew Helper</h1>
+        <div>
+            <form class="my-4" action="{% url 'home' %}" method="GET">
+                <div class="row">
+                    <div class="col-md-4">
+                        <select id="method-dropdown" class="form-control my-2" name="selected_method_id" onchange="populateRecipes()">
+                            <option class="dropdown-item" value="">Select Brew Method</option>
+                            {% for method in methods %}
+                                <option class="dropdown-item" value="{{ method.id }}">{{ method.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <select id="recipe-dropdown" class="form-control my-2" name="selected_recipe_id">
+                            <option class="dropdown-item" value="">Select Recipe</option>
+                            <!-- Recipes will be populated dynamically using JavaScript -->
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <input class="form-control btn-primary my-2" type="submit" value="Load">
+                    </div>
+                </div>
+            </form>
+        </div>
+            
+        {% if selected_method and selected_recipe %}
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h2 class="title-text my-2">{{selected_recipe.name}}</h2>
+                </div>
+                <div class="card-body">
+                    <!-- Element to display recipe header info -->
+                    <p> {{ selected_recipe.description }}</p>
+                    <p>More information on this recipe can be found here: {{ selected_recipe.reference }}</p>
+            
+                    <!-- Element to display method header info -->
+                    <h3 class="title-text">Equipment:</h3>
+                    <ul>
+                        {% for equipment in selected_method.equipment.all|dictsort:"name" %}
+                            <li>{{ equipment.name }}</li>
+                        {% endfor %}
+                    </ul>
+                    <h3 class="title-text">Brew Parameters:</h3>
+                    <div>
+                        <div class="my-2">
+                            <span id="recipe-coffee-weight-label" class="title-text">Total Coffee:</span>
+                            <span id="recipe-coffee-weight">{{ selected_recipe.coffee_weight}}g</span>
+                        </div>
+                        <div class="my-2">
+                            <span id="recipe-target-total-water-label" class="title-text">Total Water:</span>
+                            <span id="recipe-target-total-water">{{ selected_recipe.target_total_water }}g</span>
+                        </div>
+                        <div class="my-2">
+                            <span id="recipe-brew-ratio-label" class="title-text" for="recipe-brew-ratio">Brew Ratio:</span>
+                            <span id="recipe-brew-ratio">{{ selected_recipe.brew_ratio }}</span>
+                        </div>
+                        <div class="my-2">
+                            <span id="recipe-coffee-grind-size-label" class="title-text">Grind Size:</span>
+                            <span id="recipe-coffee-grind-size">{{ selected_recipe.coffee_grind_size }}</span>
+                        </div>
+                        <div class="my-2">
+                            <span id="recipe-temperature-label" class="title-text">Temperature:</span>
+                            <span id="recipe-temperature">{{ selected_recipe.temperature }}</span>
+                        </div>
+                        <div class="my-2">
+                            <span id="recipe-target-total-time-label" class="title-text">Total Time:</span>
+                            <span id="recipe-target-total-time">{{ selected_recipe.target_total_time }}</span>
+                        </div>
+                    </div>
+                
+            
+                    <!-- Preparation steps-->
+                    <div>
+                        <h3 class="title-text my-2">Preparation</h3>
+                        {% if preparation_steps %}
+                            <table class="table table-bordered" id="preparation-steps">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 5%;">Step</th>
+                                        <th style="width: 95%;">Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for step in preparation_steps %}
+                                    <tr>
+                                        <td class="step-order-id" style="text-align: center;">{{ step.order_id }}</td>
+                                        <td class="step-description">{{ step.description }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        {% else %}
+                            <label>No prepration steps</label>
+                        {% endif %}
+                    </div>
+
+                    <!-- Brew steps-->
+                    <div>
+                        <h3 class="title-text my-2">Brew</h3>
+                        <!-- Element to display elapsed time -->
+                        <div>
+                            <span id="elapsed-time-label" class="title-text">Elapsed Time:</span>
+                            <span id="elapsed-time">00:00</span>
+                        </div>
+                        <table class="table table-bordered" id="brewing-steps">
+                            <thead>
+                                <tr>
+                                    <th style="width: 5%;">Step</th>
+                                    <th style="width: 70%;">Description</th>
+                                    <!-- <th>Change in Water</th> -->
+                                    <th>Target Water</th>
+                                    <!-- <th>Change in Time</th> -->
+                                    <th>Target Time</th>
+                                    <th>Executed Time</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for step in brew_steps %}
+                                <tr>
+                                    <td class="step-order-id" style="text-align: center;">{{ step.order_id }}</td>
+                                    <td class="step-description">{{ step.description }}</td>
+                                    <td class="step-target-total-water" style="text-align: center;">{{ step.target_total_water }}g</td>
+                                    <td class="step-target-total-time"  style="text-align: center;">{{ step.target_total_time }}</td>
+                                    <td class="step-executed-time"  style="text-align: center;"></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Sounds used in app -->
+                    <audio id="startStepBeepSound" src="{% static 'brewhelper/audio/startStepBeep128.mp3' %}" type="audio/mpeg"></audio>
+                    <audio id="warningStepEndBeepsSound" src="{% static 'brewhelper/audio/warningStepEndBeeps128.mp3' %}" type="audio/mpeg"></audio>
+                    
+                    <!-- Buttons for controlling the timer -->
+                    <div class="my-2">
+                        <button class="btn btn-primary btn-sm" id="startPauseButton" onclick="onStartClicked()">
+                            <span class="text">Start</span>
+                        </button>
+                        <button class="btn btn-primary btn-sm" onclick="onResetClicked()">
+                            <span class="text">Reset</span>
+                        </button>
+                        <button class="btn btn-primary btn-sm" onclick="onNextStepClicked()">
+                            <span class="text">Next</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Speech Settings -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h2 class="my-2">Settings</h2>
+                </div>
+                <div class="card-body">
+                    <p><!-- Checkbox for toggling read steps outloud feature -->
+                        <div class="form-group">
+                            <div class="custom-control custom-checkbox">
+                                <input type ="checkbox" id="toggleReadStepsOutloud" class="custom-control-input" checked onchange="toggleReadStepsOutloud()">
+                                <label class="custom-control-label" for="toggleReadStepsOutloud">Read Steps Outloud</label>
+                            </div>
+                        </div>
+                    </p>
+                    <p><!-- Checkbox for toggling voice commands feature -->
+                        <div class="form-group">
+                            <div class="custom-control custom-checkbox">
+                                <input type ="checkbox" id="toggleVoiceCommands" class="custom-control-input" onchange="toggleVoiceCommands()">
+                                <label class="custom-control-label" for="toggleVoiceCommands">Enable Voice Commands</label>
+                            </div>
+                        </div>
+                    </p>
+                    <p>
+                        <div>
+                            <span class="title-text">Last Detected Command:</span>
+                            <span id="detected-voice-command"></span>
+                        </div>
+                    </p>
+                </div>
+            </div>
+
+        {% else %}
+            <div class="card shadow mb-4">
+                <div class="card-body">
+                    <p class="text">Please select a method followed by a recipe. Then press Load. </p>
+                </div>
+            </div>
+        {% endif %}
+        
+    </div>
+    <!-- /.container-fluid -->
+
+    <!-- Add any JavaScript scripts or other body elements here -->
+    <script>
+        // General helpers ///////////////////////////////////////////////////
+        
+        // Function the returns object with minutes and seconds converted from input total seconds
+        function getMinutesAndSeconds(totalSeconds) {
+            if (isNaN(totalSeconds) || totalSeconds < 0) {
+                return { minutes: 0, seconds: 0 };
+            }
+
+            var minutes = Math.floor(totalSeconds / 60);
+            var remainingSeconds = totalSeconds % 60;
+
+            return { minutes: minutes, seconds: remainingSeconds };
+        }
+
+        // Function to convert seconds to display string mm:ss
+        function getTimeStringFromSeconds(seconds) {
+            if (isNaN(seconds) || seconds < 0) {
+                return "";
+            }
+            timeObject = getMinutesAndSeconds(seconds);
+            const minutes = timeObject.minutes; // Get minutes
+            const remainingSeconds = timeObject.seconds; // Get remaining seconds
+
+            const formattedMinutes = String(minutes).padStart(2, '0'); // Ensure 2-digit minutes
+            const formattedSeconds = String(remainingSeconds).padStart(2, '0'); // Ensure 2-digit seconds
+
+            return `${formattedMinutes}:${formattedSeconds}`; // Format as "mm:ss"
+        }
+
+        // Function to convert display string mm:ss to seconds
+        function getSecondsFromTimeString(timeString) {
+            const [minutes, seconds] = timeString.split(':').map(Number);
+            return minutes * 60 + seconds;
+        }
+
+        // Selecting the recipe //////////////////////////////////////////////
+        // Function to populate recipe dropdown base on method
+        async function populateRecipes() {
+            return new Promise((resolve, reject) => {
+                const methodDropdown = document.getElementById('method-dropdown');
+                const selectedMethodId = methodDropdown.value;
+                const recipeDropdown = document.getElementById('recipe-dropdown');
+
+                // Clear previous options in the recipe dropdown
+                recipeDropdown.innerHTML = '<option value="">Select Recipe</option>';
+
+                if (selectedMethodId !== '') {
+                    // AJAX call to fetch recipes associated with the selected method
+                    fetch(`/get-recipes?method_id=${selectedMethodId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            data.forEach(recipe => {
+                                const option = document.createElement('option');
+                                option.value = recipe.id;
+                                option.textContent = recipe.name;
+                                recipeDropdown.appendChild(option);
+                            });
+                            resolve(); // Resolve the Promise once fetching and populating is done
+                        })
+                        .catch(error => {
+                            console.error('Error fetching recipes:', error);
+                            reject(error); // Reject the Promise in case of an error
+                        });
+                } else {
+                    resolve(); // Resolve immediately if no method is selected
+                }
+            });
+        }
+       
+        document.addEventListener('DOMContentLoaded', () => {
+            // After Select is hit or the page is refreshed, retain selected method and recipe
+            const methodDropdown = document.getElementById('method-dropdown');
+            const recipeDropdown = document.getElementById('recipe-dropdown');
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const selectedMethodId = urlParams.get('selected_method_id');
+            const selectedRecipeId = urlParams.get('selected_recipe_id');
+            
+            if (selectedMethodId) {
+                methodDropdown.value = selectedMethodId;
+                // Populate recipes based on the selected method and set the currently selected recipe
+                populateRecipes()
+                    .then(() => {
+                        if (selectedRecipeId) {
+                            recipeDropdown.value = selectedRecipeId;
+                        }
+                    })
+                    .catch(error => {
+                        // Handle any errors that occurred during populateRecipes
+                        console.error('Error in populateRecipes:', error);
+                    });
+            }
+
+            // Shortcut keys
+            document.addEventListener('keydown', event => {
+                switch (event.key) {
+                    case 'Shift':
+                        onStartClicked();
+                        break;
+                    case 'Control':
+                        onResetClicked();
+                        break;
+                    case ' ':
+                    case 'Spacebar':
+                        event.preventDefault();
+                        onNextStepClicked();
+                        break;
+                    default:
+                        break;
+                }
+            });
+            
+            // Initialize read outloud
+            // Wait for voice list to load (aync to the page) before using them in speech functions
+            window.speechSynthesis.getVoices();
+            window.speechSynthesis.onvoiceschanged = function(){
+                voices = window.speechSynthesis.getVoices();
+            }
+            // Initialize voice commands
+            initVoiceCommands();
+        });
+        
+        // Speech Features ///////////////////////////////////////////////////////
+        // read steps outloud ////
+        let isReadStepsOutloud = true;
+        let voices;
+        // Function to set read steps outloud flag based on checkbox state
+        function toggleReadStepsOutloud() {
+            const checkbox = document.getElementById('toggleReadStepsOutloud');
+            isReadStepsOutloud = checkbox.checked;
+            if (!isReadStepsOutloud) {
+                cancelReadText();
+            }
+        }
+        // Function to read the description aloud
+        function readText(text) {
+            if (!isReadStepsOutloud){
+                console.log('why')
+                return;
+            }
+            console.log('here')
+            // Clear old utterances
+            cancelReadText();
+            // Create utterance from description
+            const utterance = new SpeechSynthesisUtterance(text);
+            // set voice
+            utterance.voice = voices[4]; //for now we hardcode one
+            // Read description
+            window.speechSynthesis.speak(utterance);
+        }
+        // Function to pause reading description
+        function pauseReadText(){
+            if (window.speechSynthesis.speaking){
+                window.speechSynthesis.pause();
+            }
+        }
+        // Function to cancel reading all descriptions
+        function cancelReadText(){
+            if (window.speechSynthesis.speaking){
+                window.speechSynthesis.cancel();
+            }
+        }
+
+        // voice commands for Voice Commands ////
+        let voiceCommands;
+        // Function to initialize voice commands
+        function initVoiceCommands() {
+            // Check browser support for SpeechRecognition
+            if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+                voiceCommands = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+
+                // Configure voice commands
+                voiceCommands.continuous = false; // Enable continuous recognition
+                voiceCommands.lang = 'en-US'; // Set the language
+                voiceCommands.interimResults = false; // Set to true for interim results
+                
+                // Define commands and associate with functions                
+                isAutoRestart = true;
+                
+                voiceCommands.onresult = event => {
+                    const lastResultIndex = event.results.length - 1;
+                    const speechResult = event.results[lastResultIndex][0].transcript.toLowerCase();
+                    
+                    // Split the speechResult into words and extract the last word spoken
+                    const words = speechResult.split(' ');
+                    const lastWord = words[words.length - 1];
+                    
+                    // Compare last word to accepted list of commands
+                    switch (lastWord) {
+                        case 'prepare':
+                            if (currentProcess === Process.NONE){
+                                onStartClicked(); //start operation
+                            }
+                            break;
+                        case 'start':
+                            if (currentProcess === Process.NONE || currentProcess === Process.PREPARATION){
+                                stopPreparationSteps();
+                            }
+                            onStartClicked();
+                            break;
+                        case 'pause':
+                            if (currentProcess === Process.BREW && isTimerRunning){
+                                onStartClicked();
+                            }
+                            break;
+                        case 'reset':
+                            onResetClicked(); // Reset operation
+                            break;
+                        case 'next':
+                            onNextStepClicked(); // Next operation
+                            break;
+                        default:
+                            break;
+                    }
+                    // Update user with last word detected
+                    updateDetectedVoiceCommand(lastWord)
+                };
+
+                // Handle errors and other events
+                voiceCommands.onerror = event => {
+                    switch(event.error){
+                        case 'not-allowed':
+                        case 'service-not-allowed':
+                            // if permission to use the mic is denied, turn off auto-restart
+                            isAutoRestart = false;
+                            break;
+                    }
+                    console.error('voice commands error:', event.error);
+                };
+
+                // Start/stop voice commands based on checkbox state
+                toggleVoiceCommands();
+
+                // Restart recognition after it ends to enable continuous listening
+                voiceCommands.onend = () => {
+                    //updateDetectedVoiceCommand(); //clear shown detected command
+                    if (isAutoRestart){
+                        voiceCommands.start(); // Restart recognition after it ends
+                    }
+                };
+            } else {
+                console.log('voice commands not supported.');
+            }
+        }
+        // Function to toggle voice commands based on checkbox state
+        function toggleVoiceCommands() {
+            if (voiceCommands) {
+                const checkbox = document.getElementById('toggleVoiceCommands');
+                if (checkbox.checked) {
+                    isAutoRestart = true;
+                    voiceCommands.start(); // Start voice commands
+                } else {
+                    updateDetectedVoiceCommand(); //clear shown detected command
+                    isAutoRestart = false;
+                    voiceCommands.stop(); // Stop voice commands
+                }
+            }
+        }
+        // Function to update detected voice command in the input element, defaults to empty string (clear)
+        function updateDetectedVoiceCommand(detecedVoiceCommandResult = "[No Word Detected]") {
+            const detecedVoiceCommandInput = document.getElementById('detected-voice-command');
+            detecedVoiceCommandInput.innerText = detecedVoiceCommandResult; // Update input value with speech recognition result
+        }
+        ///////////////////////////////////////////////////////////////////////
+        // Navigate through different processes
+        // Process status that assumes you can't have multiple processes going at the same time
+        const Process = {
+            NONE: Symbol('no process ready'),
+            PREPARATION: Symbol('preparation process'),
+            BREW: Symbol('brew process')
+        };
+        let currentProcess = Process.NONE;
+        // Update brew time data in header info
+        const recipeTargetTotalTime = document.getElementById('recipe-target-total-time');
+        recipeTargetTotalTime.innerText = getTimeStringFromSeconds(recipeTargetTotalTime.innerText);
+
+        // Get all rows of the table
+        const preparationSteps = document.querySelectorAll('#preparation-steps tbody tr');
+        const brewSteps = document.querySelectorAll('#brewing-steps tbody tr');
+        
+        let preparationStepIndex = -1;
+        let brewStepIndex = -1;
+        let executedBrewStepIndex = -1;
+        let elapsedTime = 0;
+        let timer;
+
+        let isTimerRunning = false;
+
+        updateStartButtonStatus();
+
+        // Function to remove format from all steps
+        function removeEmphasizeSteps(steps, formatName){
+            steps.forEach(row => {
+                row.classList.remove(formatName); // Remove highlight from all rows
+            });
+        }
+        // Function to add format to step
+        function emphasizeCurrentStep(stepIndex, steps, formatName) {
+            removeEmphasizeSteps(steps, formatName);
+            if (stepIndex < steps.length){
+                steps[stepIndex].classList.add(formatName); //Add format to step
+            }
+        }
+
+        // Function to remove higlight from all steps
+        function removeHighlightCurrentStep(steps){
+            removeEmphasizeSteps(steps, 'highlighted-current-step');
+        }
+        // Function to highlight the current step
+        function highlightCurrentStep(stepIndex, steps) {
+            emphasizeCurrentStep(stepIndex, steps, 'highlighted-current-step');
+        }
+        
+        // Function to remove bold from all steps
+        function removeHighlightTargetStep(steps){
+            removeEmphasizeSteps(steps, 'highlighted-target-step'); // Remove bold from all rows
+        } 
+        // Function to bold the step description
+        function highlightTargetStep(stepIndex, steps){
+            emphasizeCurrentStep(stepIndex, steps, 'highlighted-target-step');
+        }
+
+        // Function to update the status of the start button according to the step
+        function updateStartButtonStatus(){
+            const startPauseButton = document.getElementById('startPauseButton');
+            if (currentProcess === Process.NONE){ 
+                startPauseButton.textContent = 'Prepare';
+            } else if (currentProcess === Process.PREPARATION) {
+                startPauseButton.textContent = 'Start';
+            } else if (currentProcess === Process.BREW) {
+                if (!isTimerRunning){
+                    startPauseButton.textContent = 'Start'
+                } else {
+                    startPauseButton.textContent = 'Pause'
+                }
+            } else {
+                // unhandled case
+            }
+        }
+
+        // Function to run through the current process steps
+        function onStartClicked(){
+            if (preparationStepIndex < 0 && preparationSteps.length > 0){ 
+                // preparation ready to start
+                currentProcess = Process.PREPARATION;
+                startPreparationSteps();
+            } else if (brewSteps.length > 0){
+                // brew ready to start
+                currentProcess = Process.BREW;
+                stopPreparationSteps();
+                startBrewSteps();
+            } else {
+                // no process can be started
+                currentProcess = Process.NONE;
+            }
+            updateStartButtonStatus();
+        }
+        // Function to reset all processes 
+        function onResetClicked(){
+            resetPreparationSteps();
+            resetTimer();
+            currentProcess = Process.NONE;
+            updateStartButtonStatus();
+        }
+        // Function to move to the next step of the current process
+        function onNextStepClicked(){
+            if (currentProcess === Process.PREPARATION){
+                nextPreparationStep();
+            } else if (currentProcess === Process.BREW){
+                nextBrewStep();
+            } else {
+                //unhandled case
+            }
+            updateStartButtonStatus();
+        }
+        
+        // Function to get step description
+        function getStepDescription(step){
+            return step.querySelector('.step-description').textContent;
+        }
+        ////////////////////////////////////////////////////////////////////////
+        // Preparation process       
+        
+        // Function to start preparation
+        function startPreparationSteps() {
+            preparationStepIndex = 0;
+            preparationStep = preparationSteps[preparationStepIndex];
+            highlightTargetStep(preparationStepIndex,preparationSteps);
+            highlightCurrentStep(preparationStepIndex, preparationSteps);
+            readText(getStepDescription(preparationStep));
+        }
+        // Function to stop preparation
+        function stopPreparationSteps(){
+            preparationStepIndex = preparationSteps.length;
+            removeHighlightTargetStep(preparationSteps);
+            removeHighlightCurrentStep(preparationSteps);
+        }
+        // Function to move to the next preparation step
+        function nextPreparationStep() {
+            if (preparationStepIndex < preparationSteps.length - 1){
+                preparationStepIndex++;
+                preparationStep = preparationSteps[preparationStepIndex];
+                highlightTargetStep(preparationStepIndex,preparationSteps);
+                highlightCurrentStep(preparationStepIndex, preparationSteps);
+                readText(getStepDescription(preparationStep));
+            } else {
+                stopPreparationSteps();
+                readText('Preparation steps complete. Time to brew.');
+            }
+        }
+
+        // Function to reset preparation steps
+        function resetPreparationSteps(){
+            preparationStepIndex = -1;
+            removeHighlightTargetStep(preparationSteps);
+            removeHighlightCurrentStep(preparationSteps);
+        }
+        ////////////////////////////////////////////////////////////////////////
+        // Brew process
+
+        // Update the Time cells in the table        
+        function updateTimeCells(timeCells){
+            timeCells.forEach(cell => {
+            const timeInSeconds = parseInt(cell.textContent);
+            cell.textContent = getTimeStringFromSeconds(timeInSeconds);
+            });
+        }
+        const totalTargetTimeCells = document.querySelectorAll('.step-target-total-time');
+        updateTimeCells(totalTargetTimeCells)
+
+        // Function to update elapsed time in the input element
+        function updateElapsedTime() {
+            const elapsedTimeInput = document.getElementById('elapsed-time');
+            const formattedTime = getTimeStringFromSeconds(elapsedTime); // Convert elapsed time to "mm:ss"
+            elapsedTimeInput.innerText = formattedTime; // Update input value with formatted time
+        }
+        
+        // Function to enable/disable timer
+        function toggleTimer() {
+            if (!isTimerRunning) { 
+                startTimer();
+            } else {
+                pauseTimer();
+            }
+            isTimerRunning = !isTimerRunning; // Toggle timer status
+        }
+
+        // Function to start the timer and highlight brew steps based on target_total_time
+        function startTimer() {
+            if (elapsedTime < 1){
+                const startStepAudio = document.getElementById('startStepBeepSound');
+                startStepAudio.play();
+            }
+            if (brewStepIndex >= 0 && brewStepIndex < brewSteps.length){
+                highlightTargetStep(brewStepIndex, brewSteps);
+                highlightCurrentStep(brewStepIndex, brewSteps);
+                readText(getStepDescription(brewSteps[brewStepIndex])+ " " + getBrewStepTargetSpeechText(brewSteps[brewStepIndex]));
+            }
+            timer = setInterval(() => {
+                elapsedTime += 1; // Increment elapsed time (assuming 1 second intervals)
+                updateElapsedTime(); // Update elapsed time in the input element
+                // Highlight the current step
+                if (brewStepIndex < 0 || brewStepIndex >= brewSteps.length) {
+                    // Don't stop timer as it will disrupt the executed completed time
+                } else {
+                    const currentStepTotalTime = getSecondsFromTimeString(brewSteps[brewStepIndex].querySelector('.step-target-total-time').textContent);
+                    
+                    // Play warning beep 3 seconds before step change
+                    if (elapsedTime >= currentStepTotalTime - 3) {
+                        const warningStepEndAudio = document.getElementById('warningStepEndBeepsSound');
+                        if (warningStepEndAudio.paused){
+                            warningStepEndAudio.play();
+                        }
+                    }
+                    
+                    if (elapsedTime >= currentStepTotalTime) {
+                        const startStepAudio = document.getElementById('startStepBeepSound');
+                        if (startStepAudio.paused){
+                            startStepAudio.play();
+                        }
+                        brewStepIndex++;
+                        if (brewStepIndex >= 0 && brewStepIndex < brewSteps.length){
+                            highlightTargetStep(brewStepIndex, brewSteps);
+                            readText(getStepDescription(brewSteps[brewStepIndex])+ " " + getBrewStepTargetSpeechText(brewSteps[brewStepIndex]));
+                        }
+                        else{
+                            removeHighlightTargetStep(brewSteps);
+                        }
+                    }
+                }
+            }, 1000); // Timer interval: 1 second (adjust as needed)
+        }
+        // Function to stop the timer
+        function pauseTimer() {
+            clearInterval(timer);
+            const startStepAudio = document.getElementById('startStepBeepSound');
+            startStepAudio.pause();
+            const warningStepEndAudio = document.getElementById('warningStepEndBeepsSound');
+            warningStepEndAudio.pause();
+            cancelReadText(); //better to cancel and restart reading
+        }
+
+        // Function to start brew 
+        function startBrewSteps(){
+            if (brewStepIndex < 0){
+                brewStepIndex = 0; 
+                isTimerRunning = false;
+            }
+            toggleTimer();
+        }
+
+        // Function to reset the timer and step index
+        function resetTimer() {
+            // Stop the timer
+            pauseTimer(timer);
+            isTimerRunning = false;
+        
+            // Reset test parameters
+            brewStepIndex = -1;
+            executedBrewStepIndex = -1;
+            elapsedTime = 0;
+            const startStepAudio = document.getElementById('startStepBeepSound');
+            startStepAudio.currentTime = 0;
+            const warningStepEndAudio = document.getElementById('warningStepEndBeepsSound');
+            warningStepEndAudio.currentTime = 0;
+            cancelReadText();
+            removeHighlightTargetStep(brewSteps);
+            removeHighlightCurrentStep(brewSteps);
+            updateElapsedTime(); // Update elapsed time in the input element
+
+            // Clear the executed-time column
+            const timeTakenCells = document.querySelectorAll('.step-executed-time');
+            timeTakenCells.forEach(cell => {
+                cell.textContent = ''; // Clear the content of executed-time cells
+            });
+        }
+
+        // Function to record time taken and update step
+        function nextBrewStep() {
+            if (brewStepIndex < 0){
+                return; //brew hasn't started
+            }
+
+            if (executedBrewStepIndex >= -1 && executedBrewStepIndex < brewSteps.length - 1){
+                // Increment to current step to be executed
+                executedBrewStepIndex++; 
+                // Record current time for the current step executed
+                const currentStepId = executedBrewStepIndex + 1; // Assuming stepIndex starts from 0
+                const timeTakenCell = brewSteps[executedBrewStepIndex].querySelector(`.step-executed-time`);
+                timeTakenCell.textContent = getTimeStringFromSeconds(elapsedTime);
+
+                // Highlight next step to execute
+                highlightCurrentStep(executedBrewStepIndex + 1, brewSteps);
+            } else {
+                // past steps
+                removeHighlightCurrentStep(brewSteps);
+            }
+        }
+
+        // Function to get step target description
+        function getBrewStepTargetSpeechText(step){
+            targetTotalWater = parseFloat(step.querySelector('.step-target-total-water').textContent);
+            targetTotalTime = step.querySelector('.step-target-total-time').textContent;
+    
+            timeObject = getMinutesAndSeconds(getSecondsFromTimeString(targetTotalTime));
+            const minutes = timeObject.minutes; // Get minutes
+            const remainingSeconds = timeObject.seconds; // Get remaining seconds
+
+            var minutesText = minutes > 0 ? minutes + " minute" + (minutes > 1 ? "s" : "") : "";
+            var secondsText = remainingSeconds > 0 ? remainingSeconds + " second" + (remainingSeconds > 1 ? "s" : "") : "";
+
+            targetTotalTimeMinsAndSecs = '';
+            if (minutesText && secondsText) {
+                targetTotalTimeMinsAndSecs = minutesText + " and " + secondsText;
+            } else {
+                targetTotalTimeMinsAndSecs = minutesText + secondsText;
+            }
+
+            return "Target " + targetTotalWater + " grams of water at " + targetTotalTimeMinsAndSecs + ".";
+        }
+
+    </script>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="{% static 'js/sb-admin-2.min.js' %}"></script>
+
+    <!-- Page level plugins -->
+    <script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+
+</body>
+</html>
