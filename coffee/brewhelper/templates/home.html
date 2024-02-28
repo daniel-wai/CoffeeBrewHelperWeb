@@ -177,16 +177,22 @@
                     <audio id="warningStepEndBeepsSound" src="{% static 'brewhelper/audio/warningStepEndBeeps128.mp3' %}" type="audio/mpeg"></audio>
                     
                     <!-- Buttons for controlling the timer -->
-                    <div class="my-2">
-                        <button class="btn btn-primary btn-sm" id="startPauseButton" onclick="onStartClicked()">
-                            <span class="text">Start</span>
-                        </button>
-                        <button class="btn btn-primary btn-sm" onclick="onResetClicked()">
-                            <span class="text">Reset</span>
-                        </button>
-                        <button class="btn btn-primary btn-sm" onclick="onNextStepClicked()">
-                            <span class="text">Next</span>
-                        </button>
+                    <div class="row my-2">
+                        <div class="col-md-2">
+                            <button class="form-control btn-primary my-2" id="startPauseButton" onclick="onStartClicked()">
+                                <span class="text">Start</span>
+                            </button>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="form-control btn-primary my-2" onclick="onResetClicked()">
+                                <span class="text">Reset</span>
+                            </button>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="form-control btn-primary my-2" onclick="onNextStepClicked()">
+                                <span class="text">Next</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
