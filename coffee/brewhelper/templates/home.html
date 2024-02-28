@@ -43,27 +43,29 @@
     <!-- Begin Page Content -->
     <div class="container-fluid">
         <h1 class="py-3 title-text">Coffee Brew Helper</h1>
-        <form class="form-control border-0 small my-4" action="{% url 'home' %}" method="GET">
-            <label class="title-text" for="method-dropdown">Select Method:</label>
-            <div class="btn">
-                <select id="method-dropdown" class="form-control" name="selected_method_id" onchange="populateRecipes()">
-                    <option class="dropdown-item" value="">Select a Method</option>
-                    {% for method in methods %}
-                        <option class="dropdown-item" value="{{ method.id }}">{{ method.name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <label class="title-text" for="recipe-dropdown">Select Recipe:</label>
-            <div class="btn">
-                <select id="recipe-dropdown" class="form-control" name="selected_recipe_id">
-                    <option class="dropdown-item" value="">Select a Recipe</option>
-                    <!-- Recipes will be populated dynamically using JavaScript -->
-                </select>
-            </div>
-
-            <input class="btn btn-primary btn-sm" type="submit" value="Select">
-        </form>
+        <div>
+            <form class="my-4" action="{% url 'home' %}" method="GET">
+                <div class="row">
+                    <div class="col-md-4">
+                        <select id="method-dropdown" class="form-control my-2" name="selected_method_id" onchange="populateRecipes()">
+                            <option class="dropdown-item" value="">Select Brew Method</option>
+                            {% for method in methods %}
+                                <option class="dropdown-item" value="{{ method.id }}">{{ method.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <select id="recipe-dropdown" class="form-control my-2" name="selected_recipe_id">
+                            <option class="dropdown-item" value="">Select Recipe</option>
+                            <!-- Recipes will be populated dynamically using JavaScript -->
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <input class="form-control btn-primary my-2" type="submit" value="Load">
+                    </div>
+                </div>
+            </form>
+        </div>
             
         {% if selected_method and selected_recipe %}
             <div class="card shadow mb-4">
@@ -223,7 +225,7 @@
         {% else %}
             <div class="card shadow mb-4">
                 <div class="card-body">
-                    <p class="text">Please select a method and then a recipe. </p>
+                    <p class="text">Please select a method followed by a recipe. Then press Load. </p>
                 </div>
             </div>
         {% endif %}
@@ -277,7 +279,7 @@
                 const recipeDropdown = document.getElementById('recipe-dropdown');
 
                 // Clear previous options in the recipe dropdown
-                recipeDropdown.innerHTML = '<option value="">Select a Recipe</option>';
+                recipeDropdown.innerHTML = '<option value="">Select Recipe</option>';
 
                 if (selectedMethodId !== '') {
                     // AJAX call to fetch recipes associated with the selected method

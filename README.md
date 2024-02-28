@@ -61,7 +61,7 @@ When enabled, the user can use the appplication by saying commands rather than p
 ## Usage
 The typical workflow is as follows:
 1. Select a **Brew Method** from the dropdown menu on the top left. The **Recipe** dropdown menu will populate with all recipes which use this brew method.
-1. Select a recipe from the **Recipe** dropdown menu. Press Select. Recipe information will be loaded onto the page.
+1. Select a recipe from the **Recipe** dropdown menu. Press Load. Recipe information will be loaded onto the page.
 1. Use the **Equipment** list to gather all required tools before you begin.
 1. You are ready to begin **Preparation** and **Brew** steps.
 	> Note:
