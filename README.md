@@ -181,3 +181,12 @@ Here is how you can clone the source repository to run locally.
 ### Common Issues and Troubleshooting
 
 To be completed once user feedback has been processed.
+
+## Theme
+
+The SB Admin 2 free Boostrap 4 theme is used with the following source repository: https://github.com/StartBootstrap/startbootstrap-sb-admin-2.git
+
+The relevant files are copied to the static folder at the root folder level. 
+
+
+
