@@ -4,223 +4,241 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Coffee Brew Helper</title>
     <!-- Add any CSS links, meta tags, or other head elements here -->
     {% load static %}
+
+    <!-- Custom fonts for this template-->
+    <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
+
+    <!-- Custom styles for this page -->
+    <link href="{% static 'vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+    
+ 
     <style>
         /* Key Test Output*/
         .highlighted-current-step { /*completed step*/ 
-            background-color: yellow; 
+            background-color: var(--primary); 
+            color: var(--white);
         }
         .highlighted-target-step {
-            outline: 2px solid black;
+            outline: 2px solid var(--dark);
         }
 
-        /* Header styling */
-        h2 {
-            margin-top: 20px;
-            margin-bottom: 10px; /* Reduce space below section headers */
-        }
-        h3 {
-            margin-top: 20px;
-            margin-bottom: 10px; /* Reduce space below section headers */
-        }
-
-        /* Section Styling */
-        .section {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        /* List Styling */
-        ul {
-            margin-top: 0px;
-            margin-bottom: 0px;
-            line-height: 1.5; /* Adjust line spacing within sections */
-        }
-
-        /* Paragraph styling */
-        p {
-            margin-top: 0px;
-        }
-
-        /* Input Styling */
-        input[type="text"] {
-            background: none;
-            border: none;
-            outline: none;
-            width: 80%;
-        }
-
-        /* Label Styling */
-        label {
+        /* Title styling */
+        .title-text{
             font-weight: bold;
-            margin: 0;
-            padding: 0;
         }
-
-
     </style>
+
 </head>
 <body>
-    <h1>Coffee Brew Helper</h1>
-    <form action="{% url 'home' %}" method="GET">
-        <label for="method-dropdown">Select Method:</label>
-        <select id="method-dropdown" name="selected_method_id" onchange="populateRecipes()">
-            <option value="">Select a Method</option>
-            {% for method in methods %}
-                <option value="{{ method.id }}">{{ method.name }}</option>
-            {% endfor %}
-        </select>
-
-        <label for="recipe-dropdown">Select Recipe:</label>
-        <select id="recipe-dropdown" name="selected_recipe_id">
-            <option value="">Select a Recipe</option>
-            <!-- Recipes will be populated dynamically using JavaScript -->
-        </select>
-
-        <input type="submit" value="Select">
-    </form>
-        
-    {% if selected_method and selected_recipe %}
-        <div class="section">
-            <h2>{{selected_recipe.name}}</h2>
-             <!-- Element to display recipe header info -->
-             <label id = "recipe-description-label" for="recipe-description">
-                <span>Description: </span>
-                <input type ="text" id="recipe-description" readonly value="{{ selected_recipe.description }}">
-            </label>
-            <label id = "recipe-reference-label" for="recipe-reference">
-                <span>Reference: </span>
-                <input type ="text" id="recipe-reference" readonly value="{{ selected_recipe.reference }}">
-            </label>
-            <!-- Element to display method header info -->
-            <h3>Equipment:</h3>
-            <ul>
-                {% for equipment in selected_method.equipment.all|dictsort:"name" %}
-                    <li>{{ equipment.name }}</li>
-                {% endfor %}
-            </ul>
-            <h3>Brew parameters:</h3>
-            <label id = "recipe-coffee-weight-label" for="recipe-coffee-weight">
-                <span>Total coffee: </span>
-                <input type ="text" id="recipe-coffee-weight" readonly value="{{ selected_recipe.coffee_weight}}g">
-            </label>
-            <label id = "recipe-target-total-water-label" for="recipe-target-total-water">
-                <span>Total water: </span>
-                <input type ="text" id="recipe-target-total-water" readonly value="{{ selected_recipe.target_total_water }}g">
-            </label>
-            <label id = "recipe-brew-ratio-label" for="recipe-brew-ratio">
-                <span>Brew ratio: </span>
-                <input type ="text" id="recipe-brew-ratio" readonly value="{{ selected_recipe.brew_ratio }}">
-            </label>
-            <label id = "recipe-coffee-grind-size-label" for="recipe-coffee-grind-size">
-                <span>Grind size: </span>
-                <input type ="text" id="recipe-coffee-grind-size" readonly value="{{ selected_recipe.coffee_grind_size }}">
-            </label>
-            <label id = "recipe-temperature-label" for="recipe-temperature">
-                <span>Temperature: </span>
-                <input type ="text" id="recipe-temperature" readonly value="{{ selected_recipe.temperature }}">
-            </label>
-            <label id = "recipe-target-total-time-label" for="recipe-target-total-time">
-                <span>Total time: </span>
-                <input type ="text" id="recipe-target-total-time" readonly value="{{ selected_recipe.target_total_time }}">
-            </label>
+    <!-- Begin Page Content -->
+    <div class="container-fluid">
+        <h1 class="py-3 title-text">Coffee Brew Helper</h1>
+        <div>
+            <form class="my-4" action="{% url 'home' %}" method="GET">
+                <div class="row">
+                    <div class="col-md-4">
+                        <select id="method-dropdown" class="form-control my-2" name="selected_method_id" onchange="populateRecipes()">
+                            <option class="dropdown-item" value="">Select Brew Method</option>
+                            {% for method in methods %}
+                                <option class="dropdown-item" value="{{ method.id }}">{{ method.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <select id="recipe-dropdown" class="form-control my-2" name="selected_recipe_id">
+                            <option class="dropdown-item" value="">Select Recipe</option>
+                            <!-- Recipes will be populated dynamically using JavaScript -->
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <input class="form-control btn-primary my-2" type="submit" value="Load">
+                    </div>
+                </div>
+            </form>
         </div>
-        
-         <!-- Preparation steps-->
-        <div class="section">
-            <h3>Preparation</h3>
-            {% if preparation_steps %}
-                <table border="1" id="preparation-steps">
-                    <thead>
-                        <tr>
-                            <th style="width: 5%;">Step</th>
-                            <th style="width: 95%;">Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for step in preparation_steps %}
-                        <tr>
-                            <td class="step-order-id" style="text-align: center;">{{ step.order_id }}</td>
-                            <td class="step-description">{{ step.description }}</td>
-                        </tr>
+            
+        {% if selected_method and selected_recipe %}
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h2 class="title-text my-2">{{selected_recipe.name}}</h2>
+                </div>
+                <div class="card-body">
+                    <!-- Element to display recipe header info -->
+                    <p> {{ selected_recipe.description }}</p>
+                    <p>More information on this recipe can be found here: {{ selected_recipe.reference }}</p>
+            
+                    <!-- Element to display method header info -->
+                    <h3 class="title-text">Equipment:</h3>
+                    <ul>
+                        {% for equipment in selected_method.equipment.all|dictsort:"name" %}
+                            <li>{{ equipment.name }}</li>
                         {% endfor %}
-                    </tbody>
-                </table>
-            {% else %}
-                <label>No prepration steps</label>
-            {% endif %}
-        </div>
+                    </ul>
+                    <h3 class="title-text">Brew Parameters:</h3>
+                    <div>
+                        <div class="my-2">
+                            <span id="recipe-coffee-weight-label" class="title-text">Total Coffee:</span>
+                            <span id="recipe-coffee-weight">{{ selected_recipe.coffee_weight}}g</span>
+                        </div>
+                        <div class="my-2">
+                            <span id="recipe-target-total-water-label" class="title-text">Total Water:</span>
+                            <span id="recipe-target-total-water">{{ selected_recipe.target_total_water }}g</span>
+                        </div>
+                        <div class="my-2">
+                            <span id="recipe-brew-ratio-label" class="title-text" for="recipe-brew-ratio">Brew Ratio:</span>
+                            <span id="recipe-brew-ratio">{{ selected_recipe.brew_ratio }}</span>
+                        </div>
+                        <div class="my-2">
+                            <span id="recipe-coffee-grind-size-label" class="title-text">Grind Size:</span>
+                            <span id="recipe-coffee-grind-size">{{ selected_recipe.coffee_grind_size }}</span>
+                        </div>
+                        <div class="my-2">
+                            <span id="recipe-temperature-label" class="title-text">Temperature:</span>
+                            <span id="recipe-temperature">{{ selected_recipe.temperature }}</span>
+                        </div>
+                        <div class="my-2">
+                            <span id="recipe-target-total-time-label" class="title-text">Total Time:</span>
+                            <span id="recipe-target-total-time">{{ selected_recipe.target_total_time }}</span>
+                        </div>
+                    </div>
+                
+            
+                    <!-- Preparation steps-->
+                    <div>
+                        <h3 class="title-text my-2">Preparation</h3>
+                        {% if preparation_steps %}
+                            <table class="table table-bordered" id="preparation-steps">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 5%;">Step</th>
+                                        <th style="width: 95%;">Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for step in preparation_steps %}
+                                    <tr>
+                                        <td class="step-order-id" style="text-align: center;">{{ step.order_id }}</td>
+                                        <td class="step-description">{{ step.description }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        {% else %}
+                            <label>No prepration steps</label>
+                        {% endif %}
+                    </div>
 
-        <!-- Brew steps-->
-        <div class="section">
-            <h3>Brew</h3>
-            <!-- Element to display elapsed time -->
-            <label id = "elapsed-time-label" for="elapsed-time">
-                <span>Elapsed Time: </span>
-                <input type="text" id="elapsed-time" readonly value="00:00">
-            </label>
-            <table border="1" id="brewing-steps">
-                <thead>
-                    <tr>
-                        <th style="width: 5%;">Step</th>
-                        <th style="width: 70%;">Description</th>
-                        <!-- <th>Change in Water</th> -->
-                        <th>Target Water</th>
-                        <!-- <th>Change in Time</th> -->
-                        <th>Target Time</th>
-                        <th>Executed Time</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for step in brew_steps %}
-                    <tr>
-                        <td class="step-order-id" style="text-align: center;">{{ step.order_id }}</td>
-                        <td class="step-description">{{ step.description }}</td>
-                        <td class="step-target-total-water" style="text-align: center;">{{ step.target_total_water }}g</td>
-                        <td class="step-target-total-time"  style="text-align: center;">{{ step.target_total_time }}</td>
-                        <td class="step-executed-time"  style="text-align: center;"></td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+                    <!-- Brew steps-->
+                    <div>
+                        <h3 class="title-text my-2">Brew</h3>
+                        <!-- Element to display elapsed time -->
+                        <div>
+                            <span id="elapsed-time-label" class="title-text">Elapsed Time:</span>
+                            <span id="elapsed-time">00:00</span>
+                        </div>
+                        <table class="table table-bordered" id="brewing-steps">
+                            <thead>
+                                <tr>
+                                    <th style="width: 5%;">Step</th>
+                                    <th style="width: 70%;">Description</th>
+                                    <!-- <th>Change in Water</th> -->
+                                    <th>Target Water</th>
+                                    <!-- <th>Change in Time</th> -->
+                                    <th>Target Time</th>
+                                    <th>Executed Time</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for step in brew_steps %}
+                                <tr>
+                                    <td class="step-order-id" style="text-align: center;">{{ step.order_id }}</td>
+                                    <td class="step-description">{{ step.description }}</td>
+                                    <td class="step-target-total-water" style="text-align: center;">{{ step.target_total_water }}g</td>
+                                    <td class="step-target-total-time"  style="text-align: center;">{{ step.target_total_time }}</td>
+                                    <td class="step-executed-time"  style="text-align: center;"></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
 
-        <!-- Buttons for controlling the timer -->
-        <audio id="startStepBeepSound" src="{% static 'brewhelper/audio/startStepBeep128.mp3' %}" type="audio/mpeg"></audio>
-        <audio id="warningStepEndBeepsSound" src="{% static 'brewhelper/audio/warningStepEndBeeps128.mp3' %}" type="audio/mpeg"></audio>
-        <button id="startPauseButton" onclick="onStartClicked()">Start</button>
-        <button onclick="onResetClicked()">Reset</button>
-        <button onclick="onNextStepClicked()">Next</button>
+                    <!-- Sounds used in app -->
+                    <audio id="startStepBeepSound" src="{% static 'brewhelper/audio/startStepBeep128.mp3' %}" type="audio/mpeg"></audio>
+                    <audio id="warningStepEndBeepsSound" src="{% static 'brewhelper/audio/warningStepEndBeeps128.mp3' %}" type="audio/mpeg"></audio>
+                    
+                    <!-- Buttons for controlling the timer -->
+                    <div class="row my-2">
+                        <div class="col-md-2">
+                            <button class="form-control btn-primary my-2" id="startPauseButton" onclick="onStartClicked()">
+                                <span class="text">Start</span>
+                            </button>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="form-control btn-primary my-2" onclick="onResetClicked()">
+                                <span class="text">Reset</span>
+                            </button>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="form-control btn-primary my-2" onclick="onNextStepClicked()">
+                                <span class="text">Next</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Speech Settings -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h2 class="my-2">Settings</h2>
+                </div>
+                <div class="card-body">
+                    <p><!-- Checkbox for toggling read steps outloud feature -->
+                        <div class="form-group">
+                            <div class="custom-control custom-checkbox">
+                                <input type ="checkbox" id="toggleReadStepsOutloud" class="custom-control-input" checked onchange="toggleReadStepsOutloud()">
+                                <label class="custom-control-label" for="toggleReadStepsOutloud">Read Steps Outloud</label>
+                            </div>
+                        </div>
+                    </p>
+                    <p><!-- Checkbox for toggling voice commands feature -->
+                        <div class="form-group">
+                            <div class="custom-control custom-checkbox">
+                                <input type ="checkbox" id="toggleVoiceCommands" class="custom-control-input" onchange="toggleVoiceCommands()">
+                                <label class="custom-control-label" for="toggleVoiceCommands">Enable Voice Commands</label>
+                            </div>
+                        </div>
+                    </p>
+                    <p>
+                        <div>
+                            <span class="title-text">Last Detected Command:</span>
+                            <span id="detected-voice-command"></span>
+                        </div>
+                    </p>
+                </div>
+            </div>
+
+        {% else %}
+            <div class="card shadow mb-4">
+                <div class="card-body">
+                    <p class="text">Please select a brew method followed by a recipe. Then press Load. </p>
+                </div>
+            </div>
+        {% endif %}
         
-        <!-- Speech Settings -->
-        <div class="section">
-            <h2>Settings</h2>
-            <p><!-- Checkbox for toggling read steps outloud feature -->
-                <label for="toggleReadStepsOutloud">
-                    <input type ="checkbox" id="toggleReadStepsOutloud" checked onchange="toggleReadStepsOutloud()">
-                    <span><strong>Enable Read Steps Outloud</strong></span>
-                </label>
-            </p>
-            <p><!-- Checkbox for toggling voice commands feature -->
-                <label for="toggleVoiceCommands">
-                    <input type ="checkbox" id="toggleVoiceCommands" onchange="toggleVoiceCommands()">
-                    <span><strong>Enable Voice Commands</strong></span>
-                </label>
-            </p>
-            <p class="detected-voice-command-label">
-                <label for="detected-voice-command"><span>Last Detected Command: </span></label>
-                <input type="text" id="detected-voice-command" readonly value="">
-            </p>
-        </div>
+    </div>
+    <!-- /.container-fluid -->
 
-    {% else %}
-        <div class="section">
-            <h2>[No Recipe Selected]</h2>
-        </div>
-    {% endif %}
-    
     <!-- Add any JavaScript scripts or other body elements here -->
     <script>
         // General helpers ///////////////////////////////////////////////////
@@ -267,7 +285,7 @@
                 const recipeDropdown = document.getElementById('recipe-dropdown');
 
                 // Clear previous options in the recipe dropdown
-                recipeDropdown.innerHTML = '<option value="">Select a Recipe</option>';
+                recipeDropdown.innerHTML = '<option value="">Select Recipe</option>';
 
                 if (selectedMethodId !== '') {
                     // AJAX call to fetch recipes associated with the selected method
@@ -484,7 +502,7 @@
         // Function to update detected voice command in the input element, defaults to empty string (clear)
         function updateDetectedVoiceCommand(detecedVoiceCommandResult = "[No Word Detected]") {
             const detecedVoiceCommandInput = document.getElementById('detected-voice-command');
-            detecedVoiceCommandInput.value = detecedVoiceCommandResult ; // Update input value with speech recognition result
+            detecedVoiceCommandInput.innerText = detecedVoiceCommandResult; // Update input value with speech recognition result
         }
         ///////////////////////////////////////////////////////////////////////
         // Navigate through different processes
@@ -497,7 +515,7 @@
         let currentProcess = Process.NONE;
         // Update brew time data in header info
         const recipeTargetTotalTime = document.getElementById('recipe-target-total-time');
-        recipeTargetTotalTime.value = getTimeStringFromSeconds(recipeTargetTotalTime.value);
+        recipeTargetTotalTime.innerText = getTimeStringFromSeconds(recipeTargetTotalTime.innerText);
 
         // Get all rows of the table
         const preparationSteps = document.querySelectorAll('#preparation-steps tbody tr');
@@ -657,7 +675,7 @@
         function updateElapsedTime() {
             const elapsedTimeInput = document.getElementById('elapsed-time');
             const formattedTime = getTimeStringFromSeconds(elapsedTime); // Convert elapsed time to "mm:ss"
-            elapsedTimeInput.value = formattedTime; // Update input value with formatted time
+            elapsedTimeInput.innerText = formattedTime; // Update input value with formatted time
         }
         
         // Function to enable/disable timer
@@ -805,5 +823,20 @@
         }
 
     </script>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="{% static 'js/sb-admin-2.min.js' %}"></script>
+
+    <!-- Page level plugins -->
+    <script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+
 </body>
 </html>

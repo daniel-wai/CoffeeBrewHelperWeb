@@ -61,7 +61,7 @@ When enabled, the user can use the appplication by saying commands rather than p
 ## Usage
 The typical workflow is as follows:
 1. Select a **Brew Method** from the dropdown menu on the top left. The **Recipe** dropdown menu will populate with all recipes which use this brew method.
-1. Select a recipe from the **Recipe** dropdown menu. Press Select. Recipe information will be loaded onto the page.
+1. Select a recipe from the **Recipe** dropdown menu. Press Load. Recipe information will be loaded onto the page.
 1. Use the **Equipment** list to gather all required tools before you begin.
 1. You are ready to begin **Preparation** and **Brew** steps.
 	> Note:
@@ -181,3 +181,12 @@ Here is how you can clone the source repository to run locally.
 ### Common Issues and Troubleshooting
 
 To be completed once user feedback has been processed.
+
+## Theme
+
+The SB Admin 2 free Boostrap 4 theme is used with the following source repository: https://github.com/StartBootstrap/startbootstrap-sb-admin-2.git
+
+The relevant files are copied to the static folder at the root folder level. 
+
+
+
