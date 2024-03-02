@@ -36,6 +36,13 @@
         .title-text{
             font-weight: bold;
         }
+
+        /* Bullet list not indented */
+        .list-inline-bullet{
+            padding-left: 0;
+            list-style-position: inside;
+        }
+
     </style>
 
 </head>
@@ -79,7 +86,7 @@
             
                     <!-- Element to display method header info -->
                     <h3 class="title-text">Equipment:</h3>
-                    <ul>
+                    <ul class="list-inline-bullet">
                         {% for equipment in selected_method.equipment.all|dictsort:"name" %}
                             <li>{{ equipment.name }}</li>
                         {% endfor %}
@@ -117,22 +124,16 @@
                     <div>
                         <h3 class="title-text my-2">Preparation</h3>
                         {% if preparation_steps %}
-                            <table class="table table-bordered" id="preparation-steps">
-                                <thead>
-                                    <tr>
-                                        <th style="width: 5%;">Step</th>
-                                        <th style="width: 95%;">Description</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for step in preparation_steps %}
-                                    <tr>
-                                        <td class="step-order-id" style="text-align: center;">{{ step.order_id }}</td>
-                                        <td class="step-description">{{ step.description }}</td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
+                            <div id="preparation-steps">
+                                {% for step in preparation_steps %}
+                                <div class="row my-2">
+                                    <div class="col-md-12">
+                                        <span class="step-order-id title-text">Step {{ step.order_id }}:</span>
+                                        <span class="step-description">{{ step.description }}</span>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
                         {% else %}
                             <label>No prepration steps</label>
                         {% endif %}
@@ -146,30 +147,28 @@
                             <span id="elapsed-time-label" class="title-text">Elapsed Time:</span>
                             <span id="elapsed-time">00:00</span>
                         </div>
-                        <table class="table table-bordered" id="brewing-steps">
-                            <thead>
-                                <tr>
-                                    <th style="width: 5%;">Step</th>
-                                    <th style="width: 70%;">Description</th>
-                                    <!-- <th>Change in Water</th> -->
-                                    <th>Target Water</th>
-                                    <!-- <th>Change in Time</th> -->
-                                    <th>Target Time</th>
-                                    <th>Executed Time</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for step in brew_steps %}
-                                <tr>
-                                    <td class="step-order-id" style="text-align: center;">{{ step.order_id }}</td>
-                                    <td class="step-description">{{ step.description }}</td>
-                                    <td class="step-target-total-water" style="text-align: center;">{{ step.target_total_water }}g</td>
-                                    <td class="step-target-total-time"  style="text-align: center;">{{ step.target_total_time }}</td>
-                                    <td class="step-executed-time"  style="text-align: center;"></td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                        <div class id="brewing-steps">
+                            {% for step in brew_steps %}
+                            <div class="row my-4">
+                                <div class="col-md-12 mb-2">
+                                    <span class="step-order-id title-text">Step {{ step.order_id }}:</span> 
+                                    <span class="step-description">{{step.description }}</span>
+                                </div>
+                                <div class="col-md-2">
+                                    <span class="title-text">Total Water:</span>
+                                    <span class="step-target-total-water">{{step.target_total_water}}g</span>
+                                </div>
+                                <div class="col-md-2">
+                                    <span class="title-text">Total Time:</span>
+                                    <span class="step-target-total-time">{{ step.target_total_time }}</span>
+                                </div>
+                                <div class="col-md-2">
+                                    <span class="title-text">Executed Time:</span>
+                                    <span class="step-executed-time"></span>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
                     </div>
 
                     <!-- Sounds used in app -->
@@ -378,10 +377,8 @@
         // Function to read the description aloud
         function readText(text) {
             if (!isReadStepsOutloud){
-                console.log('why')
                 return;
             }
-            console.log('here')
             // Clear old utterances
             cancelReadText();
             // Create utterance from description
@@ -518,8 +515,8 @@
         recipeTargetTotalTime.innerText = getTimeStringFromSeconds(recipeTargetTotalTime.innerText);
 
         // Get all rows of the table
-        const preparationSteps = document.querySelectorAll('#preparation-steps tbody tr');
-        const brewSteps = document.querySelectorAll('#brewing-steps tbody tr');
+        const preparationSteps = document.querySelectorAll('#preparation-steps .row');
+        const brewSteps = document.querySelectorAll('#brewing-steps .row');
         
         let preparationStepIndex = -1;
         let brewStepIndex = -1;
@@ -619,7 +616,7 @@
         
         // Function to get step description
         function getStepDescription(step){
-            return step.querySelector('.step-description').textContent;
+            return step.querySelector('.step-description').innerText;
         }
         ////////////////////////////////////////////////////////////////////////
         // Preparation process       
@@ -664,8 +661,8 @@
         // Update the Time cells in the table        
         function updateTimeCells(timeCells){
             timeCells.forEach(cell => {
-            const timeInSeconds = parseInt(cell.textContent);
-            cell.textContent = getTimeStringFromSeconds(timeInSeconds);
+            const timeInSeconds = parseInt(cell.innerText);
+            cell.innerText = getTimeStringFromSeconds(timeInSeconds);
             });
         }
         const totalTargetTimeCells = document.querySelectorAll('.step-target-total-time');
@@ -706,7 +703,7 @@
                 if (brewStepIndex < 0 || brewStepIndex >= brewSteps.length) {
                     // Don't stop timer as it will disrupt the executed completed time
                 } else {
-                    const currentStepTotalTime = getSecondsFromTimeString(brewSteps[brewStepIndex].querySelector('.step-target-total-time').textContent);
+                    const currentStepTotalTime = getSecondsFromTimeString(brewSteps[brewStepIndex].querySelector('.step-target-total-time').innerText);
                     
                     // Play warning beep 3 seconds before step change
                     if (elapsedTime >= currentStepTotalTime - 3) {
@@ -774,7 +771,7 @@
             // Clear the executed-time column
             const timeTakenCells = document.querySelectorAll('.step-executed-time');
             timeTakenCells.forEach(cell => {
-                cell.textContent = ''; // Clear the content of executed-time cells
+                cell.innerText = ''; // Clear the content of executed-time cells
             });
         }
 
@@ -790,7 +787,7 @@
                 // Record current time for the current step executed
                 const currentStepId = executedBrewStepIndex + 1; // Assuming stepIndex starts from 0
                 const timeTakenCell = brewSteps[executedBrewStepIndex].querySelector(`.step-executed-time`);
-                timeTakenCell.textContent = getTimeStringFromSeconds(elapsedTime);
+                timeTakenCell.innerText = getTimeStringFromSeconds(elapsedTime);
 
                 // Highlight next step to execute
                 highlightCurrentStep(executedBrewStepIndex + 1, brewSteps);
@@ -802,8 +799,8 @@
 
         // Function to get step target description
         function getBrewStepTargetSpeechText(step){
-            targetTotalWater = parseFloat(step.querySelector('.step-target-total-water').textContent);
-            targetTotalTime = step.querySelector('.step-target-total-time').textContent;
+            targetTotalWater = parseFloat(step.querySelector('.step-target-total-water').innerText);
+            targetTotalTime = step.querySelector('.step-target-total-time').innerText;
     
             timeObject = getMinutesAndSeconds(getSecondsFromTimeString(targetTotalTime));
             const minutes = timeObject.minutes; // Get minutes
