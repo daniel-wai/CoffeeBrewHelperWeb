@@ -53,7 +53,7 @@
         <div>
             <form class="my-4" action="{% url 'home' %}" method="GET">
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-5">
                         <select id="method-dropdown" class="form-control my-2" name="selected_method_id" onchange="populateRecipes()">
                             <option class="dropdown-item" value="">Select Brew Method</option>
                             {% for method in methods %}
@@ -61,7 +61,7 @@
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-5">
                         <select id="recipe-dropdown" class="form-control my-2" name="selected_recipe_id">
                             <option class="dropdown-item" value="">Select Recipe</option>
                             <!-- Recipes will be populated dynamically using JavaScript -->
@@ -154,15 +154,15 @@
                                     <span class="step-order-id title-text">Step {{ step.order_id }}:</span> 
                                     <span class="step-description">{{step.description }}</span>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-4">
                                     <span class="title-text">Total Water:</span>
                                     <span class="step-target-total-water">{{step.target_total_water}}g</span>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-4">
                                     <span class="title-text">Total Time:</span>
                                     <span class="step-target-total-time">{{ step.target_total_time }}</span>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-4">
                                     <span class="title-text">Executed Time:</span>
                                     <span class="step-executed-time"></span>
                                 </div>
@@ -177,17 +177,17 @@
                     
                     <!-- Buttons for controlling the timer -->
                     <div class="row my-2">
-                        <div class="col-md-2">
+                        <div class="col-md-4">
                             <button class="form-control btn-primary my-2" id="startPauseButton" onclick="onStartClicked()">
                                 <span class="text">Start</span>
                             </button>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-4">
                             <button class="form-control btn-primary my-2" onclick="onResetClicked()">
                                 <span class="text">Reset</span>
                             </button>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-4">
                             <button class="form-control btn-primary my-2" onclick="onNextStepClicked()">
                                 <span class="text">Next</span>
                             </button>
