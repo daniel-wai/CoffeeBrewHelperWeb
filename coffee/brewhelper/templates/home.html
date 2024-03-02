@@ -151,20 +151,18 @@
                             {% for step in brew_steps %}
                             <div class="row my-4">
                                 <div class="col-md-12 mb-2">
-                                    <span class="step-order-id title-text">Step {{ step.order_id }}:</span> 
-                                    <span class="step-description">{{step.description }}</span>
+                                        <span class="step-order-id title-text">Step {{ step.order_id }}:</span> 
+                                        <span class="step-description">{{step.description }}</span>
                                 </div>
-                                <div class="col-md-4">
-                                    <span class="title-text">Total Water:</span>
-                                    <span class="step-target-total-water">{{step.target_total_water}}g</span>
+                                <div class="col-md-12 d-flex justify-content-between">
+                                    <span class="col-md-4 p-0 align-self-end text-center title-text">Total Water:</span>
+                                    <span class="col-md-4 p-0 align-self-end text-center title-text">Total Time:</span>
+                                    <span class="col-md-4 p-0 align-self-end text-center title-text">Rec. Time:</span>
                                 </div>
-                                <div class="col-md-4">
-                                    <span class="title-text">Total Time:</span>
-                                    <span class="step-target-total-time">{{ step.target_total_time }}</span>
-                                </div>
-                                <div class="col-md-4">
-                                    <span class="title-text">Executed Time:</span>
-                                    <span class="step-executed-time"></span>
+                                <div class="col-md-12 mb-4 d-flex justify-content-between">
+                                    <span class="step-target-total-water col-md-4 p-0 align-self-end text-center">{{step.target_total_water}}g</span>
+                                    <span class="step-target-total-time col-md-4 p-0 align-self-end text-center">{{ step.target_total_time }}</span>
+                                    <span class="step-executed-time col-md-4 p-0 align-self-end text-center text-nowrap">--:--</span>
                                 </div>
                             </div>
                             {% endfor %}
@@ -771,7 +769,7 @@
             // Clear the executed-time column
             const timeTakenCells = document.querySelectorAll('.step-executed-time');
             timeTakenCells.forEach(cell => {
-                cell.innerText = ''; // Clear the content of executed-time cells
+                cell.innerText = '--:--'; // Clear the content of executed-time cells
             });
         }
 
