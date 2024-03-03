@@ -68,7 +68,7 @@
                         </select>
                     </div>
                     <div class="col-md-2">
-                        <input class="form-control btn-primary my-2" type="submit" value="Load">
+                        <input class="btn btn-primary btn-block my-2" type="submit" value="Load">
                     </div>
                 </div>
             </form>
@@ -142,11 +142,6 @@
                     <!-- Brew steps-->
                     <div>
                         <h3 class="title-text mt-4">Brew</h3>
-                        <!-- Element to display elapsed time -->
-                        <div>
-                            <span id="elapsed-time-label" class="title-text">Elapsed Time:</span>
-                            <span id="elapsed-time">00:00</span>
-                        </div>
                         <div class id="brewing-steps">
                             {% for step in brew_steps %}
                             <div class="row my-4">
@@ -177,24 +172,35 @@
                     <audio id="startStepBeepSound" src="{% static 'brewhelper/audio/startStepBeep128.mp3' %}" type="audio/mpeg"></audio>
                     <audio id="warningStepEndBeepsSound" src="{% static 'brewhelper/audio/warningStepEndBeeps128.mp3' %}" type="audio/mpeg"></audio>
                     
-                    <!-- Buttons for controlling the timer -->
-                    <div class="row my-2">
-                        <div class="col-md-4">
-                            <button class="form-control btn-primary my-2" id="startPauseButton" onclick="onStartClicked()">
-                                <span class="text">Start</span>
-                            </button>
-                        </div>
-                        <div class="col-md-4">
-                            <button class="form-control btn-primary my-2" onclick="onResetClicked()">
-                                <span class="text">Reset</span>
-                            </button>
-                        </div>
-                        <div class="col-md-4">
-                            <button class="form-control btn-primary my-2" onclick="onNextStepClicked()">
-                                <span class="text">Next</span>
-                            </button>
+                    <!-- Begin fixed control panel -->
+                    <div class="bg-white shadow fixed-bottom">
+                        <div class="m-4">
+                            <!-- Element to display elapsed time -->
+                            <div>
+                                <span id="elapsed-time-label" class="title-text">Elapsed Time:</span>
+                                <span id="elapsed-time">00:00</span>
+                            </div>
+                            <!-- Buttons for controlling the timer -->
+                            <div class="row">
+                                <span class="col-md-4">
+                                    <button class="btn btn-primary btn-block my-1" id="startPauseButton" onclick="onStartClicked()">
+                                        <span class="text">Start</span>
+                                    </button>
+                                </span>
+                                <span class="col-md-4">
+                                    <button class="btn btn-primary btn-block my-1" onclick="onResetClicked()">
+                                        <span class="text">Reset</span>
+                                    </button>
+                                </span>
+                                <span class="col-md-4">
+                                    <button class="btn btn-primary btn-block my-1" onclick="onNextStepClicked()">
+                                        <span class="text">Next</span>
+                                    </button>
+                                </span>
+                            </div>
                         </div>
                     </div>
+                    <!-- End fixed control panel -->
                 </div>
             </div>
 
