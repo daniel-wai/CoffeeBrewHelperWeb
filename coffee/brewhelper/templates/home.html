@@ -103,7 +103,7 @@
                         {% endfor %}
                     </ul>
                     <h3 class="h5">Brew Parameters:</h3>
-                    <div>
+                    <div class="mb-3">
                         <div class="my-2">
                             <span id="recipe-coffee-weight-label" class="title-text">Total Coffee:</span>
                             <span id="recipe-coffee-weight">{{ selected_recipe.coffee_weight}}g</span>
@@ -135,9 +135,9 @@
                     <div>
                         <h3 class="h5">Preparation</h3>
                         {% if preparation_steps %}
-                            <div id="preparation-steps">
+                            <div id="preparation-steps" class="mb-3">
                                 {% for step in preparation_steps %}
-                                <div class="row my-2">
+                                <div class="row mb-3">
                                     <div class="col-md-12">
                                         <span class="step-order-id title-text">Step {{ step.order_id }}:</span>
                                         <span class="step-description">{{ step.description }}</span>
@@ -153,9 +153,9 @@
                     <!-- Brew steps-->
                     <div>
                         <h3 class="h5">Brew</h3>
-                        <div class id="brewing-steps">
+                        <div id="brewing-steps" class="mb-3">
                             {% for step in brew_steps %}
-                            <div class="row my-4">
+                            <div class="row mb-4">
                                 <div class="col-md-12 mb-2">
                                         <span class="step-order-id title-text">Step {{ step.order_id }}:</span> 
                                         <span class="step-description">{{step.description }}</span>
