@@ -43,12 +43,16 @@
             list-style-position: inside;
         }
         
+        /* account for fixed control panel margin */
+        .account-for-fixed-control-panel-margin{
+            padding-bottom: 16rem;
+        }
     </style>
 
 </head>
 <body>
     <!-- Begin Page Content -->
-    <div class="container-fluid">
+    <div class="container-fluid account-for-fixed-control-panel-margin">
         <h1 class="py-3 title-text">Coffee Brew Helper</h1>
         <div>
             <form class="my-4" action="{% url 'home' %}" method="GET">
