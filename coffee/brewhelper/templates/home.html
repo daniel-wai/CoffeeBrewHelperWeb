@@ -32,21 +32,39 @@
             outline: 2px solid var(--dark);
         }
 
+        /* Extend header styling */
+        h1, h2, h3, h4, h5, h6,
+        .h1, .h2, .h3, .h4, .h5, .h6 {
+            font-weight: 900;
+            margin-top: 0.5rem !important;
+        }
+
         /* Title styling */
         .title-text{
             font-weight: bold;
+        }
+
+        /* Bullet list not indented */
+        .list-inline-bullet{
+            padding-left: 0;
+            list-style-position: inside;
+        }
+        
+        /* account for fixed control panel margin */
+        .account-for-fixed-control-panel-margin{
+            padding-bottom: 16rem;
         }
     </style>
 
 </head>
 <body>
     <!-- Begin Page Content -->
-    <div class="container-fluid">
-        <h1 class="py-3 title-text">Coffee Brew Helper</h1>
+    <div class="container-fluid account-for-fixed-control-panel-margin">
+        <h1 class="h2 pt-3">Coffee Brew Helper</h1>
         <div>
-            <form class="my-4" action="{% url 'home' %}" method="GET">
+            <form class="mb-4" action="{% url 'home' %}" method="GET">
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-5">
                         <select id="method-dropdown" class="form-control my-2" name="selected_method_id" onchange="populateRecipes()">
                             <option class="dropdown-item" value="">Select Brew Method</option>
                             {% for method in methods %}
@@ -54,14 +72,14 @@
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-5">
                         <select id="recipe-dropdown" class="form-control my-2" name="selected_recipe_id">
                             <option class="dropdown-item" value="">Select Recipe</option>
                             <!-- Recipes will be populated dynamically using JavaScript -->
                         </select>
                     </div>
                     <div class="col-md-2">
-                        <input class="form-control btn-primary my-2" type="submit" value="Load">
+                        <input class="btn btn-primary btn-block my-2" type="submit" value="Load">
                     </div>
                 </div>
             </form>
@@ -70,7 +88,7 @@
         {% if selected_method and selected_recipe %}
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
-                    <h2 class="title-text my-2">{{selected_recipe.name}}</h2>
+                    <h2 class="h4">{{selected_recipe.name}}</h2>
                 </div>
                 <div class="card-body">
                     <!-- Element to display recipe header info -->
@@ -78,14 +96,14 @@
                     <p>More information on this recipe can be found here: {{ selected_recipe.reference }}</p>
             
                     <!-- Element to display method header info -->
-                    <h3 class="title-text">Equipment:</h3>
-                    <ul>
+                    <h3 class="h5">Equipment:</h3>
+                    <ul class="list-inline-bullet">
                         {% for equipment in selected_method.equipment.all|dictsort:"name" %}
                             <li>{{ equipment.name }}</li>
                         {% endfor %}
                     </ul>
-                    <h3 class="title-text">Brew Parameters:</h3>
-                    <div>
+                    <h3 class="h5">Brew Parameters:</h3>
+                    <div class="mb-3">
                         <div class="my-2">
                             <span id="recipe-coffee-weight-label" class="title-text">Total Coffee:</span>
                             <span id="recipe-coffee-weight">{{ selected_recipe.coffee_weight}}g</span>
@@ -115,24 +133,18 @@
             
                     <!-- Preparation steps-->
                     <div>
-                        <h3 class="title-text my-2">Preparation</h3>
+                        <h3 class="h5">Preparation</h3>
                         {% if preparation_steps %}
-                            <table class="table table-bordered" id="preparation-steps">
-                                <thead>
-                                    <tr>
-                                        <th style="width: 5%;">Step</th>
-                                        <th style="width: 95%;">Description</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for step in preparation_steps %}
-                                    <tr>
-                                        <td class="step-order-id" style="text-align: center;">{{ step.order_id }}</td>
-                                        <td class="step-description">{{ step.description }}</td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
+                            <div id="preparation-steps" class="mb-3">
+                                {% for step in preparation_steps %}
+                                <div class="row mb-3">
+                                    <div class="col-md-12">
+                                        <span class="step-order-id title-text">Step {{ step.order_id }}:</span>
+                                        <span class="step-description">{{ step.description }}</span>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
                         {% else %}
                             <label>No prepration steps</label>
                         {% endif %}
@@ -140,67 +152,73 @@
 
                     <!-- Brew steps-->
                     <div>
-                        <h3 class="title-text my-2">Brew</h3>
-                        <!-- Element to display elapsed time -->
-                        <div>
-                            <span id="elapsed-time-label" class="title-text">Elapsed Time:</span>
-                            <span id="elapsed-time">00:00</span>
+                        <h3 class="h5">Brew</h3>
+                        <div id="brewing-steps" class="mb-3">
+                            {% for step in brew_steps %}
+                            <div class="row mb-4">
+                                <div class="col-md-12 mb-2">
+                                        <span class="step-order-id title-text">Step {{ step.order_id }}:</span> 
+                                        <span class="step-description">{{step.description }}</span>
+                                </div>
+                                <div class="col-md-12 d-flex justify-content-between">
+                                    <span class="align-self-end text-center d-flex flex-column">
+                                        <span class="title-text text-xs">Total Water:</span>
+                                        <span class="step-target-total-water">{{step.target_total_water}}g</span>
+                                    </span>
+                                    <span class="align-self-end text-center d-flex flex-column">
+                                        <span class="title-text text-xs">Total Time:</span>
+                                        <span class="step-target-total-time">{{ step.target_total_time }}</span>
+                                    </span>
+                                    <span class="align-self-end text-center d-flex flex-column">
+                                        <span class="title-text text-xs">Recorded Time:</span>
+                                        <span class="step-executed-time text-nowrap">--:--</span>
+                                    </span>
+                                </div>
+                            </div>
+                            {% endfor %}
                         </div>
-                        <table class="table table-bordered" id="brewing-steps">
-                            <thead>
-                                <tr>
-                                    <th style="width: 5%;">Step</th>
-                                    <th style="width: 70%;">Description</th>
-                                    <!-- <th>Change in Water</th> -->
-                                    <th>Target Water</th>
-                                    <!-- <th>Change in Time</th> -->
-                                    <th>Target Time</th>
-                                    <th>Executed Time</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for step in brew_steps %}
-                                <tr>
-                                    <td class="step-order-id" style="text-align: center;">{{ step.order_id }}</td>
-                                    <td class="step-description">{{ step.description }}</td>
-                                    <td class="step-target-total-water" style="text-align: center;">{{ step.target_total_water }}g</td>
-                                    <td class="step-target-total-time"  style="text-align: center;">{{ step.target_total_time }}</td>
-                                    <td class="step-executed-time"  style="text-align: center;"></td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
                     </div>
 
                     <!-- Sounds used in app -->
                     <audio id="startStepBeepSound" src="{% static 'brewhelper/audio/startStepBeep128.mp3' %}" type="audio/mpeg"></audio>
                     <audio id="warningStepEndBeepsSound" src="{% static 'brewhelper/audio/warningStepEndBeeps128.mp3' %}" type="audio/mpeg"></audio>
                     
-                    <!-- Buttons for controlling the timer -->
-                    <div class="row my-2">
-                        <div class="col-md-2">
-                            <button class="form-control btn-primary my-2" id="startPauseButton" onclick="onStartClicked()">
-                                <span class="text">Start</span>
-                            </button>
-                        </div>
-                        <div class="col-md-2">
-                            <button class="form-control btn-primary my-2" onclick="onResetClicked()">
-                                <span class="text">Reset</span>
-                            </button>
-                        </div>
-                        <div class="col-md-2">
-                            <button class="form-control btn-primary my-2" onclick="onNextStepClicked()">
-                                <span class="text">Next</span>
-                            </button>
+                    <!-- Begin fixed control panel -->
+                    <div class="bg-white shadow fixed-bottom">
+                        <div class="m-4">
+                            <!-- Element to display elapsed time -->
+                            <div>
+                                <span id="elapsed-time-label" class="title-text">Elapsed Time:</span>
+                                <span id="elapsed-time">00:00</span>
+                            </div>
+                            <!-- Buttons for controlling the timer -->
+                            <div class="row">
+                                <span class="col-md-4">
+                                    <button class="btn btn-primary btn-block my-1" id="startPauseButton" onclick="onStartClicked()">
+                                        <span class="text">Start</span>
+                                    </button>
+                                </span>
+                                <span class="col-md-4">
+                                    <button class="btn btn-primary btn-block my-1" onclick="onResetClicked()">
+                                        <span class="text">Reset</span>
+                                    </button>
+                                </span>
+                                <span class="col-md-4">
+                                    <button class="btn btn-primary btn-block my-1" onclick="onNextStepClicked()">
+                                        <span class="text">Next</span>
+                                    </button>
+                                </span>
+                            </div>
                         </div>
                     </div>
+                    <!-- End fixed control panel -->
                 </div>
             </div>
 
             <!-- Speech Settings -->
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
-                    <h2 class="my-2">Settings</h2>
+                    <h2 class="h4">Settings</h2>
                 </div>
                 <div class="card-body">
                     <p><!-- Checkbox for toggling read steps outloud feature -->
@@ -378,10 +396,8 @@
         // Function to read the description aloud
         function readText(text) {
             if (!isReadStepsOutloud){
-                console.log('why')
                 return;
             }
-            console.log('here')
             // Clear old utterances
             cancelReadText();
             // Create utterance from description
@@ -518,8 +534,8 @@
         recipeTargetTotalTime.innerText = getTimeStringFromSeconds(recipeTargetTotalTime.innerText);
 
         // Get all rows of the table
-        const preparationSteps = document.querySelectorAll('#preparation-steps tbody tr');
-        const brewSteps = document.querySelectorAll('#brewing-steps tbody tr');
+        const preparationSteps = document.querySelectorAll('#preparation-steps .row');
+        const brewSteps = document.querySelectorAll('#brewing-steps .row');
         
         let preparationStepIndex = -1;
         let brewStepIndex = -1;
@@ -619,7 +635,7 @@
         
         // Function to get step description
         function getStepDescription(step){
-            return step.querySelector('.step-description').textContent;
+            return step.querySelector('.step-description').innerText;
         }
         ////////////////////////////////////////////////////////////////////////
         // Preparation process       
@@ -664,8 +680,8 @@
         // Update the Time cells in the table        
         function updateTimeCells(timeCells){
             timeCells.forEach(cell => {
-            const timeInSeconds = parseInt(cell.textContent);
-            cell.textContent = getTimeStringFromSeconds(timeInSeconds);
+            const timeInSeconds = parseInt(cell.innerText);
+            cell.innerText = getTimeStringFromSeconds(timeInSeconds);
             });
         }
         const totalTargetTimeCells = document.querySelectorAll('.step-target-total-time');
@@ -706,7 +722,7 @@
                 if (brewStepIndex < 0 || brewStepIndex >= brewSteps.length) {
                     // Don't stop timer as it will disrupt the executed completed time
                 } else {
-                    const currentStepTotalTime = getSecondsFromTimeString(brewSteps[brewStepIndex].querySelector('.step-target-total-time').textContent);
+                    const currentStepTotalTime = getSecondsFromTimeString(brewSteps[brewStepIndex].querySelector('.step-target-total-time').innerText);
                     
                     // Play warning beep 3 seconds before step change
                     if (elapsedTime >= currentStepTotalTime - 3) {
@@ -774,7 +790,7 @@
             // Clear the executed-time column
             const timeTakenCells = document.querySelectorAll('.step-executed-time');
             timeTakenCells.forEach(cell => {
-                cell.textContent = ''; // Clear the content of executed-time cells
+                cell.innerText = '--:--'; // Clear the content of executed-time cells
             });
         }
 
@@ -790,7 +806,7 @@
                 // Record current time for the current step executed
                 const currentStepId = executedBrewStepIndex + 1; // Assuming stepIndex starts from 0
                 const timeTakenCell = brewSteps[executedBrewStepIndex].querySelector(`.step-executed-time`);
-                timeTakenCell.textContent = getTimeStringFromSeconds(elapsedTime);
+                timeTakenCell.innerText = getTimeStringFromSeconds(elapsedTime);
 
                 // Highlight next step to execute
                 highlightCurrentStep(executedBrewStepIndex + 1, brewSteps);
@@ -802,8 +818,8 @@
 
         // Function to get step target description
         function getBrewStepTargetSpeechText(step){
-            targetTotalWater = parseFloat(step.querySelector('.step-target-total-water').textContent);
-            targetTotalTime = step.querySelector('.step-target-total-time').textContent;
+            targetTotalWater = parseFloat(step.querySelector('.step-target-total-water').innerText);
+            targetTotalTime = step.querySelector('.step-target-total-time').innerText;
     
             timeObject = getMinutesAndSeconds(getSecondsFromTimeString(targetTotalTime));
             const minutes = timeObject.minutes; // Get minutes
