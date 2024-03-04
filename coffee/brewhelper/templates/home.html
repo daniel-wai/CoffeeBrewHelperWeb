@@ -682,8 +682,9 @@
                 highlightCurrentStep(preparationStepIndex, preparationSteps);
                 readText(getStepDescription(preparationStep));
             } else {
+                // End preparation steps and start brew steps
                 stopPreparationSteps();
-                readText('Preparation steps complete. Time to brew.');
+                onStartClicked();
             }
         }
 
