@@ -466,7 +466,14 @@
                             onResetClicked(); // Reset operation
                             break;
                         case 'next':
-                            onNextStepClicked(); // Next operation
+                            if (currentProcess === Process.PREPARATION){
+                                onNextStepClicked(); // Next operation
+                            }
+                            break;
+                        case 'record':
+                            if (currentProcess === Process.BREW){
+                                onNextStepClicked(); // Next operation
+                            }
                             break;
                         default:
                             break;
