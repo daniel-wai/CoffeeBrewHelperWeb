@@ -28,8 +28,8 @@
             background-color: var(--primary); 
             color: var(--white);
         }
-        .highlighted-target-step {
-            outline: 2px solid var(--dark);
+        .border-current-step {
+            outline: 0.125rem solid var(--secondary);
         }
 
         /* Extend header styling */
@@ -204,7 +204,7 @@
                                     </button>
                                 </span>
                                 <span class="col-md-4">
-                                    <button class="btn btn-primary btn-block my-1" onclick="onNextStepClicked()">
+                                    <button class="btn btn-primary btn-block my-1" id="nextRecordButton" onclick="onNextStepClicked()">
                                         <span class="text">Next</span>
                                     </button>
                                 </span>
@@ -545,7 +545,7 @@
 
         let isTimerRunning = false;
 
-        updateStartButtonStatus();
+        updateAllButtonStatus();
 
         // Function to remove format from all steps
         function removeEmphasizeSteps(steps, formatName){
@@ -571,12 +571,18 @@
         }
         
         // Function to remove bold from all steps
-        function removeHighlightTargetStep(steps){
-            removeEmphasizeSteps(steps, 'highlighted-target-step'); // Remove bold from all rows
+        function removeBorderCurrentStep(steps){
+            removeEmphasizeSteps(steps, 'border-current-step'); // Remove bold from all rows
         } 
         // Function to bold the step description
-        function highlightTargetStep(stepIndex, steps){
-            emphasizeCurrentStep(stepIndex, steps, 'highlighted-target-step');
+        function borderCurrentStep(stepIndex, steps){
+            emphasizeCurrentStep(stepIndex, steps, 'border-current-step');
+        }
+
+        // Function to update the status of all buttons according to the step
+        function updateAllButtonStatus(){
+            updateStartButtonStatus();
+            updateNextButtonStatus();
         }
 
         // Function to update the status of the start button according to the step
@@ -592,6 +598,19 @@
                 } else {
                     startPauseButton.textContent = 'Pause'
                 }
+            } else {
+                // unhandled case
+            }
+        }
+        // Function to update the status of the next button according to the step
+        function updateNextButtonStatus(){
+            const nextRecordButton = document.getElementById('nextRecordButton');
+            if (currentProcess === Process.NONE){ 
+                nextRecordButton.textContent = 'Next';
+            } else if (currentProcess === Process.PREPARATION) {
+                nextRecordButton.textContent = 'Next';
+            } else if (currentProcess === Process.BREW) {
+                nextRecordButton.textContent = 'Record';
             } else {
                 // unhandled case
             }
@@ -612,14 +631,14 @@
                 // no process can be started
                 currentProcess = Process.NONE;
             }
-            updateStartButtonStatus();
+            updateAllButtonStatus();
         }
         // Function to reset all processes 
         function onResetClicked(){
             resetPreparationSteps();
             resetTimer();
             currentProcess = Process.NONE;
-            updateStartButtonStatus();
+            updateAllButtonStatus();
         }
         // Function to move to the next step of the current process
         function onNextStepClicked(){
@@ -630,7 +649,7 @@
             } else {
                 //unhandled case
             }
-            updateStartButtonStatus();
+            updateAllButtonStatus();
         }
         
         // Function to get step description
@@ -644,14 +663,14 @@
         function startPreparationSteps() {
             preparationStepIndex = 0;
             preparationStep = preparationSteps[preparationStepIndex];
-            highlightTargetStep(preparationStepIndex,preparationSteps);
+            borderCurrentStep(preparationStepIndex,preparationSteps);
             highlightCurrentStep(preparationStepIndex, preparationSteps);
             readText(getStepDescription(preparationStep));
         }
         // Function to stop preparation
         function stopPreparationSteps(){
             preparationStepIndex = preparationSteps.length;
-            removeHighlightTargetStep(preparationSteps);
+            removeBorderCurrentStep(preparationSteps);
             removeHighlightCurrentStep(preparationSteps);
         }
         // Function to move to the next preparation step
@@ -659,7 +678,7 @@
             if (preparationStepIndex < preparationSteps.length - 1){
                 preparationStepIndex++;
                 preparationStep = preparationSteps[preparationStepIndex];
-                highlightTargetStep(preparationStepIndex,preparationSteps);
+                borderCurrentStep(preparationStepIndex,preparationSteps);
                 highlightCurrentStep(preparationStepIndex, preparationSteps);
                 readText(getStepDescription(preparationStep));
             } else {
@@ -671,7 +690,7 @@
         // Function to reset preparation steps
         function resetPreparationSteps(){
             preparationStepIndex = -1;
-            removeHighlightTargetStep(preparationSteps);
+            removeBorderCurrentStep(preparationSteps);
             removeHighlightCurrentStep(preparationSteps);
         }
         ////////////////////////////////////////////////////////////////////////
@@ -711,7 +730,7 @@
                 startStepAudio.play();
             }
             if (brewStepIndex >= 0 && brewStepIndex < brewSteps.length){
-                highlightTargetStep(brewStepIndex, brewSteps);
+                borderCurrentStep(brewStepIndex, brewSteps);
                 highlightCurrentStep(brewStepIndex, brewSteps);
                 readText(getStepDescription(brewSteps[brewStepIndex])+ " " + getBrewStepTargetSpeechText(brewSteps[brewStepIndex]));
             }
@@ -739,11 +758,13 @@
                         }
                         brewStepIndex++;
                         if (brewStepIndex >= 0 && brewStepIndex < brewSteps.length){
-                            highlightTargetStep(brewStepIndex, brewSteps);
+                            borderCurrentStep(brewStepIndex, brewSteps);
+                            highlightCurrentStep(brewStepIndex, brewSteps);
                             readText(getStepDescription(brewSteps[brewStepIndex])+ " " + getBrewStepTargetSpeechText(brewSteps[brewStepIndex]));
                         }
                         else{
-                            removeHighlightTargetStep(brewSteps);
+                            removeBorderCurrentStep(brewSteps);
+                            removeHighlightCurrentStep(brewSteps);
                         }
                     }
                 }
@@ -783,7 +804,7 @@
             const warningStepEndAudio = document.getElementById('warningStepEndBeepsSound');
             warningStepEndAudio.currentTime = 0;
             cancelReadText();
-            removeHighlightTargetStep(brewSteps);
+            removeBorderCurrentStep(brewSteps);
             removeHighlightCurrentStep(brewSteps);
             updateElapsedTime(); // Update elapsed time in the input element
 
@@ -809,10 +830,12 @@
                 timeTakenCell.innerText = getTimeStringFromSeconds(elapsedTime);
 
                 // Highlight next step to execute
-                highlightCurrentStep(executedBrewStepIndex + 1, brewSteps);
+                //borderCurrentStep(executedBrewStepIndex + 1, brewSteps);
+                //highlightCurrentStep(executedBrewStepIndex + 1, brewSteps);
             } else {
                 // past steps
-                removeHighlightCurrentStep(brewSteps);
+                //removeBorderCurrentStep(brewSteps);
+                //removeHighlightCurrentStep(brewSteps);
             }
         }
 
