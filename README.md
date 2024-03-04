@@ -73,7 +73,7 @@ The typical workflow is as follows:
 	- To highlight the next step, press the **Next** button, press the spacebar or say "next".
 1. Use the **Brew** steps to guide you through the timed brewing process where the coffee extraction takes place:
 	- Start the timer to begin brewing: press the **Start** button, press the shift key or say "start". The first brew step is highlighted with a bolded outline. You should hear an audible beep signifying the start of the brewing process. For all other brew steps, audible beeps start 3 seconds before the start of the step.
-	- Each time you finish a step, press the **Next** button, press the spacebar or say "next" to record the elapsed time to complete this step. This can be reviewed at the end to evaluate the timing compared to the coffee taste. The target step has a bolded outline, while the current step that you are working on is highlighted. 
+	- Each time you finish a step, press the **Record** button, press the spacebar or say "record" to record the elapsed time to complete this step. This can be reviewed at the end to evaluate the timing compared to the coffee taste. The target step has a bolded outline, while the current step that you are working on is highlighted. 
 	- To pause the timer, press the **Pause** button, press the shift key or say "pause". Pausing the timer during brewing is not recommended as it doesn't allow for an accurate measurement of your performance.
 1. As your coffee cools, review the time you took to complete each step compared to the recipe. The key is not getting exact times and volumes, but rather how the process affects the taste. Let the taste decide how you adjust grind size, water, and process. 
 1. To reset all steps, press the **Reset** button, press the ctrl key or say "reset".
@@ -84,11 +84,12 @@ Here is the summary of various ways to achieve the same command. Try (a) pressin
 
 | Command  | (a) Button | (b) Keyboard | (c) Voice |
 | ------------- | ------------- | ---- | ---- |
-| Start **Preparation** steps | Prepare  | shift | Prepare 
-| Start/continue **Brew** step timer | Start  | shift | Start 
-| Pause **Brew** step timer | Pause  | shift | Pause 
-| Reset all steps  | Reset  | ctrl | Reset 
-| Move to next **Preparation** step or record elapsed time to complete current **Brew** step | Next  | spacebar | Next
+| Start **Preparation** steps | Prepare | shift | Prepare |
+| Start/continue **Brew** step timer | Start  | shift | Start |
+| Pause **Brew** step timer | Pause | shift | Pause |
+| Reset all steps  | Reset  | ctrl | Reset |
+| Move to next **Preparation** step | Next | spacebar | Next |
+| Record elapsed time to complete current **Brew** step | Record | spacebar | Record |
 
 ## Installation
 Here is how you can clone the source repository to run locally.
