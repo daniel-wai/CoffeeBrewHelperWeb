@@ -56,7 +56,7 @@ List of steps to brew coffee. These are time-sensitive steps, so complete the pr
 The target step to complete is read outloud. For brew steps, the target total water and time is read outloud after the step description.
 
 ##### Enable Voice commands
-When enabled, the user can use the appplication by saying commands rather than pressing buttons or using the keyboard. See Usage section for more details on supported commands.
+When enabled, the user can use the appplication by saying commands rather than pressing buttons or using the keyboard. The word detected by the application will appear in the **Last Detected Command** display. See Usage section for more details on supported commands.
 
 ## Usage
 The typical workflow is as follows:
