@@ -185,11 +185,15 @@
                     
                     <!-- Begin fixed control panel -->
                     <div class="bg-white shadow fixed-bottom">
-                        <div class="m-4">
+                        <div class="mx-4 mt-1 mb-1">
                             <!-- Element to display elapsed time -->
                             <div>
                                 <span id="elapsed-time-label" class="title-text">Elapsed Time:</span>
                                 <span id="elapsed-time">00:00</span>
+                            </div>
+                            <div id="detected-voice-command-container">
+                                <span class="title-text">Last Detected Command:</span>
+                                <span id="detected-voice-command"></span>
                             </div>
                             <!-- Buttons for controlling the timer -->
                             <div class="row">
@@ -235,12 +239,6 @@
                                 <input type ="checkbox" id="toggleVoiceCommands" class="custom-control-input" onchange="toggleVoiceCommands()">
                                 <label class="custom-control-label" for="toggleVoiceCommands">Enable Voice Commands</label>
                             </div>
-                        </div>
-                    </p>
-                    <p>
-                        <div>
-                            <span class="title-text">Last Detected Command:</span>
-                            <span id="detected-voice-command"></span>
                         </div>
                     </p>
                 </div>
@@ -512,18 +510,27 @@
         function toggleVoiceCommands() {
             if (voiceCommands) {
                 const checkbox = document.getElementById('toggleVoiceCommands');
+                const detectedVoiceCommandContainer = document.getElementById('detected-voice-command-container');
                 if (checkbox.checked) {
                     isAutoRestart = true;
                     voiceCommands.start(); // Start voice commands
+                    
+                    // show detected voice command container 
+                    detectedVoiceCommandContainer.classList.remove('d-none');
+                    detectedVoiceCommandContainer.classList.add('d-block');    
                 } else {
                     updateDetectedVoiceCommand(); //clear shown detected command
                     isAutoRestart = false;
                     voiceCommands.stop(); // Stop voice commands
+                    
+                    // hide detected voice command container 
+                    detectedVoiceCommandContainer.classList.remove('d-block');
+                    detectedVoiceCommandContainer.classList.add('d-none');  
                 }
             }
         }
         // Function to update detected voice command in the input element, defaults to empty string (clear)
-        function updateDetectedVoiceCommand(detecedVoiceCommandResult = "[No Word Detected]") {
+        function updateDetectedVoiceCommand(detecedVoiceCommandResult = "Listening...") {
             const detecedVoiceCommandInput = document.getElementById('detected-voice-command');
             detecedVoiceCommandInput.innerText = detecedVoiceCommandResult; // Update input value with speech recognition result
         }
