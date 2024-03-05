@@ -180,8 +180,8 @@
                     </div>
 
                     <!-- Sounds used in app -->
-                    <audio id="startStepBeepSound" src="{% static 'brewhelper/audio/startStepBeep128.mp3' %}" type="audio/mpeg"></audio>
-                    <audio id="warningStepEndBeepsSound" src="{% static 'brewhelper/audio/warningStepEndBeeps128.mp3' %}" type="audio/mpeg"></audio>
+                    <audio id="start-step-beep-sound" src="{% static 'brewhelper/audio/startStepBeep128.mp3' %}" type="audio/mpeg"></audio>
+                    <audio id="warning-step-end-beeps-sound" src="{% static 'brewhelper/audio/warningStepEndBeeps128.mp3' %}" type="audio/mpeg"></audio>
                     
                     <!-- Begin fixed control panel -->
                     <div class="bg-white shadow fixed-bottom">
@@ -198,7 +198,7 @@
                             <!-- Buttons for controlling the timer -->
                             <div class="row">
                                 <span class="col-md-4">
-                                    <button class="btn btn-primary btn-block my-1" id="startPauseButton" onclick="onStartClicked()">
+                                    <button class="btn btn-primary btn-block my-1" id="start-pause-button" onclick="onStartClicked()">
                                         <span class="text">Start</span>
                                     </button>
                                 </span>
@@ -208,7 +208,7 @@
                                     </button>
                                 </span>
                                 <span class="col-md-4">
-                                    <button class="btn btn-primary btn-block my-1" id="nextRecordButton" onclick="onNextStepClicked()">
+                                    <button class="btn btn-primary btn-block my-1" id="next-record-button" onclick="onNextStepClicked()">
                                         <span class="text">Next</span>
                                     </button>
                                 </span>
@@ -228,16 +228,16 @@
                     <p><!-- Checkbox for toggling read steps outloud feature -->
                         <div class="form-group">
                             <div class="custom-control custom-checkbox">
-                                <input type ="checkbox" id="toggleReadStepsOutloud" class="custom-control-input" checked onchange="toggleReadStepsOutloud()">
-                                <label class="custom-control-label" for="toggleReadStepsOutloud">Read Steps Outloud</label>
+                                <input type ="checkbox" id="toggle-read-steps-outloud" class="custom-control-input" checked onchange="toggleReadStepsOutloud()">
+                                <label class="custom-control-label" for="toggle-read-steps-outloud">Read Steps Outloud</label>
                             </div>
                         </div>
                     </p>
                     <p><!-- Checkbox for toggling voice commands feature -->
                         <div class="form-group">
                             <div class="custom-control custom-checkbox">
-                                <input type ="checkbox" id="toggleVoiceCommands" class="custom-control-input" onchange="toggleVoiceCommands()">
-                                <label class="custom-control-label" for="toggleVoiceCommands">Enable Voice Commands</label>
+                                <input type ="checkbox" id="toggle-voice-commands" class="custom-control-input" onchange="toggleVoiceCommands()">
+                                <label class="custom-control-label" for="toggle-voice-commands">Enable Voice Commands</label>
                             </div>
                         </div>
                     </p>
@@ -385,7 +385,7 @@
         let voices;
         // Function to set read steps outloud flag based on checkbox state
         function toggleReadStepsOutloud() {
-            const checkbox = document.getElementById('toggleReadStepsOutloud');
+            const checkbox = document.getElementById('toggle-read-steps-outloud');
             isReadStepsOutloud = checkbox.checked;
             if (!isReadStepsOutloud) {
                 cancelReadText();
@@ -509,7 +509,7 @@
         // Function to toggle voice commands based on checkbox state
         function toggleVoiceCommands() {
             if (voiceCommands) {
-                const checkbox = document.getElementById('toggleVoiceCommands');
+                const checkbox = document.getElementById('toggle-voice-commands');
                 const detectedVoiceCommandContainer = document.getElementById('detected-voice-command-container');
                 if (checkbox.checked) {
                     isAutoRestart = true;
@@ -601,7 +601,7 @@
 
         // Function to update the status of the start button according to the step
         function updateStartButtonStatus(){
-            const startPauseButton = document.getElementById('startPauseButton');
+            const startPauseButton = document.getElementById('start-pause-button');
             if (currentProcess === Process.NONE){ 
                 startPauseButton.textContent = 'Prepare';
             } else if (currentProcess === Process.PREPARATION) {
@@ -618,7 +618,7 @@
         }
         // Function to update the status of the next button according to the step
         function updateNextButtonStatus(){
-            const nextRecordButton = document.getElementById('nextRecordButton');
+            const nextRecordButton = document.getElementById('next-record-button');
             if (currentProcess === Process.NONE){ 
                 nextRecordButton.textContent = 'Next';
             } else if (currentProcess === Process.PREPARATION) {
@@ -741,7 +741,7 @@
         // Function to start the timer and highlight brew steps based on target_total_time
         function startTimer() {
             if (elapsedTime < 1){
-                const startStepAudio = document.getElementById('startStepBeepSound');
+                const startStepAudio = document.getElementById('start-step-beep-sound');
                 startStepAudio.play();
             }
             if (brewStepIndex >= 0 && brewStepIndex < brewSteps.length){
@@ -760,14 +760,14 @@
                     
                     // Play warning beep 3 seconds before step change
                     if (elapsedTime >= currentStepTotalTime - 3) {
-                        const warningStepEndAudio = document.getElementById('warningStepEndBeepsSound');
+                        const warningStepEndAudio = document.getElementById('warning-step-end-beeps-sound');
                         if (warningStepEndAudio.paused){
                             warningStepEndAudio.play();
                         }
                     }
                     
                     if (elapsedTime >= currentStepTotalTime) {
-                        const startStepAudio = document.getElementById('startStepBeepSound');
+                        const startStepAudio = document.getElementById('start-step-beep-sound');
                         if (startStepAudio.paused){
                             startStepAudio.play();
                         }
@@ -788,9 +788,9 @@
         // Function to stop the timer
         function pauseTimer() {
             clearInterval(timer);
-            const startStepAudio = document.getElementById('startStepBeepSound');
+            const startStepAudio = document.getElementById('start-step-beep-sound');
             startStepAudio.pause();
-            const warningStepEndAudio = document.getElementById('warningStepEndBeepsSound');
+            const warningStepEndAudio = document.getElementById('warning-step-end-beeps-sound');
             warningStepEndAudio.pause();
             cancelReadText(); //better to cancel and restart reading
         }
@@ -814,9 +814,9 @@
             brewStepIndex = -1;
             executedBrewStepIndex = -1;
             elapsedTime = 0;
-            const startStepAudio = document.getElementById('startStepBeepSound');
+            const startStepAudio = document.getElementById('start-step-beep-sound');
             startStepAudio.currentTime = 0;
-            const warningStepEndAudio = document.getElementById('warningStepEndBeepsSound');
+            const warningStepEndAudio = document.getElementById('warning-step-end-beeps-sound');
             warningStepEndAudio.currentTime = 0;
             cancelReadText();
             removeBorderCurrentStep(brewSteps);
