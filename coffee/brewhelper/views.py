@@ -57,3 +57,6 @@ def get_recipes(request):
     # Fetch recipes associated with the method_id using Django ORM
     recipes = Recipe.objects.filter(methods__id=method_id).values('id', 'name')
     return JsonResponse(list(recipes), safe=False)
+
+def help_page(request):
+    return render(request, 'help.html')
