@@ -36,21 +36,54 @@
             list-style-position: inside;
         }
 
+        /* Bottom-right fixed element styling */
         .fixed-bottom-right {
             position: fixed;
             right: 0;
             bottom: 0;
             z-index: 1030;
         }
+        
+        /* Override sidebar styling to hide unless mobile devices are used*/
+        @media (min-width: 768px) {
+            .sidebar {
+                width: 0 !important; 
+            }
+            .sidebar.toggled {
+                overflow: visible;
+                width: 0 !important;
+            }
+        }
+        @media (max-width: 767.98px) {
+            .d-md-max-none {
+                display: none !important;
+            }
+        }
     </style>
 
     {% block page_styles %}{% endblock %}
 </head>
-<body>
+<body class="sidebar-toggled">
+    <!-- Topbar -->
+    <nav class="navbar navbar-expand navbar-light bg-white topbar  shadow">
+        <!-- Sidebar Toggle (Topbar) -->
+        <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+            <i class="fa fa-bars"></i>
+        </button>
+        <span class="nav-item active d-md-max-none">
+            <a class="nav-link title-text" href="{% url 'home' %}">Home</a>
+        </span>
+        <span class="nav-item active d-md-max-none">
+            <a class="nav-link title-text" href="{% url 'help' %}">Help</a>
+        </span>
+    </nav>
+    <!-- End of Topbar -->
+
     <!-- Page Wrapper -->
     <div id="wrapper">
         <!-- Sidebar -->
-        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion toggled" id="accordionSidebar">
+            <a class="bg-dark" href="{% url 'home' %}">Home</a>
             <a class="bg-dark" href="{% url 'help' %}">Help</a>
         </ul>
         <!-- End of Sidebar -->
@@ -59,15 +92,6 @@
         <div id="content-wrapper" class="d-flex flex-column">
             <!-- Main Content -->
             <div id="content">
-                <!-- Topbar -->
-                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 shadow">
-                    <!-- Sidebar Toggle (Topbar) -->
-                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
-                        <i class="fa fa-bars"></i>
-                    </button>
-                </nav>
-                <!-- End of Topbar -->
-
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
                     <!-- Page-specific content will be inserted here -->
@@ -80,7 +104,7 @@
         <!-- End of Content Wrapper -->
     </div>
     <!-- End of Page Wrapper -->
-    
+
     <!-- Start of Scripts -->
     <script>
         // fixed-bottom-right style can be used to add a bottom-right fixed bar 
@@ -94,18 +118,31 @@
                 const sidebarWidth = sidebar.offsetWidth;              
                 fixedBottomRight.style.width = `calc(100vw - ${sidebarWidth + scrollbarWidth}px)`;
             }
-        
-            // Initial update
-            updateFixedBottomRightWidth();
-        
-            // Update width when window is resized
-            window.addEventListener('resize', updateFixedBottomRightWidth);
-        
-            // Update width when sidebar toggle button is clicked
-            document.getElementById('sidebarToggleTop').addEventListener('click', updateFixedBottomRightWidth);
+            // Initial update if fixedBottomRight exists
+            if (fixedBottomRight) {
+                    // Initial update
+                    updateFixedBottomRightWidth();
+                
+                    // Update width when window is resized
+                    window.addEventListener('resize', updateFixedBottomRightWidth);
+                
+                    // Update width when sidebar toggle button is clicked
+                    document.getElementById('sidebarToggleTop').addEventListener('click', updateFixedBottomRightWidth);
+            }
         });
     </script>
-    <!-- End of Scripts-->
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="{% static 'js/sb-admin-2.min.js' %}"></script>
+
     {% block page_scripts %}{% endblock %}
+      <!-- End of Scripts-->
 </body>
 </html>
