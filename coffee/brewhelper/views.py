@@ -3,6 +3,7 @@ from .models import Step, BrewStep, Recipe, BrewMethod
 from django.http import JsonResponse
 # Create your views here.
 
+# home page
 def home(request):
     methods = BrewMethod.objects.all()
     recipes = Recipe.objects.all()
@@ -52,11 +53,13 @@ def home(request):
 
     return render(request, 'home.html', {'methods': methods, 'recipes': recipes,'selected_method': selected_method, 'selected_recipe': selected_recipe, 'preparation_steps': preparation_steps, 'brew_steps': brew_steps})
 
+# Home page: get list of recipes for selected brew method
 def get_recipes(request):
     method_id = request.GET.get('method_id')
     # Fetch recipes associated with the method_id using Django ORM
     recipes = Recipe.objects.filter(methods__id=method_id).values('id', 'name')
     return JsonResponse(list(recipes), safe=False)
 
-def help_page(request):
-    return render(request, 'help.html')
+# User guide page
+def user_guide(request):
+    return render(request, 'user-guide.html')
