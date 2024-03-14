@@ -52,8 +52,8 @@ List of steps to brew coffee. These are time-sensitive steps, so complete the pr
 
 #### Settings
 
-##### Enable Read Steps Outloud
-The target step to complete is read outloud. For brew steps, the target total water and time is read outloud after the step description.
+##### Enable Read Steps Aloud
+The target step to complete is read aloud. For brew steps, the target total water and time is read aloud after the step description.
 
 ##### Enable Voice commands
 When enabled, the user can use the appplication by saying commands rather than pressing buttons or using the keyboard. The word detected by the application will appear in the **Last Detected Command** display. See Usage section for more details on supported commands.
@@ -65,11 +65,11 @@ The typical workflow is as follows:
 1. Use the **Equipment** list to gather all required tools before you begin.
 1. You are ready to begin **Preparation** and **Brew** steps.
 	> Note:
-	> - check the **Enable Read Step Outloud** checkbox to hear the step description read outloud
+	> - check the **Enable Read Step Aloud** checkbox to hear the step description read aloud
 	> - check the **Enable Voice Command** checkbox to use the application by saying the command
 1. Use the **Preparation** steps to ensure the water, ground coffee beans and equipment are ready before beginning the timed brewing process. 
 	- To highlight the first step, press the **Prepare** button, press the shift key or say "prepare".
-	- The current step will be highlighted in yellow and have a bolded outline. It will be read outloud if the **Enable Read Step Outloud** checkbox is checked. 
+	- The current step will be highlighted in yellow and have a bolded outline. It will be read aloud if the **Enable Read Step Aloud** checkbox is checked. 
 	- To highlight the next step, press the **Next** button, press the spacebar or say "next".
 1. Use the **Brew** steps to guide you through the timed brewing process where the coffee extraction takes place:
 	- Start the timer to begin brewing: press the **Start** button, press the shift key or say "start". The first brew step is highlighted with a bolded outline. You should hear an audible beep signifying the start of the brewing process. For all other brew steps, audible beeps start 3 seconds before the start of the step.

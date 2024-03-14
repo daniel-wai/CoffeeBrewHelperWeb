@@ -159,11 +159,11 @@
                     <h2 class="h4">Settings</h2>
                 </div>
                 <div class="card-body">
-                    <p><!-- Checkbox for toggling read steps outloud feature -->
+                    <p><!-- Checkbox for toggling read steps aloud feature -->
                         <div class="form-group">
                             <div class="custom-control custom-checkbox">
-                                <input type ="checkbox" id="toggle-read-steps-outloud" class="custom-control-input" checked onchange="toggleReadStepsOutloud()">
-                                <label class="custom-control-label" for="toggle-read-steps-outloud">Read Steps Outloud</label>
+                                <input type ="checkbox" id="toggle-read-steps-aloud" class="custom-control-input" checked onchange="toggleReadStepsAloud()">
+                                <label class="custom-control-label" for="toggle-read-steps-aloud">Read Steps Aloud</label>
                             </div>
                         </div>
                     </p>
@@ -337,7 +337,7 @@
                 }
             });
             
-            // Initialize read outloud
+            // Initialize read aloud
             // Wait for voice list to load (aync to the page) before using them in speech functions
             window.speechSynthesis.getVoices();
             window.speechSynthesis.onvoiceschanged = function(){
@@ -348,20 +348,20 @@
         });
         
         // Speech Features ///////////////////////////////////////////////////////
-        // read steps outloud ////
-        let isReadStepsOutloud = true;
+        // read steps aloud ////
+        let isReadStepsAloud = true;
         let voices;
-        // Function to set read steps outloud flag based on checkbox state
-        function toggleReadStepsOutloud() {
-            const checkbox = document.getElementById('toggle-read-steps-outloud');
-            isReadStepsOutloud = checkbox.checked;
-            if (!isReadStepsOutloud) {
+        // Function to set read steps aloud flag based on checkbox state
+        function toggleReadStepsAloud() {
+            const checkbox = document.getElementById('toggle-read-steps-aloud');
+            isReadStepsAloud = checkbox.checked;
+            if (!isReadStepsAloud) {
                 cancelReadText();
             }
         }
         // Function to read the description aloud
         function readText(text) {
-            if (!isReadStepsOutloud){
+            if (!isReadStepsAloud){
                 return;
             }
             // Clear old utterances
