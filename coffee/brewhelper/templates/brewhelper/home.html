@@ -1,27 +1,12 @@
 <!-- home.html -->
+{% extends 'brewhelper/base.html' %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Coffee Brew Helper</title>
-    <!-- Add any CSS links, meta tags, or other head elements here -->
-    {% load static %}
+{% load static %}
 
-    <!-- Custom fonts for this template-->
-    <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
-    <link
-        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-        rel="stylesheet">
+{% block title %}Coffee Brew Helper{% endblock %}
 
-    <!-- Custom styles for this template-->
-    <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
-
-    <!-- Custom styles for this page -->
-    <link href="{% static 'vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
-    
- 
+<!-- Add any CSS links, meta tags, or other head elements here -->
+{% block page_styles %}
     <style>
         /* Key Test Output*/
         .highlighted-current-step { /*completed step*/ 
@@ -32,34 +17,15 @@
             outline: 0.125rem solid var(--secondary);
         }
 
-        /* Extend header styling */
-        h1, h2, h3, h4, h5, h6,
-        .h1, .h2, .h3, .h4, .h5, .h6 {
-            font-weight: 900;
-            margin-top: 0.5rem !important;
-        }
-
-        /* Title styling */
-        .title-text{
-            font-weight: bold;
-        }
-
-        /* Bullet list not indented */
-        .list-inline-bullet{
-            padding-left: 0;
-            list-style-position: inside;
-        }
-        
         /* account for fixed control panel margin */
         .account-for-fixed-control-panel-margin{
             padding-bottom: 16rem;
         }
     </style>
+{% endblock %}
 
-</head>
-<body>
-    <!-- Begin Page Content -->
-    <div class="container-fluid account-for-fixed-control-panel-margin">
+{% block page_content %}
+    <div class="account-for-fixed-control-panel-margin">
         <h1 class="h2 pt-3">Coffee Brew Helper</h1>
         <div>
             <form class="mb-4" action="{% url 'home' %}" method="GET">
@@ -183,39 +149,7 @@
                     <audio id="start-step-beep-sound" src="{% static 'brewhelper/audio/startStepBeep128.mp3' %}" type="audio/mpeg"></audio>
                     <audio id="warning-step-end-beeps-sound" src="{% static 'brewhelper/audio/warningStepEndBeeps128.mp3' %}" type="audio/mpeg"></audio>
                     
-                    <!-- Begin fixed control panel -->
-                    <div class="bg-white shadow fixed-bottom">
-                        <div class="mx-4 mt-4 mb-1">
-                            <!-- Element to display elapsed time -->
-                            <div>
-                                <span id="elapsed-time-label" class="title-text">Elapsed Time:</span>
-                                <span id="elapsed-time">00:00</span>
-                            </div>
-                            <div id="detected-voice-command-container">
-                                <span class="title-text">Last Detected Command:</span>
-                                <span id="detected-voice-command"></span>
-                            </div>
-                            <!-- Buttons for controlling the timer -->
-                            <div class="row">
-                                <span class="col-md-4">
-                                    <button class="btn btn-primary btn-block my-1" id="start-pause-button" onclick="onStartClicked()">
-                                        <span class="text">Start</span>
-                                    </button>
-                                </span>
-                                <span class="col-md-4">
-                                    <button class="btn btn-primary btn-block my-1" onclick="onResetClicked()">
-                                        <span class="text">Reset</span>
-                                    </button>
-                                </span>
-                                <span class="col-md-4">
-                                    <button class="btn btn-primary btn-block my-1" id="next-record-button" onclick="onNextStepClicked()">
-                                        <span class="text">Next</span>
-                                    </button>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- End fixed control panel -->
+                    
                 </div>
             </div>
 
@@ -225,11 +159,11 @@
                     <h2 class="h4">Settings</h2>
                 </div>
                 <div class="card-body">
-                    <p><!-- Checkbox for toggling read steps outloud feature -->
+                    <p><!-- Checkbox for toggling read steps aloud feature -->
                         <div class="form-group">
                             <div class="custom-control custom-checkbox">
-                                <input type ="checkbox" id="toggle-read-steps-outloud" class="custom-control-input" checked onchange="toggleReadStepsOutloud()">
-                                <label class="custom-control-label" for="toggle-read-steps-outloud">Read Steps Outloud</label>
+                                <input type ="checkbox" id="toggle-read-steps-aloud" class="custom-control-input" checked onchange="toggleReadStepsAloud()">
+                                <label class="custom-control-label" for="toggle-read-steps-aloud">Read Steps Aloud</label>
                             </div>
                         </div>
                     </p>
@@ -244,6 +178,40 @@
                 </div>
             </div>
 
+            <!-- Begin fixed control panel -->
+            <div class="bg-white shadow fixed-bottom-right">
+                <div class="mx-4 mt-4 mb-1">
+                    <!-- Element to display elapsed time -->
+                    <div>
+                        <span id="elapsed-time-label" class="title-text">Elapsed Time:</span>
+                        <span id="elapsed-time">00:00</span>
+                    </div>
+                    <div id="detected-voice-command-container">
+                        <span class="title-text">Last Detected Command:</span>
+                        <span id="detected-voice-command"></span>
+                    </div>
+                    <!-- Buttons for controlling the timer -->
+                    <div class="row">
+                        <span class="col-md-4">
+                            <button class="btn btn-primary btn-block my-1" id="start-pause-button" onclick="onStartClicked()">
+                                <span class="text">Start</span>
+                            </button>
+                        </span>
+                        <span class="col-md-4">
+                            <button class="btn btn-primary btn-block my-1" onclick="onResetClicked()">
+                                <span class="text">Reset</span>
+                            </button>
+                        </span>
+                        <span class="col-md-4">
+                            <button class="btn btn-primary btn-block my-1" id="next-record-button" onclick="onNextStepClicked()">
+                                <span class="text">Next</span>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <!-- End fixed control panel -->
+
         {% else %}
             <div class="card shadow mb-4">
                 <div class="card-body">
@@ -251,10 +219,10 @@
                 </div>
             </div>
         {% endif %}
-        
     </div>
-    <!-- /.container-fluid -->
+{% endblock %}
 
+{% block page_scripts %}
     <!-- Add any JavaScript scripts or other body elements here -->
     <script>
         // General helpers ///////////////////////////////////////////////////
@@ -369,7 +337,7 @@
                 }
             });
             
-            // Initialize read outloud
+            // Initialize read aloud
             // Wait for voice list to load (aync to the page) before using them in speech functions
             window.speechSynthesis.getVoices();
             window.speechSynthesis.onvoiceschanged = function(){
@@ -380,20 +348,20 @@
         });
         
         // Speech Features ///////////////////////////////////////////////////////
-        // read steps outloud ////
-        let isReadStepsOutloud = true;
+        // read steps aloud ////
+        let isReadStepsAloud = true;
         let voices;
-        // Function to set read steps outloud flag based on checkbox state
-        function toggleReadStepsOutloud() {
-            const checkbox = document.getElementById('toggle-read-steps-outloud');
-            isReadStepsOutloud = checkbox.checked;
-            if (!isReadStepsOutloud) {
+        // Function to set read steps aloud flag based on checkbox state
+        function toggleReadStepsAloud() {
+            const checkbox = document.getElementById('toggle-read-steps-aloud');
+            isReadStepsAloud = checkbox.checked;
+            if (!isReadStepsAloud) {
                 cancelReadText();
             }
         }
         // Function to read the description aloud
         function readText(text) {
-            if (!isReadStepsOutloud){
+            if (!isReadStepsAloud){
                 return;
             }
             // Clear old utterances
@@ -877,20 +845,5 @@
         }
 
     </script>
+{% endblock %}
 
-    <!-- Bootstrap core JavaScript-->
-    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
-    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-
-    <!-- Core plugin JavaScript-->
-    <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
-
-    <!-- Custom scripts for all pages-->
-    <script src="{% static 'js/sb-admin-2.min.js' %}"></script>
-
-    <!-- Page level plugins -->
-    <script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}"></script>
-    <script src="{% static 'vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
-
-</body>
-</html>

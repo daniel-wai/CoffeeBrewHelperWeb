@@ -1,0 +1,287 @@
+<!-- help.html -->
+{% extends 'brewhelper/base.html' %}
+
+{% block title %}User Guide{% endblock %}
+
+{% block page_content %}
+    <h1 class="h2 pt-3">User Guide</h1>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h2 class="h4">Overview</h2>
+        </div>
+        <div class="card-body">
+            <p>We often think of brewing coffee as using an automatic drip machine where the process is 
+                hands-off for the most part. However, coffee enthusiasts have been exploring other brewing methods, 
+                such as pourover, French press, and AeroPress, to achieve the best cup possible. 
+                This application aims to help new coffee enthusiasts experiment with their coffee brewing technique.
+            </p>
+
+            <p>There are many brew guides available online which typically include the following key parameters:</p>
+                    <ul class="list-inline-bullet">
+                        <li>Brew ratio: Water Weight / Coffee Weight</li>
+                        <li>Coffee grind size</li>
+                        <li>Water temperature</li>
+                        <li>Brew process: speed of pouring (flow rate), number of pours, steep time, etc.</li>
+                    </ul>
+                Here is 
+                <a href="https://www.pilotcoffeeroasters.com/learn/brew-guides/">
+                    Pilot Coffee Roasters Brew Guide
+                </a> 
+                showing different coffee recipes for various methods.
+            </p>
+
+            <p>This application guides users through the brew process and provides feedback on
+                their performance. Espresso-based drinks are not yet covered.
+            </p>
+        </div>
+    </div>
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h2 class="h4">Features</h2>
+        </div>
+        <div class="card-body">
+
+            <h3 class="h5">Library of Methods and Associated Recipes</h3>
+
+            <p>Brew methods and their associated recipes are uploaded manually to the database. 
+                The long-term goal is to allow users to add or improve recipes based on their testing. 
+                Here is a list of supported recipes organized by brew method:
+            </p>
+        
+            <div>
+                <span class="title-text">Hario V60 Pourover Method:</span>
+                <ul class="list-inline-bullet">
+                    <li>James Hoffmann V60 1 cup</li>
+                    <li>Pilot Coffee Roasters Pourover Brew Guide</li>
+                    <li>Subtext Coffee Roasters V60 Brew Guide</li>
+                </ul>
+            </div>
+            <div>
+                <span class="title-text">French Press Method:</span>
+                <ul class="list-inline-bullet">
+                    <li>Pilot Coffee Roasters French Press Brew Guide</li>
+                </ul>
+            </div>
+            <div>
+                <span class="title-text">AeroPress Method:</span>
+                <ul class="list-inline-bullet">
+                    <li>Pilot Coffee Roasters AeroPress Brew Guide</li>
+                    <li>Subtext Coffee Roasters AeroPress Brew Guide</li>
+                </ul>
+            </div>
+
+            <h3 class="h5">Recipe Information</h3>
+            <p>The recipe name and description is displayed at the top along with a reference link (if applicable).
+                The following key sections are then provided.</p>
+
+            <h4 class="h6">Equipment</h4>
+            <p>List of equipment recommended to carry out each recipe.</p>
+
+            <h4 class="h6">Brew Parameters</h4>
+            <p>Key parameters for the setup:</p>
+            <ul class="list-inline-bullet">
+                <li>Total Coffee</li>
+                <li>Total Water</li>
+                <li>Brew Ratio (Water Weight / Coffee Weight)</li>
+                <li>Grind Size (of coffee beans)</li>
+                <li>Temperature (of water)</li>
+                <li>Total time (of brew)</li>
+            </ul>
+
+            <h4 class="h6">Preparation</h4>
+            <p>List of steps to ensure the water, ground coffee beans and equipment are ready 
+                before beginning the timed brewing process.
+            </p>
+
+            <h4 class="h6">Brew</h4>
+            <p>List of timed steps to brew the coffee. The target total water and time at the end of each step is listed. The total water is the cumulative
+                amount of water added since the start of the brew steps. The total time is the target elapsed time at the
+                end of each step.
+            </p>
+        </div>
+    </div>  
+
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h2 class="h4">Settings</h2>
+        </div>
+        <div class="card-body">
+            <p><span class="title-text">Enable Read Steps Aloud:</span> 
+                When enabled, the current step to complete is read aloud. 
+                For brew steps, the target total water and time are read aloud after the step description.
+            </p>
+            <p><span class="title-text">Enable Voice Commands:</span> When enabled, the user can use the 
+                application by saying commands rather than pressing buttons or using the keyboard. 
+                The word detected by the application will appear in the 
+                <span class="title-text">Last Detected Command</span> display. 
+                See <span class="title-text">Main Controls</span> section for more details on supported commands.
+            </p>
+        </div>
+    </div> 
+
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h2 class="h4">Main Controls</h2>
+        </div>
+        <div class="card-body">
+
+            <p>The main controls are located at the bottom of the application along with 
+                the <span class="title-text">Elapsed Time</span> during the <span class="title-text">Brew</span> steps. 
+                The commands change according to the current stage of the recipe. A command can be executed
+                by pressing a button, pressing a key or by saying a keyword if 
+                <span class="title-text">Enable Voice Command</span> is checked.       
+            </p>
+            <p>Here is a summary of the functionality of the main controls at each stage of brewing:</p>
+            
+            <div class="mb-4">
+                <h4 class="h6">Recipe Not Started:</h4>
+                <div class="my-2">
+                    <span class="title-text">Prepare:</span>
+                    <span>Starts <span class="title-text">Preparation</span> steps - try pressing the shift key or saying "prepare"</span>
+                </div>
+                <div class="my-2">
+                    <span class="title-text">Reset:</span>
+                    <span>Not used</span>
+                </div>
+                <div class="my-2">
+                    <span class="title-text">Next:</span>
+                    <span>Not used</span>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <h4 class="h6">During Preparation Steps:</h4>
+                <div class="my-2">
+                    <span class="title-text">Start:</span>
+                    <span>Skip to <span class="title-text">Brew</span> steps - try pressing shift key or saying "start"</span>
+                </div>
+                <div class="my-2">
+                    <span class="title-text">Reset:</span>
+                    <span>Restart recipe - try pressing the ctrl key or saying "reset"</span>
+                </div>
+                <div class="my-2">
+                    <span class="title-text">Next:</span>
+                    <span>Go to next step - try pressing the spacebar or saying "next"</span>
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <h4 class="h6">During Brew Steps:</h4>
+                <div class="my-2">
+                    <span class="title-text">Start/Pause:</span>
+                    <span>Start/pause timer - try pressing shift key or saying "start"/"pause"</span>
+                </div>
+                <div class="my-2">
+                    <span class="title-text">Reset:</span>
+                    <span>Restart recipe - try pressing the ctrl key or saying "reset"</span>
+                </div>
+                <div class="my-2">
+                    <span class="title-text">Record:</span>
+                    <span>Record elapsed time for current step - try pressing the spacebar or saying "record"</span>
+                </div>    
+            </div>
+        </div>
+    </div> 
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h2 class="h4">Typical Workflow</h2>
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <span class="title-text">Step 1:</span>
+                        <span>
+                            Select a <span class="title-text">Brew Method</span> from the dropdown menu on the top left. 
+                            The <span class="title-text">Recipe</span> dropdown menu will populate with all recipes which 
+                            use this brew method.
+                        </span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <span class="title-text">Step 2:</span>
+                        <span>
+                            Select a recipe from the <span class="title-text">Recipe</span> dropdown menu. 
+                            Press <span class="title-text">Load</span>. Recipe information will be loaded onto the page.
+                        </span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <span class="title-text">Step 3:</span>
+                        <span>
+                            Use the <span class="title-text">Equipment</span> list to gather all required tools before you begin.
+                        </span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <span class="title-text">Step 4:</span>
+                        <span>
+                            Review your settings. 
+                            Check the <span class="title-text">Enable Read Step Aloud</span> checkbox to hear the step description read aloud.
+                            Check the <span class="title-text">Enable Voice Command</span> checkbox to use the application by saying the command.
+                        </span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <span class="title-text">Step 5:</span>
+                        <span>
+                            Begin the <span class="title-text">Preparation</span> steps by pressing the 
+                            <span class="title-text">Prepare</span> button, by pressing the shift key or 
+                            by saying "prepare"</span>.
+                            The first step is highlighted. To highlight the next step, 
+                            press the <span class="title-text">Next</span> button, press the spacebar or say "next". 
+                            Complete all the preparation steps.
+                        </span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <span class="title-text">Step 6:</span>
+                        <span>
+                            Begin the <span class="title-text">Brew</span> steps by pressing the 
+                            <span class="title-text">Start</span> button, by pressing the shift key or 
+                            by saying "start"</span>. The timer will start and the <span class="title-text">Elapsed Time</span> is displayed at the bottom of the application.
+                            You should hear audible beeps at the start of each step and 3 seconds before the end of each step.
+                            Record the elapsed time to complete each brew step by pressing the <span class="title-text">Record</span> button, 
+                            by pressing the spacebar or by saying "record". Reviewing the recorded times is useful for mastering the recipe. 
+                            To pause the timer, press the <span class="title-text">Pause</span> button, press the shift key or say "pause". 
+                            For the most accurate time measurement, it is best not to pause the timer during brewing. 
+                            Complete all the brew steps.
+                        </span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <span class="title-text">Step 7:</span>
+                        <span>
+                            Allow the coffee to cool to a drinkable temperature, then take a sip! 
+                            Achieving the target time and water at each step are just some of many 
+                            factors that influence the taste and mouthfeel. 
+                            Experiment with different recipes and adjust brewing parameters to 
+                            discover your favorite cup!
+                        </span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <span class="title-text">Step 8:</span>
+                        <span>
+                            To reset all steps, press the <span class="title-text">Reset</span> button, press the ctrl key or say "reset".
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+{% endblock %}
+
+{% block page_scripts %}{% endblock %}

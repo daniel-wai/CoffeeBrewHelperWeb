@@ -9,87 +9,17 @@
 We often think of brewing coffee as using an automatic drip machine where the process is hands-off for the most part. However, coffee ethusiasts have been exploring other brewing methods, such as pourover, french press and aeropress, to achieve the best cup possible. This application aims to help new coffee ethusiasts experiment with their coffee brewing technique.
 
 Coffee brew recipes typically include the following key factors: 
-- Brew ratio: Weight of Water / Weight of Coffee
+- Brew ratio: Water Weight / Coffee Weight
 - Coffee grind size
 - Water temperature
 - Brew process: speed of pouring (flow rate), number of pours, steep time, etc. 
 
 There are many brew guides available online. Here is [Pilot Coffee Roasters Brew Guide](https://www.pilotcoffeeroasters.com/learn/brew-guides/) showing different coffee recipes for various methods.
 
-This application focuses on guiding the brew process and providing feedback on the executed performance. Espresso-based drinks are not yet covered.
+This application guides users through the brew process and provides feedback on their performance. Espresso-based drinks are not yet covered.
 
-## Features
-
-### Library of Methods and Associated Recipes
-
-Brew methods and their associated recipes are uploaded manually to the database. The long-term goal is to allow user input to add or improve recipes based on their testing. Here is a list of supported methods and recipes:
-- V60: Hario V60 pourover
-   - James Hoffmann V60 1 cup
-   - Pilot Coffee Roasters Pourover Brew Guide
-   - Subtext Coffee Roasters V60 Brew Guide
-- French press:
-   - Pilot Coffee Roasters French Press Brew Guide
-- Aeropress:
-   - Pilot Coffee Roasters AeroPress Brew Guide
-   - Subtext Coffee Roasters AeroPress Brew Guide
-   
-### Recipe
-
-#### General Information
-Each recipe lists:
-- Name
-- Description
-- Reference (if applicable)
-
-#### Equipment
-List of equipment recommended to carry out each recipe.
-
-#### Preparation Process
-List of steps before brewing can begin.
-
-#### Brewing Process
-List of steps to brew coffee. These are time-sensitive steps, so complete the preparation entirely first.
-
-#### Settings
-
-##### Enable Read Steps Outloud
-The target step to complete is read outloud. For brew steps, the target total water and time is read outloud after the step description.
-
-##### Enable Voice commands
-When enabled, the user can use the appplication by saying commands rather than pressing buttons or using the keyboard. The word detected by the application will appear in the **Last Detected Command** display. See Usage section for more details on supported commands.
-
-## Usage
-The typical workflow is as follows:
-1. Select a **Brew Method** from the dropdown menu on the top left. The **Recipe** dropdown menu will populate with all recipes which use this brew method.
-1. Select a recipe from the **Recipe** dropdown menu. Press Load. Recipe information will be loaded onto the page.
-1. Use the **Equipment** list to gather all required tools before you begin.
-1. You are ready to begin **Preparation** and **Brew** steps.
-	> Note:
-	> - check the **Enable Read Step Outloud** checkbox to hear the step description read outloud
-	> - check the **Enable Voice Command** checkbox to use the application by saying the command
-1. Use the **Preparation** steps to ensure the water, ground coffee beans and equipment are ready before beginning the timed brewing process. 
-	- To highlight the first step, press the **Prepare** button, press the shift key or say "prepare".
-	- The current step will be highlighted in yellow and have a bolded outline. It will be read outloud if the **Enable Read Step Outloud** checkbox is checked. 
-	- To highlight the next step, press the **Next** button, press the spacebar or say "next".
-1. Use the **Brew** steps to guide you through the timed brewing process where the coffee extraction takes place:
-	- Start the timer to begin brewing: press the **Start** button, press the shift key or say "start". The first brew step is highlighted with a bolded outline. You should hear an audible beep signifying the start of the brewing process. For all other brew steps, audible beeps start 3 seconds before the start of the step.
-	- Each time you finish a step, press the **Record** button, press the spacebar or say "record" to record the elapsed time to complete this step. This can be reviewed at the end to evaluate the timing compared to the coffee taste. The target step has a bolded outline, while the current step that you are working on is highlighted. 
-	- To pause the timer, press the **Pause** button, press the shift key or say "pause". Pausing the timer during brewing is not recommended as it doesn't allow for an accurate measurement of your performance.
-1. As your coffee cools, review the time you took to complete each step compared to the recipe. The key is not getting exact times and volumes, but rather how the process affects the taste. Let the taste decide how you adjust grind size, water, and process. 
-1. To reset all steps, press the **Reset** button, press the ctrl key or say "reset".
-
-You are now rewarded with a fresh cup of caffeine delight. Enjoy!
-
-Here is the summary of various ways to achieve the same command. Try (a) pressing a button, (b) pressing a keyboard key or (c) saying a command.
-
-| Command  | (a) Button | (b) Keyboard | (c) Voice |
-| ------------- | ------------- | ---- | ---- |
-| Start **Preparation** steps | Prepare | shift | Prepare |
-| Start/continue **Brew** step timer | Start  | shift | Start |
-| Pause **Brew** step timer | Pause | shift | Pause |
-| Reset all steps  | Reset  | ctrl | Reset |
-| Move to next **Preparation** step | Next | spacebar | Next |
-| Record elapsed time to complete current **Brew** step | Record | spacebar | Record |
+## User Guide
+Check out the [user guide](https://danielwai.pythonanywhere.com/user-guide/) for details on using the application.
 
 ## Installation
 Here is how you can clone the source repository to run locally.
