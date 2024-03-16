@@ -43,7 +43,19 @@
             bottom: 0;
             z-index: 1030;
         }
-        
+
+        /* Override container styling to reduce padding on mobile devices*/
+        @media (max-width: 767.98px) {
+            .container,
+            .container-fluid,
+            .container-sm,
+            .container-md,
+            .container-lg,
+            .container-xl {
+                padding-left: 0.5rem;
+                padding-right: 0.5rem;
+            }
+        }
         /* Override sidebar styling to hide unless mobile devices are used*/
         @media (min-width: 768px) {
             .sidebar {
