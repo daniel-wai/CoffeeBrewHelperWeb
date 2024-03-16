@@ -70,10 +70,10 @@
         <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
             <i class="fa fa-bars"></i>
         </button>
-        <span class="nav-item active d-md-max-none">
+        <span class="nav-item d-md-max-none">
             <a class="nav-link title-text" href="{% url 'home' %}">Home</a>
         </span>
-        <span class="nav-item active d-md-max-none">
+        <span class="nav-item d-md-max-none">
             <a class="nav-link title-text" href="{% url 'user_guide' %}">User Guide</a>
         </span>
     </nav>
@@ -83,8 +83,21 @@
     <div id="wrapper">
         <!-- Sidebar -->
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion toggled" id="accordionSidebar">
-            <a class="bg-dark" href="{% url 'home' %}">Home</a>
-            <a class="bg-dark" href="{% url 'user_guide' %}">User Guide</a>
+            <!-- Nav Item - Home -->
+            <li class="nav-item">
+                <a class="nav-link small" href="{% url 'home' %}">Home</a>
+            </li>
+            
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
+            
+            <!-- Nav Item - User Guide -->
+            <li class="nav-item">
+                <a class="nav-link small" href="{% url 'user_guide' %}">User Guide</a>
+            </li>  
+
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
         </ul>
         <!-- End of Sidebar -->
 
