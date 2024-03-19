@@ -59,7 +59,9 @@
                 <div class="card-body">
                     <!-- Element to display recipe header info -->
                     <p> {{ selected_recipe.description }}</p>
-                    <p>More information on this recipe can be found here: {{ selected_recipe.reference }}</p>
+                    <p>More information on this recipe can be found here: 
+                        <a href="{{ selected_recipe.reference }}">{{ selected_recipe.reference }}</a>
+                    </p>
             
                     <!-- Element to display method header info -->
                     <h3 class="h5">Equipment:</h3>
