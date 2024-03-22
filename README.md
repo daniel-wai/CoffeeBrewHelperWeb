@@ -1,8 +1,7 @@
 # Coffee Brew Helper Application
+[![CoffeeBrewHelper1000_withTitle_Thumbnail](https://github.com/daniel-wai/CoffeeBrewHelperWeb/assets/83196054/f5370b8c-86d1-4997-bfd5-82d144e10a4f)](https://youtu.be/fjCw9sn6c1k?si=RKWY-41fv2gSa4qQ)
+
 [Click here to try the application!](https://danielwai.pythonanywhere.com)
-
-[Check out the Introductory Video](https://youtu.be/fjCw9sn6c1k?si=tOMVKoJdoKGuM-Iv)
-
 
 ## Introduction
 
