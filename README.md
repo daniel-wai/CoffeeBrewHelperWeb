@@ -1,7 +1,7 @@
 # Coffee Brew Helper Application
 [Click here to try the application!](https://danielwai.pythonanywhere.com)
 
-![TempThumbnailMod](https://github.com/daniel-wai/CoffeeBrewHelperWeb/assets/83196054/6d163a52-a380-4e06-b965-c4177b21eb80)
+[Check out the Introductory Video](https://youtu.be/fjCw9sn6c1k?si=tOMVKoJdoKGuM-Iv)
 
 
 ## Introduction
