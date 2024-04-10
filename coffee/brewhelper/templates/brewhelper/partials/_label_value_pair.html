@@ -1,0 +1,21 @@
+<!--
+Partial: _label_value_pair.html
+Description: This partial is used to display a label-value pair like Weight: 10g.
+Input:
+    base_id = optional string id for container which wraps label-value information
+    label = string with id "base_id-label" if base_id provided
+    value = string with id "base_id-value" if base_id provided
+Output: 
+    label: value
+-->
+<!-- Container div with optional id -->
+<div {% if base_id %} id="{{ base_id }}"{% endif %} class="my-2">
+    <!-- Label span with dynamic id and class -->
+    <span id="{{ base_id }}-label" class="title-text">
+        {{ label }}:
+    </span>
+    <!-- Value span with dynamic id -->
+    <span id="{{ base_id }}-value">
+        {{ value }}
+    </span>
+</div>

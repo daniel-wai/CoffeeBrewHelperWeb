@@ -73,30 +73,36 @@
                     </ul>
                     <h3 class="h5">Brew Parameters:</h3>
                     <div class="mb-3">
-                        <div class="my-2">
-                            <span id="recipe-coffee-weight-label" class="title-text">Total Coffee:</span>
-                            <span id="recipe-coffee-weight">{{ selected_recipe.coffee_weight}}g</span>
-                        </div>
-                        <div class="my-2">
-                            <span id="recipe-target-total-water-label" class="title-text">Total Water:</span>
-                            <span id="recipe-target-total-water">{{ selected_recipe.target_total_water }}g</span>
-                        </div>
-                        <div class="my-2">
-                            <span id="recipe-brew-ratio-label" class="title-text" for="recipe-brew-ratio">Brew Ratio:</span>
-                            <span id="recipe-brew-ratio">{{ selected_recipe.brew_ratio }}</span>
-                        </div>
-                        <div class="my-2">
-                            <span id="recipe-coffee-grind-size-label" class="title-text">Grind Size:</span>
-                            <span id="recipe-coffee-grind-size">{{ selected_recipe.coffee_grind_size }}</span>
-                        </div>
-                        <div class="my-2">
-                            <span id="recipe-temperature-label" class="title-text">Temperature:</span>
-                            <span id="recipe-temperature">{{ selected_recipe.temperature }}</span>
-                        </div>
-                        <div class="my-2">
-                            <span id="recipe-target-total-time-label" class="title-text">Total Time:</span>
-                            <span id="recipe-target-total-time">{{ selected_recipe.target_total_time }}</span>
-                        </div>
+                        {% include "brewhelper/partials/_label_value_pair.html" with 
+                            base_id="recipe-coffee-weight"     
+                            label="Total Coffee"
+                            value=selected_recipe.coffee_weight|stringformat:"s"|add:"g"    
+                        %}
+                        {% include "brewhelper/partials/_label_value_pair.html" with 
+                            base_id="recipe-target-total-water"        
+                            label="Total Water"
+                            value=selected_recipe.target_total_water|stringformat:"s"|add:"g" 
+                        %}
+                        {% include "brewhelper/partials/_label_value_pair.html" with 
+                            base_id="recipe-brew-ratio"   
+                            label="Brew Ratio"
+                            value=selected_recipe.brew_ratio|stringformat:"s"  
+                        %}
+                        {% include "brewhelper/partials/_label_value_pair.html" with 
+                            base_id="recipe-coffee-grind-size"  
+                            label="Grind Size"
+                            value=selected_recipe.coffee_grind_size|stringformat:"s"   
+                        %}
+                        {% include "brewhelper/partials/_label_value_pair.html" with 
+                            base_id="recipe-temperature"  
+                            label="Temperature"
+                            value=selected_recipe.temperature|stringformat:"s"   
+                        %}
+                        {% include "brewhelper/partials/_label_value_pair.html" with 
+                            base_id="recipe-target-total-time"      
+                            label="Total Time"
+                            value=selected_recipe.target_total_time|stringformat:"s"   
+                        %}
                     </div>
                 
             
@@ -515,7 +521,7 @@
         };
         let currentProcess = Process.NONE;
         // Update brew time data in header info
-        const recipeTargetTotalTime = document.getElementById('recipe-target-total-time');
+        const recipeTargetTotalTime = document.getElementById('recipe-target-total-time-value');
         recipeTargetTotalTime.innerText = getTimeStringFromSeconds(recipeTargetTotalTime.innerText);
 
         // Get all rows of the table

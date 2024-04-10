@@ -38,7 +38,7 @@
                 The long-term goal is to allow users to add or improve recipes based on their testing. 
                 Here is a list of supported recipes organized by brew method:
             </p>
-        
+
             <div>
                 <span class="title-text">Hario V60 Pourover Method:</span>
                 <ul class="list-inline-bullet">
@@ -128,50 +128,50 @@
             
             <div class="mb-4">
                 <h4 class="h6">Recipe Not Started:</h4>
-                <div class="my-2">
-                    <span class="title-text">Prepare:</span>
-                    <span>Starts <span class="title-text">Preparation</span> steps - try pressing the shift key or saying "prepare"</span>
-                </div>
-                <div class="my-2">
-                    <span class="title-text">Reset:</span>
-                    <span>Not used</span>
-                </div>
-                <div class="my-2">
-                    <span class="title-text">Next:</span>
-                    <span>Not used</span>
-                </div>
+                {% include "brewhelper/partials/_label_value_pair.html" with 
+                    label="Prepare" 
+                    value='Starts <span class="title-text">Preparation</span> steps - try pressing the shift key or saying "prepare"'
+                %}
+                {% include "brewhelper/partials/_label_value_pair.html" with 
+                    label="Reset" 
+                    value='Not used'
+                %}
+                {% include "brewhelper/partials/_label_value_pair.html" with 
+                    label="Next" 
+                    value='Not used'
+                %}
             </div>
 
             <div class="mb-4">
                 <h4 class="h6">During Preparation Steps:</h4>
-                <div class="my-2">
-                    <span class="title-text">Start:</span>
-                    <span>Skip to <span class="title-text">Brew</span> steps - try pressing shift key or saying "start"</span>
-                </div>
-                <div class="my-2">
-                    <span class="title-text">Reset:</span>
-                    <span>Restart recipe - try pressing the ctrl key or saying "reset"</span>
-                </div>
-                <div class="my-2">
-                    <span class="title-text">Next:</span>
-                    <span>Go to next step - try pressing the spacebar or saying "next"</span>
-                </div>
+                {% include "brewhelper/partials/_label_value_pair.html" with 
+                    label="Start" 
+                    value='Skip to <span class="title-text">Brew</span> steps - try pressing shift key or saying "start"'
+                %}
+                {% include "brewhelper/partials/_label_value_pair.html" with 
+                    label="Reset" 
+                    value='Restart recipe - try pressing the ctrl key or saying "reset"'
+                %}
+                {% include "brewhelper/partials/_label_value_pair.html" with 
+                    label="Next" 
+                    value='Go to next step - try pressing the spacebar or saying "next"'
+                %}
             </div>
             
             <div class="mb-4">
                 <h4 class="h6">During Brew Steps:</h4>
-                <div class="my-2">
-                    <span class="title-text">Start/Pause:</span>
-                    <span>Start/pause timer - try pressing shift key or saying "start"/"pause"</span>
-                </div>
-                <div class="my-2">
-                    <span class="title-text">Reset:</span>
-                    <span>Restart recipe - try pressing the ctrl key or saying "reset"</span>
-                </div>
-                <div class="my-2">
-                    <span class="title-text">Record:</span>
-                    <span>Record elapsed time for current step - try pressing the spacebar or saying "record"</span>
-                </div>    
+                {% include "brewhelper/partials/_label_value_pair.html" with 
+                    label="Start/Pause" 
+                    value='Start/pause timer - try pressing shift key or saying "start"/"pause"'
+                %}
+                {% include "brewhelper/partials/_label_value_pair.html" with 
+                    label="Reset" 
+                    value='Restart recipe - try pressing the ctrl key or saying "reset"'
+                %}
+                {% include "brewhelper/partials/_label_value_pair.html" with 
+                    label="Record" 
+                    value='Record elapsed time for current step - try pressing the spacebar or saying "record"'
+                %}
             </div>
         </div>
     </div> 
