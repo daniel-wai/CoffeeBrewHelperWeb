@@ -1,11 +1,9 @@
-<!-- home.html -->
 {% extends 'brewhelper/base.html' %}
 
 {% load static %}
 
 {% block title %}Coffee Brew Helper{% endblock %}
 
-<!-- Add any CSS links, meta tags, or other head elements here -->
 {% block page_styles %}
     <style>
         /* Key Test Output*/
@@ -112,16 +110,14 @@
                         {% if preparation_steps %}
                             <div id="preparation-steps" class="mb-3">
                                 {% for step in preparation_steps %}
-                                <div class="row mb-3">
-                                    <div class="col-md-12">
-                                        <span class="step-order-id title-text">Step {{ step.order_id }}:</span>
-                                        <span class="step-description">{{ step.description }}</span>
-                                    </div>
-                                </div>
+                                    {% include "brewhelper/partials/_step_row.html" with 
+                                        order_id=step.order_id
+                                        description=step.description
+                                    %}
                                 {% endfor %}
                             </div>
                         {% else %}
-                            <label>No prepration steps</label>
+                            <label>No preparation steps</label>
                         {% endif %}
                     </div>
 
@@ -130,26 +126,13 @@
                         <h3 class="h5">Brew</h3>
                         <div id="brewing-steps" class="mb-3">
                             {% for step in brew_steps %}
-                            <div class="row mb-4">
-                                <div class="col-md-12 mb-2">
-                                        <span class="step-order-id title-text">Step {{ step.order_id }}:</span> 
-                                        <span class="step-description">{{step.description }}</span>
-                                </div>
-                                <div class="col-md-12 d-flex justify-content-between">
-                                    <span class="align-self-end text-center d-flex flex-column">
-                                        <span class="title-text text-xs">Total Water:</span>
-                                        <span class="step-target-total-water">{{step.target_total_water}}g</span>
-                                    </span>
-                                    <span class="align-self-end text-center d-flex flex-column">
-                                        <span class="title-text text-xs">Total Time:</span>
-                                        <span class="step-target-total-time">{{ step.target_total_time }}</span>
-                                    </span>
-                                    <span class="align-self-end text-center d-flex flex-column">
-                                        <span class="title-text text-xs">Recorded Time:</span>
-                                        <span class="step-executed-time text-nowrap">--:--</span>
-                                    </span>
-                                </div>
-                            </div>
+                                {% include "brewhelper/partials/_brew_step_row.html" with 
+                                    order_id=step.order_id|stringformat:"s"
+                                    description=step.description|stringformat:"s"
+                                    target_total_water=step.target_total_water|stringformat:"s"
+                                    target_total_time=step.target_total_time|stringformat:"s"
+                                    recorded_time="--:--" 
+                                %}
                             {% endfor %}
                         </div>
                     </div>
@@ -193,7 +176,7 @@
                     <!-- Element to display elapsed time -->
                     <div>
                         <span id="elapsed-time-label" class="title-text">Elapsed Time:</span>
-                        <span id="elapsed-time">00:00</span>
+                        <span id="elapsed-time-value">00:00</span>
                     </div>
                     <div id="detected-voice-command-container">
                         <span class="title-text">Last Detected Command:</span>
@@ -700,7 +683,7 @@
 
         // Function to update elapsed time in the input element
         function updateElapsedTime() {
-            const elapsedTimeInput = document.getElementById('elapsed-time');
+            const elapsedTimeInput = document.getElementById('elapsed-time-value');
             const formattedTime = getTimeStringFromSeconds(elapsedTime); // Convert elapsed time to "mm:ss"
             elapsedTimeInput.innerText = formattedTime; // Update input value with formatted time
         }
