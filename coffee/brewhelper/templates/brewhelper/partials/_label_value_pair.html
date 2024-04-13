@@ -1,0 +1,11 @@
+<!-- Label and value pair -->
+<div {% if base_id %} id="{{ base_id }}"{% endif %} class="my-2">
+    <!-- Label -->
+    <span {% if base_id %}id="{{ base_id }}-label"{% endif %} class="title-text">
+        {{ label }}:
+    </span>
+    <!-- Value -->
+    <span {% if base_id %}id="{{ base_id }}-value"{% endif %}>
+        {{ value }}
+    </span>
+</div>

@@ -1,11 +1,9 @@
-<!-- home.html -->
 {% extends 'brewhelper/base.html' %}
 
 {% load static %}
 
 {% block title %}Coffee Brew Helper{% endblock %}
 
-<!-- Add any CSS links, meta tags, or other head elements here -->
 {% block page_styles %}
     <style>
         /* Key Test Output*/
@@ -73,30 +71,36 @@
                     </ul>
                     <h3 class="h5">Brew Parameters:</h3>
                     <div class="mb-3">
-                        <div class="my-2">
-                            <span id="recipe-coffee-weight-label" class="title-text">Total Coffee:</span>
-                            <span id="recipe-coffee-weight">{{ selected_recipe.coffee_weight}}g</span>
-                        </div>
-                        <div class="my-2">
-                            <span id="recipe-target-total-water-label" class="title-text">Total Water:</span>
-                            <span id="recipe-target-total-water">{{ selected_recipe.target_total_water }}g</span>
-                        </div>
-                        <div class="my-2">
-                            <span id="recipe-brew-ratio-label" class="title-text" for="recipe-brew-ratio">Brew Ratio:</span>
-                            <span id="recipe-brew-ratio">{{ selected_recipe.brew_ratio }}</span>
-                        </div>
-                        <div class="my-2">
-                            <span id="recipe-coffee-grind-size-label" class="title-text">Grind Size:</span>
-                            <span id="recipe-coffee-grind-size">{{ selected_recipe.coffee_grind_size }}</span>
-                        </div>
-                        <div class="my-2">
-                            <span id="recipe-temperature-label" class="title-text">Temperature:</span>
-                            <span id="recipe-temperature">{{ selected_recipe.temperature }}</span>
-                        </div>
-                        <div class="my-2">
-                            <span id="recipe-target-total-time-label" class="title-text">Total Time:</span>
-                            <span id="recipe-target-total-time">{{ selected_recipe.target_total_time }}</span>
-                        </div>
+                        {% include "brewhelper/partials/_label_value_pair.html" with 
+                            base_id="recipe-coffee-weight"     
+                            label="Total Coffee"
+                            value=selected_recipe.coffee_weight|stringformat:"s"|add:"g"    
+                        %}
+                        {% include "brewhelper/partials/_label_value_pair.html" with 
+                            base_id="recipe-target-total-water"        
+                            label="Total Water"
+                            value=selected_recipe.target_total_water|stringformat:"s"|add:"g" 
+                        %}
+                        {% include "brewhelper/partials/_label_value_pair.html" with 
+                            base_id="recipe-brew-ratio"   
+                            label="Brew Ratio"
+                            value=selected_recipe.brew_ratio|stringformat:"s"  
+                        %}
+                        {% include "brewhelper/partials/_label_value_pair.html" with 
+                            base_id="recipe-coffee-grind-size"  
+                            label="Grind Size"
+                            value=selected_recipe.coffee_grind_size|stringformat:"s"   
+                        %}
+                        {% include "brewhelper/partials/_label_value_pair.html" with 
+                            base_id="recipe-temperature"  
+                            label="Temperature"
+                            value=selected_recipe.temperature|stringformat:"s"   
+                        %}
+                        {% include "brewhelper/partials/_label_value_pair.html" with 
+                            base_id="recipe-target-total-time"      
+                            label="Total Time"
+                            value=selected_recipe.target_total_time|stringformat:"s"   
+                        %}
                     </div>
                 
             
@@ -106,16 +110,14 @@
                         {% if preparation_steps %}
                             <div id="preparation-steps" class="mb-3">
                                 {% for step in preparation_steps %}
-                                <div class="row mb-3">
-                                    <div class="col-md-12">
-                                        <span class="step-order-id title-text">Step {{ step.order_id }}:</span>
-                                        <span class="step-description">{{ step.description }}</span>
-                                    </div>
-                                </div>
+                                    {% include "brewhelper/partials/_step_row.html" with 
+                                        order_id=step.order_id
+                                        description=step.description
+                                    %}
                                 {% endfor %}
                             </div>
                         {% else %}
-                            <label>No prepration steps</label>
+                            <label>No preparation steps</label>
                         {% endif %}
                     </div>
 
@@ -124,26 +126,13 @@
                         <h3 class="h5">Brew</h3>
                         <div id="brewing-steps" class="mb-3">
                             {% for step in brew_steps %}
-                            <div class="row mb-4">
-                                <div class="col-md-12 mb-2">
-                                        <span class="step-order-id title-text">Step {{ step.order_id }}:</span> 
-                                        <span class="step-description">{{step.description }}</span>
-                                </div>
-                                <div class="col-md-12 d-flex justify-content-between">
-                                    <span class="align-self-end text-center d-flex flex-column">
-                                        <span class="title-text text-xs">Total Water:</span>
-                                        <span class="step-target-total-water">{{step.target_total_water}}g</span>
-                                    </span>
-                                    <span class="align-self-end text-center d-flex flex-column">
-                                        <span class="title-text text-xs">Total Time:</span>
-                                        <span class="step-target-total-time">{{ step.target_total_time }}</span>
-                                    </span>
-                                    <span class="align-self-end text-center d-flex flex-column">
-                                        <span class="title-text text-xs">Recorded Time:</span>
-                                        <span class="step-executed-time text-nowrap">--:--</span>
-                                    </span>
-                                </div>
-                            </div>
+                                {% include "brewhelper/partials/_brew_step_row.html" with 
+                                    order_id=step.order_id|stringformat:"s"
+                                    description=step.description|stringformat:"s"
+                                    target_total_water=step.target_total_water|stringformat:"s"
+                                    target_total_time=step.target_total_time|stringformat:"s"
+                                    recorded_time="--:--" 
+                                %}
                             {% endfor %}
                         </div>
                     </div>
@@ -187,7 +176,7 @@
                     <!-- Element to display elapsed time -->
                     <div>
                         <span id="elapsed-time-label" class="title-text">Elapsed Time:</span>
-                        <span id="elapsed-time">00:00</span>
+                        <span id="elapsed-time-value">00:00</span>
                     </div>
                     <div id="detected-voice-command-container">
                         <span class="title-text">Last Detected Command:</span>
@@ -515,7 +504,7 @@
         };
         let currentProcess = Process.NONE;
         // Update brew time data in header info
-        const recipeTargetTotalTime = document.getElementById('recipe-target-total-time');
+        const recipeTargetTotalTime = document.getElementById('recipe-target-total-time-value');
         recipeTargetTotalTime.innerText = getTimeStringFromSeconds(recipeTargetTotalTime.innerText);
 
         // Get all rows of the table
@@ -694,7 +683,7 @@
 
         // Function to update elapsed time in the input element
         function updateElapsedTime() {
-            const elapsedTimeInput = document.getElementById('elapsed-time');
+            const elapsedTimeInput = document.getElementById('elapsed-time-value');
             const formattedTime = getTimeStringFromSeconds(elapsedTime); // Convert elapsed time to "mm:ss"
             elapsedTimeInput.innerText = formattedTime; // Update input value with formatted time
         }

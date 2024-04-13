@@ -1,0 +1,9 @@
+{% extends 'brewhelper/partials/_base_step_row.html' %}
+
+<!-- Step order_id and description -->
+{% block content%} 
+    {% include 'brewhelper/partials/_step_description_pair.html' with 
+        order_id=order_id
+        description=description            
+    %}
+{% endblock %}

@@ -1,4 +1,3 @@
-<!-- help.html -->
 {% extends 'brewhelper/base.html' %}
 
 {% block title %}User Guide{% endblock %}
@@ -38,7 +37,7 @@
                 The long-term goal is to allow users to add or improve recipes based on their testing. 
                 Here is a list of supported recipes organized by brew method:
             </p>
-        
+
             <div>
                 <span class="title-text">Hario V60 Pourover Method:</span>
                 <ul class="list-inline-bullet">
@@ -128,50 +127,50 @@
             
             <div class="mb-4">
                 <h4 class="h6">Recipe Not Started:</h4>
-                <div class="my-2">
-                    <span class="title-text">Prepare:</span>
-                    <span>Starts <span class="title-text">Preparation</span> steps - try pressing the shift key or saying "prepare"</span>
-                </div>
-                <div class="my-2">
-                    <span class="title-text">Reset:</span>
-                    <span>Not used</span>
-                </div>
-                <div class="my-2">
-                    <span class="title-text">Next:</span>
-                    <span>Not used</span>
-                </div>
+                {% include "brewhelper/partials/_label_value_pair.html" with 
+                    label="Prepare" 
+                    value='Starts <span class="title-text">Preparation</span> steps - try pressing the shift key or saying "prepare"'
+                %}
+                {% include "brewhelper/partials/_label_value_pair.html" with 
+                    label="Reset" 
+                    value='Not used'
+                %}
+                {% include "brewhelper/partials/_label_value_pair.html" with 
+                    label="Next" 
+                    value='Not used'
+                %}
             </div>
 
             <div class="mb-4">
                 <h4 class="h6">During Preparation Steps:</h4>
-                <div class="my-2">
-                    <span class="title-text">Start:</span>
-                    <span>Skip to <span class="title-text">Brew</span> steps - try pressing shift key or saying "start"</span>
-                </div>
-                <div class="my-2">
-                    <span class="title-text">Reset:</span>
-                    <span>Restart recipe - try pressing the ctrl key or saying "reset"</span>
-                </div>
-                <div class="my-2">
-                    <span class="title-text">Next:</span>
-                    <span>Go to next step - try pressing the spacebar or saying "next"</span>
-                </div>
+                {% include "brewhelper/partials/_label_value_pair.html" with 
+                    label="Start" 
+                    value='Skip to <span class="title-text">Brew</span> steps - try pressing shift key or saying "start"'
+                %}
+                {% include "brewhelper/partials/_label_value_pair.html" with 
+                    label="Reset" 
+                    value='Restart recipe - try pressing the ctrl key or saying "reset"'
+                %}
+                {% include "brewhelper/partials/_label_value_pair.html" with 
+                    label="Next" 
+                    value='Go to next step - try pressing the spacebar or saying "next"'
+                %}
             </div>
             
             <div class="mb-4">
                 <h4 class="h6">During Brew Steps:</h4>
-                <div class="my-2">
-                    <span class="title-text">Start/Pause:</span>
-                    <span>Start/pause timer - try pressing shift key or saying "start"/"pause"</span>
-                </div>
-                <div class="my-2">
-                    <span class="title-text">Reset:</span>
-                    <span>Restart recipe - try pressing the ctrl key or saying "reset"</span>
-                </div>
-                <div class="my-2">
-                    <span class="title-text">Record:</span>
-                    <span>Record elapsed time for current step - try pressing the spacebar or saying "record"</span>
-                </div>    
+                {% include "brewhelper/partials/_label_value_pair.html" with 
+                    label="Start/Pause" 
+                    value='Start/pause timer - try pressing shift key or saying "start"/"pause"'
+                %}
+                {% include "brewhelper/partials/_label_value_pair.html" with 
+                    label="Reset" 
+                    value='Restart recipe - try pressing the ctrl key or saying "reset"'
+                %}
+                {% include "brewhelper/partials/_label_value_pair.html" with 
+                    label="Record" 
+                    value='Record elapsed time for current step - try pressing the spacebar or saying "record"'
+                %}
             </div>
         </div>
     </div> 
@@ -182,92 +181,38 @@
         </div>
         <div class="card-body">
             <div class="mb-3">
-                <div class="row mb-3">
-                    <div class="col-md-12">
-                        <span class="title-text">Step 1:</span>
-                        <span>
-                            Select a <span class="title-text">Brew Method</span> from the dropdown menu on the top left. 
-                            The <span class="title-text">Recipe</span> dropdown menu will populate with all recipes which 
-                            use this brew method.
-                        </span>
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-md-12">
-                        <span class="title-text">Step 2:</span>
-                        <span>
-                            Select a recipe from the <span class="title-text">Recipe</span> dropdown menu. 
-                            Press <span class="title-text">Load</span>. Recipe information will be loaded onto the page.
-                        </span>
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-md-12">
-                        <span class="title-text">Step 3:</span>
-                        <span>
-                            Use the <span class="title-text">Equipment</span> list to gather all required tools before you begin.
-                        </span>
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-md-12">
-                        <span class="title-text">Step 4:</span>
-                        <span>
-                            Review your settings. 
-                            Check the <span class="title-text">Enable Read Step Aloud</span> checkbox to hear the step description read aloud.
-                            Check the <span class="title-text">Enable Voice Command</span> checkbox to use the application by saying the command.
-                        </span>
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-md-12">
-                        <span class="title-text">Step 5:</span>
-                        <span>
-                            Begin the <span class="title-text">Preparation</span> steps by pressing the 
-                            <span class="title-text">Prepare</span> button, by pressing the shift key or 
-                            by saying "prepare"</span>.
-                            The first step is highlighted. To highlight the next step, 
-                            press the <span class="title-text">Next</span> button, press the spacebar or say "next". 
-                            Complete all the preparation steps.
-                        </span>
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-md-12">
-                        <span class="title-text">Step 6:</span>
-                        <span>
-                            Begin the <span class="title-text">Brew</span> steps by pressing the 
-                            <span class="title-text">Start</span> button, by pressing the shift key or 
-                            by saying "start"</span>. The timer will start and the <span class="title-text">Elapsed Time</span> is displayed at the bottom of the application.
-                            You should hear audible beeps at the start of each step and 3 seconds before the end of each step.
-                            Record the elapsed time to complete each brew step by pressing the <span class="title-text">Record</span> button, 
-                            by pressing the spacebar or by saying "record". Reviewing the recorded times is useful for mastering the recipe. 
-                            To pause the timer, press the <span class="title-text">Pause</span> button, press the shift key or say "pause". 
-                            For the most accurate time measurement, it is best not to pause the timer during brewing. 
-                            Complete all the brew steps.
-                        </span>
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-md-12">
-                        <span class="title-text">Step 7:</span>
-                        <span>
-                            Allow the coffee to cool to a drinkable temperature, then take a sip! 
-                            Achieving the target time and water at each step are just some of many 
-                            factors that influence the taste and mouthfeel. 
-                            Experiment with different recipes and adjust brewing parameters to 
-                            discover your favorite cup!
-                        </span>
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-md-12">
-                        <span class="title-text">Step 8:</span>
-                        <span>
-                            To reset all steps, press the <span class="title-text">Reset</span> button, press the ctrl key or say "reset".
-                        </span>
-                    </div>
-                </div>
+                {% include "brewhelper/partials/_step_row.html" with
+                    order_id="1"
+                    description='Select a <span class="title-text">Brew Method</span> from the dropdown menu on the top left. The <span class="title-text">Recipe</span> dropdown menu will populate with all recipes which use this brew method.'
+                %}
+                {% include "brewhelper/partials/_step_row.html" with
+                    order_id="2"
+                    description='Select a recipe from the <span class="title-text">Recipe</span> dropdown menu. Press <span class="title-text">Load</span>. Recipe information will be loaded onto the page.'
+                %}
+                {% include "brewhelper/partials/_step_row.html" with
+                    order_id="3"
+                    description='Use the <span class="title-text">Equipment</span> list to gather all required tools before you begin.'
+                %}
+                {% include "brewhelper/partials/_step_row.html" with
+                    order_id="4"
+                    description='Review your settings. Check the <span class="title-text">Enable Read Step Aloud</span> checkbox to hear the step description read aloud. Check the <span class="title-text">Enable Voice Command</span> checkbox to use the application by saying the command.'
+                %}
+                {% include "brewhelper/partials/_step_row.html" with
+                    order_id="5"
+                    description='Begin the <span class="title-text">Preparation</span> steps by pressing the <span class="title-text">Prepare</span> button, by pressing the shift key or by saying "prepare"</span>. The first step is highlighted. To highlight the next step, press the <span class="title-text">Next</span> button, press the spacebar or say "next". Complete all the preparation steps.'
+                %}
+                {% include "brewhelper/partials/_step_row.html" with
+                    order_id="6"
+                    description='Begin the <span class="title-text">Brew</span> steps by pressing the <span class="title-text">Start</span> button, by pressing the shift key or by saying "start"</span>. The timer will start and the <span class="title-text">Elapsed Time</span> is displayed at the bottom of the application. You should hear audible beeps at the start of each step and 3 seconds before the end of each step. Record the elapsed time to complete each brew step by pressing the <span class="title-text">Record</span> button, by pressing the spacebar or by saying "record". Reviewing the recorded times is useful for mastering the recipe. To pause the timer, press the <span class="title-text">Pause</span> button, press the shift key or say "pause". For the most accurate time measurement, it is best not to pause the timer during brewing. Complete all the brew steps.'
+                %}
+                {% include "brewhelper/partials/_step_row.html" with
+                    order_id="7"
+                    description='Allow the coffee to cool to a drinkable temperature, then take a sip! Achieving the target time and water at each step are just some of many factors that influence the taste and mouthfeel. Experiment with different recipes and adjust brewing parameters to discover your favorite cup!'
+                %}
+                {% include "brewhelper/partials/_step_row.html" with
+                    order_id="8"
+                    description='To reset all steps, press the <span class="title-text">Reset</span> button, press the ctrl key or say "reset".'
+                %}
             </div>
         </div>
     </div>

@@ -1,0 +1,24 @@
+{% extends 'brewhelper/partials/_base_step_row.html' %}
+
+{% block content%} 
+    <!-- Brew step order_id and description -->
+    {% include "brewhelper/partials/_step_description_pair.html" with 
+        order_id=order_id
+        description=description            
+    %}
+    <!-- Brew step target_total_water, target_total_time and recorded_time -->
+    <div class="col-md-12 d-flex justify-content-between">
+        <span class="align-self-end text-center d-flex flex-column">
+            <span class="title-text text-xs">Total Water:</span>
+            <span class="step-target-total-water">{{ target_total_water}}g</span>
+        </span>
+        <span class="align-self-end text-center d-flex flex-column">
+            <span class="title-text text-xs">Total Time:</span>
+            <span class="step-target-total-time">{{ target_total_time }}</span>
+        </span>
+        <span class="align-self-end text-center d-flex flex-column">
+            <span class="title-text text-xs">Recorded Time:</span>
+            <span class="step-executed-time text-nowrap">{{recorded_time}}</span>
+        </span>
+    </div>
+{% endblock %}
